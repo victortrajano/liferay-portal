@@ -7,18 +7,23 @@ definition {
 
 	setUp {
 		TestCase.setUpPortalInstance();
+
 		User.firstLoginPG();
+
 		JSONGroup.addGroup(groupName = "Test Site Name");
+
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 	}
 
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
+		
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
+
 			User.logoutPG();
 		}
 	}

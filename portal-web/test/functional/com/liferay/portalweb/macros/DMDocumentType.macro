@@ -1,6 +1,12 @@
 definition {
 
 	macro add {
+		DMDocumentType.addWithoutSave();
+
+		DDLDataDefinition.save();
+	}
+
+	macro addWithoutSave {
 		LexiconEntry.gotoAdd();
 
 		PortletEntry.inputName(name = "${dmDocumentTypeName}");
@@ -48,24 +54,6 @@ definition {
 
 			DMDocumentType.selectPGMetadataSet(key_metadataSetName = "${metadataSetName}");
 		}
-
-		DDLDataDefinition.save();
-	}
-
-	macro deleteFields {
-		DMDocumentType.selectDocumentTypeFrame();
-
-		var key_dmDocumentTypeName = "${dmDocumentTypeName}";
-
-		LexiconEntry.openEntryMenu(rowEntry = "${dmDocumentTypeName}");
-
-		MenuItem.clickNoError(menuItem = "Edit");
-
-		for (var fieldFieldLabel : list "${fieldFieldLabel}") {
-			DataEngine.deleteField(fieldFieldLabel = "${fieldFieldLabel}");
-		}
-
-		DDLDataDefinition.save();
 	}
 
 	macro deletePG {

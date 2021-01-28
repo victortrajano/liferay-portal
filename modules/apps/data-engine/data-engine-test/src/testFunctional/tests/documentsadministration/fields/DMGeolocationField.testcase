@@ -11,6 +11,7 @@ definition {
 		JSONGroup.addGroup(groupName = "Test Site Name");
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
 	}
+
 	tearDown {
 		var testPortalInstance = PropsUtil.get("test.portal.instance");
 		if ("${testPortalInstance}" == "true") {
@@ -32,7 +33,7 @@ definition {
 		DMDocumentType.addWithoutSave(
 			dmDocumentTypeFieldNames = "Geolocation",
 			dmDocumentTypeName = "DM Document Type Name");
-		
+
 		DataEngine.editFieldSearchable(
 			fieldFieldLabel = "Geolocation",
 			searchableType = "Disable");
@@ -62,6 +63,7 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98071 DuplicateGeolocation pending implementation
+
 	}
 
 	@description = "This is a test for LPS-98071. As a Developer, I want to Implement the geolocation field type"

@@ -9,6 +9,12 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+
+		JSONGroup.addGroup(groupName = "Test Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
+
+		DMNavigator.gotoDocumentType();
 	}
 
 	tearDown {
@@ -18,9 +24,7 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			DMDocument.tearDownCP();
-
-			DMMetadataSet.tearDownCP();
+			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
 
 			User.logoutPG();
 		}
@@ -55,12 +59,21 @@ definition {
 	}
 
 	@description = "This is a test for LPS-98071. As a Developer, I want to Implement the geolocation field type"
-	@ignore = "true"
 	@priority = "4"
 	test SetGeolocationAsRepeatable {
 		property portal.acceptance = "false";
 
-		// TODO LPS-98071 SetGeolocationAsRepeatable pending implementation
+		DMDocumentType.addWithoutSave(
+			dmDocumentTypeFieldNames = "Geolocation",
+			dmDocumentTypeName = "DM Document Type Name");
+
+		DataEngine.editFieldRepeatable(fieldFieldLabel = "Geolocation");
+
+		DDLDataDefinition.save();
+
+		DMNavigator.gotoDocumentCP(dmDocumentTitle = "DM Document Type Name");
+
+		AssertElementPresent(locator1 = "FormFields#FIELD_ADD_DUPLICATE");
 	}
 
 	@description = "This is a test for LPS-98071. As a Developer, I want to Implement the geolocation field type"

@@ -56,6 +56,22 @@ definition {
 		}
 	}
 
+	macro deleteFields {
+		DMDocumentType.selectDocumentTypeFrame();
+
+		var key_dmDocumentTypeName = "${dmDocumentTypeName}";
+
+		LexiconEntry.openEntryMenu(rowEntry = "${dmDocumentTypeName}");
+
+		MenuItem.clickNoError(menuItem = "Edit");
+
+		for (var fieldFieldLabel : list "${fieldFieldLabel}") {
+			DataEngine.deleteField(fieldFieldLabel = "${fieldFieldLabel}");
+		}
+
+		DDLDataDefinition.save();
+	}
+
 	macro deletePG {
 		DMDocumentType.selectDocumentTypeFrame();
 

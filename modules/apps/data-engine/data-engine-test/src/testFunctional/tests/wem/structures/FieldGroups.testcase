@@ -45,12 +45,6 @@ definition {
 	@description = "This is a test for LPS-98077. Make sure data inserted on a Group Field persists"
 	@priority = "3"
 	test CheckIfFieldGroupDataPersists {
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
-
-		NavItem.gotoStructures();
-
-		WebContentStructures.addCP(structureName = "WC Structure Name");
-
 		DataEngine.addField(
 			fieldFieldLabel = "Text",
 			fieldName = "Text");

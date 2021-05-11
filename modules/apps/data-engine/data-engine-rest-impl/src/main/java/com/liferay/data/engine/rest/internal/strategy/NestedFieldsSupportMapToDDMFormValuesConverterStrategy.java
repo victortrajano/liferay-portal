@@ -135,15 +135,21 @@ public class NestedFieldsSupportMapToDDMFormValuesConverterStrategy
 				continue;
 			}
 
+			DDMFormField ddmFormField = entry.getValue();
+			Object value = StringPool.BLANK;
+
+			if (ddmFormField.isLocalizable()) {
+				value = HashMapBuilder.<String, Object>put(
+					LocaleUtil.toLanguageId(locale), StringPool.BLANK
+				).build();
+			}
+
 			values.put(
 				StringBundler.concat(
 					entry.getKey(), DDM.INSTANCE_SEPARATOR,
 					StringUtil.randomString()),
 				HashMapBuilder.<String, Object>put(
-					"value",
-					HashMapBuilder.<String, Object>put(
-						LocaleUtil.toLanguageId(locale), StringPool.BLANK
-					).build()
+					"value", value
 				).build());
 		}
 	}

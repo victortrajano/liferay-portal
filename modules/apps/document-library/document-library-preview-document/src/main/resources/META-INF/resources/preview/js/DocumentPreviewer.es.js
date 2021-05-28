@@ -21,6 +21,8 @@ import imagePromise from 'image-promise';
 import PropTypes from 'prop-types';
 import React, {useEffect, useRef, useState} from 'react';
 
+import '../css/main.scss';
+
 const KEY_CODE_ENTER = 13;
 
 const KEY_CODE_ESC = 27;
@@ -184,11 +186,9 @@ const DocumentPreviewer = ({baseImageURL, initialPage, totalPages}) => {
 			processPageInput(event.currentTarget.value);
 
 			hidePageInput();
-		}
-		else if (code === KEY_CODE_ESC) {
+		} else if (code === KEY_CODE_ESC) {
 			hidePageInput();
-		}
-		else if (VALID_KEY_CODES.indexOf(code) === -1) {
+		} else if (VALID_KEY_CODES.indexOf(code) === -1) {
 			event.preventDefault();
 		}
 	};

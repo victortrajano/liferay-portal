@@ -1,0 +1,9 @@
+{
+	"config": {
+		"imports": {
+			"document-library-preview-document": {
+				"/": ">=3.0.0"
+			}
+		}
+	}
+} 

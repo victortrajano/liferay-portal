@@ -62,34 +62,32 @@ public class GetDSEnvelopeMVCResourceCommand extends BaseMVCResourceCommand {
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
-		String envelopeId = ParamUtil.getString(resourceRequest, "envelopeId");
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		JSONArray dsDocumentsJSONArray = JSONFactoryUtil.createJSONArray();
-		JSONObject responseJSONObject = JSONFactoryUtil.createJSONObject();
-
 		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)resourceRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
 			DSEnvelope dsEnvelope = _dsEnvelopeManager.getDSEnvelope(
 				themeDisplay.getCompanyId(), themeDisplay.getCompanyGroupId(),
-				envelopeId);
+				ParamUtil.getString(resourceRequest, "envelopeId"));
+
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 			for (DSDocument dsDocument : dsEnvelope.getDSDocuments()) {
 				JSONObject fileEntryDetailsJSONObject =
 					_getFileEntryDetailsJSONObject(themeDisplay, dsDocument);
 
 				if (fileEntryDetailsJSONObject != null) {
-					dsDocumentsJSONArray.put(fileEntryDetailsJSONObject);
+					jsonArray.put(fileEntryDetailsJSONObject);
 				}
 			}
 
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
-				responseJSONObject.put(
+				JSONUtil.put(
 					"envelope", dsEnvelope.toJSONObject()
 				).put(
-					"fileEntries", dsDocumentsJSONArray
+					"fileEntries", jsonArray
 				));
 		}
 		catch (Exception exception) {

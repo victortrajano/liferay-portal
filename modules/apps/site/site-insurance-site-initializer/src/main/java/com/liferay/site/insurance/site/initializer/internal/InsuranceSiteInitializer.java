@@ -17,6 +17,22 @@ package com.liferay.site.insurance.site.initializer.internal;
 import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.account.util.CommerceAccountRoleHelper;
+import com.liferay.commerce.currency.model.CommerceCurrency;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
+import com.liferay.commerce.initializer.util.CPDefinitionsImporter;
+import com.liferay.commerce.initializer.util.CommerceInventoryWarehousesImporter;
+import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
+import com.liferay.commerce.product.constants.CommerceChannelConstants;
+import com.liferay.commerce.product.importer.CPFileImporter;
+import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CommerceCatalog;
+import com.liferay.commerce.product.model.CommerceChannel;
+import com.liferay.commerce.product.service.CPDefinitionLinkLocalService;
+import com.liferay.commerce.product.service.CPMeasurementUnitLocalService;
+import com.liferay.commerce.product.service.CommerceCatalogLocalService;
+import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -42,23 +58,36 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.permission.ModelPermissions;
+import com.liferay.portal.kernel.service.permission.ModelPermissionsFactory;
+import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
+import com.liferay.portal.kernel.settings.ModifiableSettings;
+import com.liferay.portal.kernel.settings.Settings;
+import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
@@ -143,6 +172,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return _servletContext.getContextPath() + "/images/thumbnail.png";
 	}
 
+	public void init() {
+		_cpDefinitions = new HashMap<>();
+	}
+
 	@Override
 	public void initialize(long groupId) throws InitializationException {
 		try {
@@ -170,6 +203,27 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 			_updateLayoutSetLookAndFeel("private");
 			_updateLayoutSetLookAndFeel("public");
+
+			CommerceCatalog commerceCatalog = createCatalog(_serviceContext);
+
+			long catalogGroupId = commerceCatalog.getGroupId();
+
+			CommerceChannel commerceChannel = createChannel(
+				commerceCatalog, _serviceContext);
+
+			createRoles(
+				_serviceContext, commerceChannel.getCommerceChannelId());
+
+			configureB2BSite(commerceChannel.getGroupId(), _serviceContext);
+
+			List<CommerceInventoryWarehouse> commerceInventoryWarehouses =
+				_importCommerceInventoryWarehouses(_serviceContext);
+
+			List<CPDefinition> cpDefinitions = _importCPDefinitions(
+				catalogGroupId, commerceChannel.getCommerceChannelId(),
+				commerceInventoryWarehouses, _serviceContext);
+
+			_importRelatedProducts(cpDefinitions, _serviceContext);
 		}
 		catch (Exception exception) {
 			_log.error(exception, exception);
@@ -185,7 +239,111 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
+		init();
 		_bundle = bundleContext.getBundle();
+	}
+
+	protected void configureB2BSite(long groupId, ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = _groupLocalService.getGroup(groupId);
+
+		group.setType(GroupConstants.TYPE_SITE_PRIVATE);
+		group.setManualMembership(true);
+		group.setMembershipRestriction(
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION);
+
+		_groupLocalService.updateGroup(group);
+
+		_commerceCurrencyLocalService.importDefaultValues(serviceContext);
+		_cpMeasurementUnitLocalService.importDefaultValues(serviceContext);
+
+		_commerceAccountRoleHelper.checkCommerceAccountRoles(serviceContext);
+
+		Settings settings = _settingsFactory.getSettings(
+			new GroupServiceSettingsLocator(
+				groupId, CommerceAccountConstants.SERVICE_NAME));
+
+		ModifiableSettings modifiableSettings =
+			settings.getModifiableSettings();
+
+		modifiableSettings.setValue(
+			"commerceSiteType",
+			String.valueOf(CommerceAccountConstants.SITE_TYPE_B2B));
+
+		modifiableSettings.store();
+	}
+
+	protected CommerceCatalog createCatalog(ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = serviceContext.getScopeGroup();
+
+		CommerceCurrency commerceCurrency =
+			_commerceCurrencyLocalService.fetchPrimaryCommerceCurrency(
+				serviceContext.getCompanyId());
+
+		return _commerceCatalogLocalService.addCommerceCatalog(
+			StringPool.BLANK, group.getName(serviceContext.getLanguageId()),
+			commerceCurrency.getCode(), serviceContext.getLanguageId(),
+			serviceContext);
+	}
+
+	protected CommerceChannel createChannel(
+			CommerceCatalog commerceCatalog, ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = serviceContext.getScopeGroup();
+
+		return _commerceChannelLocalService.addCommerceChannel(
+			StringPool.BLANK, group.getGroupId(),
+			group.getName(serviceContext.getLanguageId()) + " Portal",
+			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
+			commerceCatalog.getCommerceCurrencyCode(), serviceContext);
+	}
+
+	protected void createRoles(
+			ServiceContext serviceContext, long commerceChannelId)
+		throws Exception {
+
+		_cpFileImporter.createRoles(
+			_getJSONArray("/roles.json"), serviceContext);
+
+		updateUserRole(serviceContext);
+		updateOperationManagerRole(serviceContext, commerceChannelId);
+	}
+
+	protected CPDefinition getCPDefinitionByName(String name) {
+		return _cpDefinitions.get(name);
+	}
+
+	protected void updateOperationManagerRole(
+			ServiceContext serviceContext, long commerceChannelId)
+		throws PortalException {
+
+		ModelPermissions modelPermissions = ModelPermissionsFactory.create(
+			HashMapBuilder.put(
+				"Operations Manager", new String[] {"VIEW"}
+			).build(),
+			null);
+
+		_resourcePermissionLocalService.addModelResourcePermissions(
+			serviceContext.getCompanyId(), serviceContext.getScopeGroupId(),
+			serviceContext.getUserId(), CommerceChannel.class.getName(),
+			String.valueOf(commerceChannelId), modelPermissions);
+	}
+
+	protected void updateUserRole(ServiceContext serviceContext)
+		throws PortalException {
+
+		Role role = _roleLocalService.fetchRole(
+			serviceContext.getCompanyId(), "User");
+
+		_resourcePermissionLocalService.addResourcePermission(
+			serviceContext.getCompanyId(), "com.liferay.commerce.product",
+			ResourceConstants.SCOPE_GROUP_TEMPLATE,
+			String.valueOf(GroupConstants.DEFAULT_PARENT_GROUP_ID),
+			role.getRoleId(), "VIEW_PRICE");
 	}
 
 	private void _addAssetListEntries() throws Exception {
@@ -643,6 +801,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		serviceContext.setTimeZone(user.getTimeZone());
 		serviceContext.setUserId(user.getUserId());
 
+		Group group = _groupLocalService.getGroup(groupId);
+
+		serviceContext.setCompanyId(group.getCompanyId());
+
 		_serviceContext = serviceContext;
 	}
 
@@ -673,6 +835,19 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 
 		return zipWriter.getFile();
+	}
+
+	private long[] _getCProductIds(JSONArray jsonArray) {
+		List<Long> cProductIdsList = new ArrayList<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			CPDefinition cpDefinitionEntry = getCPDefinitionByName(
+				jsonArray.getString(i));
+
+			cProductIdsList.add(cpDefinitionEntry.getCProductId());
+		}
+
+		return ArrayUtil.toLongArray(cProductIdsList);
 	}
 
 	private String _getDynamicCollectionTypeSettings(
@@ -739,6 +914,10 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		return fileEntriesMap;
 	}
 
+	private JSONArray _getJSONArray(String name) throws Exception {
+		return _jsonFactory.createJSONArray(_read(name));
+	}
+
 	private String _getPrivateFriendlyURL(String layoutName) throws Exception {
 		Group scopeGroup = _serviceContext.getScopeGroup();
 
@@ -770,6 +949,49 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 		}
 
 		return resourcesMap;
+	}
+
+	private List<CommerceInventoryWarehouse> _importCommerceInventoryWarehouses(
+			ServiceContext serviceContext)
+		throws Exception {
+
+		return _commerceInventoryWarehousesImporter.
+			importCommerceInventoryWarehouses(
+				_getJSONArray("/warehouses.json"),
+				serviceContext.getScopeGroupId(), serviceContext.getUserId());
+	}
+
+	private List<CPDefinition> _importCPDefinitions(
+			long catalogGroupId, long commerceChannelId,
+			List<CommerceInventoryWarehouse> commerceInventoryWarehouses,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Group group = serviceContext.getScopeGroup();
+
+		JSONArray jsonArray = _getJSONArray("/products.json");
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			String externalReferenceCode = jsonObject.getString(
+				"ExternalReferenceCode");
+
+			String newExternalReferenceCode = externalReferenceCode + KEY;
+
+			jsonObject.put("ExternalReferenceCode", newExternalReferenceCode);
+		}
+
+		long[] commerceInventoryWarehouseIds = ListUtil.toLongArray(
+			commerceInventoryWarehouses,
+			CommerceInventoryWarehouse.
+				COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR);
+
+		return _cpDefinitionsImporter.importCPDefinitions(
+			jsonArray, group.getName(serviceContext.getLocale()),
+			catalogGroupId, commerceChannelId, commerceInventoryWarehouseIds,
+			InsuranceSiteInitializer.class.getClassLoader(), _PATH + "/images/",
+			serviceContext.getScopeGroupId(), serviceContext.getUserId());
 	}
 
 	private void _importPageDefinition(
@@ -805,6 +1027,52 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 			_layoutPageTemplatesImporter.importPageElement(
 				draftLayout, layoutStructure, layoutStructure.getMainItemId(),
 				pageElementsJSONArray.getString(j), j);
+		}
+	}
+
+	private void _importRelatedProducts(
+			JSONArray jsonArray, ServiceContext serviceContext)
+		throws Exception {
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject productJSONObject = jsonArray.getJSONObject(i);
+
+			JSONArray relatedProductsJSONArray = productJSONObject.getJSONArray(
+				"RelatedProducts");
+
+			if (relatedProductsJSONArray == null) {
+				continue;
+			}
+
+			String name = productJSONObject.getString("Name");
+
+			CPDefinition cpDefinition = getCPDefinitionByName(name);
+
+			_cpDefinitionLinkLocalService.updateCPDefinitionLinkCProductIds(
+				cpDefinition.getCPDefinitionId(),
+				_getCProductIds(relatedProductsJSONArray), "related",
+				serviceContext);
+		}
+	}
+
+	private void _importRelatedProducts(
+			List<CPDefinition> cpDefinitions, ServiceContext serviceContext)
+		throws Exception {
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Importing related products...");
+		}
+
+		for (CPDefinition cpDefinition : cpDefinitions) {
+			_cpDefinitions.put(
+				cpDefinition.getName(serviceContext.getLanguageId()),
+				cpDefinition);
+		}
+
+		_importRelatedProducts(_getJSONArray("/products.json"), serviceContext);
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Related products successfully imported");
 		}
 	}
 
@@ -1007,6 +1275,36 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private Bundle _bundle;
 
 	@Reference
+	private CommerceAccountRoleHelper _commerceAccountRoleHelper;
+
+	@Reference
+	private CommerceCatalogLocalService _commerceCatalogLocalService;
+
+	@Reference
+	private CommerceChannelLocalService _commerceChannelLocalService;
+
+	@Reference
+	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
+
+	@Reference
+	private CommerceInventoryWarehousesImporter
+		_commerceInventoryWarehousesImporter;
+
+	@Reference
+	private CPDefinitionLinkLocalService _cpDefinitionLinkLocalService;
+
+	private Map<String, CPDefinition> _cpDefinitions;
+
+	@Reference
+	private CPDefinitionsImporter _cpDefinitionsImporter;
+
+	@Reference
+	private CPFileImporter _cpFileImporter;
+
+	@Reference
+	private CPMeasurementUnitLocalService _cpMeasurementUnitLocalService;
+
+	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;
 
 	@Reference
@@ -1024,10 +1322,16 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	private FragmentsImporter _fragmentsImporter;
 
 	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private LayoutCopyHelper _layoutCopyHelper;
@@ -1057,12 +1361,21 @@ public class InsuranceSiteInitializer implements SiteInitializer {
 	@Reference
 	private Portal _portal;
 
+	@Reference
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
+
 	private ServiceContext _serviceContext;
 
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.site.insurance.site.initializer)"
 	)
 	private ServletContext _servletContext;
+
+	@Reference
+	private SettingsFactory _settingsFactory;
 
 	@Reference
 	private SiteNavigationMenuItemLocalService

@@ -1,0 +1,28 @@
+[
+	{
+		"availabilityEstimate": "3-5 days",
+		"backOrders": true,
+		"categories": [
+		],
+		"description": "Product designed and manufactured to accommodate OEM applications. All products are tested and inspected in an ISO-9000 compliant environment",
+		"displayAvailability": true,
+		"displayStockQuantity": true,
+		"externalReferenceCode": "MIN93015",
+		"height": 2,
+		"images": [
+		],
+		"length": 7,
+		"manufacturerPartNumber": "BB98318",
+		"minStockQuantity": 5,
+		"name": "ABS Sensor",
+		"price": 50.0,
+		"promoPrice": 0,
+		"sku": "MIN93015",
+		"specificationOptions": [
+		],
+		"taxCategory": "Normal Product",
+		"warehouse1": 60,
+		"warehouse2": 60,
+		"warehouse3": 20
+	}
+]

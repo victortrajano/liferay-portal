@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import javax.servlet.ServletContext;
@@ -78,6 +79,7 @@ public class SiteInitializerRegistrar {
 		Portal portal,
 		ResourcePermissionLocalService resourcePermissionLocalService,
 		RoleLocalService roleLocalService, SettingsFactory settingsFactory,
+		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
@@ -109,6 +111,7 @@ public class SiteInitializerRegistrar {
 		_resourcePermissionLocalService = resourcePermissionLocalService;
 		_roleLocalService = roleLocalService;
 		_settingsFactory = settingsFactory;
+		_siteNavigationMenuLocalService = siteNavigationMenuLocalService;
 		_structuredContentFolderResourceFactory =
 			structuredContentFolderResourceFactory;
 		_styleBookEntryZipProcessor = styleBookEntryZipProcessor;
@@ -135,7 +138,7 @@ public class SiteInitializerRegistrar {
 				_groupLocalService, _journalArticleLocalService, _jsonFactory,
 				_objectDefinitionResourceFactory, _portal,
 				_resourcePermissionLocalService, _roleLocalService,
-				_servletContext, _settingsFactory,
+				_servletContext, _settingsFactory, _siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _userLocalService),
@@ -175,6 +178,8 @@ public class SiteInitializerRegistrar {
 	private ServiceRegistration<?> _serviceRegistration;
 	private ServletContext _servletContext;
 	private final SettingsFactory _settingsFactory;
+	private final SiteNavigationMenuLocalService
+		_siteNavigationMenuLocalService;
 	private final StructuredContentFolderResource.Factory
 		_structuredContentFolderResourceFactory;
 	private final StyleBookEntryZipProcessor _styleBookEntryZipProcessor;

@@ -34,15 +34,22 @@ import com.liferay.headless.delivery.resource.v1_0.StructuredContentFolderResour
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.settings.SettingsFactory;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
+import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
 
 import javax.servlet.ServletContext;
@@ -77,19 +84,26 @@ public class SiteInitializerExtension {
 		FragmentsImporter fragmentsImporter,
 		GroupLocalService groupLocalService,
 		JournalArticleLocalService journalArticleLocalService,
-		JSONFactory jsonFactory,
+		JSONFactory jsonFactory, LayoutCopyHelper layoutCopyHelper,
+		LayoutLocalService layoutLocalService,
 		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
 		LayoutPageTemplatesImporter layoutPageTemplatesImporter,
+		LayoutPageTemplateStructureLocalService
+			layoutPageTemplateStructureLocalService,
+		LayoutSetLocalService layoutSetLocalService,
 		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		Portal portal,
 		ResourcePermissionLocalService resourcePermissionLocalService,
 		RoleLocalService roleLocalService, SettingsFactory settingsFactory,
+		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
+		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
 		StructuredContentFolderResource.Factory
 			structuredContentFolderResourceFactory,
 		StyleBookEntryZipProcessor styleBookEntryZipProcessor,
 		TaxonomyCategoryResource.Factory taxonomyCategoryResourceFactory,
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
+		ThemeLocalService themeLocalService,
 		UserLocalService userLocalService) {
 
 		_dependencyManager = new DependencyManager(bundle.getBundleContext());
@@ -107,14 +121,20 @@ public class SiteInitializerExtension {
 				documentFolderResourceFactory, documentResourceFactory,
 				fragmentsImporter, groupLocalService,
 				journalArticleLocalService, jsonFactory,
+				layoutCopyHelper, layoutLocalService, 
 				layoutPageTemplateEntryLocalService,
 				layoutPageTemplatesImporter,
+				layoutPageTemplateStructureLocalService, layoutSetLocalService,
 				objectDefinitionResourceFactory, portal,
 				resourcePermissionLocalService, roleLocalService,
-				settingsFactory, siteNavigationMenuLocalService,
+				settingsFactory,
+				siteNavigationMenuItemLocalService,
+				siteNavigationMenuItemTypeRegistry,
+				siteNavigationMenuLocalService,
 				structuredContentFolderResourceFactory,
 				styleBookEntryZipProcessor, taxonomyCategoryResourceFactory,
-				taxonomyVocabularyResourceFactory, userLocalService));
+				taxonomyVocabularyResourceFactory, themeLocalService,
+				userLocalService));
 
 		ServiceDependency serviceDependency =
 			_dependencyManager.createServiceDependency();

@@ -1,32 +1,32 @@
 [
 	{
-		"path": "home"
+		"resourcePath": "home"
 	},
 	{
-		"path": "product"
+		"resourcePath": "product"
 	},
 	{
-		"path": "news"
+		"resourcePath": "news"
 	},
 	{
-		"path": "contact"
+		"resourcePath": "contact"
 	},
 	{
-		"path": "dashboard"
+		"resourcePath": "dashboard"
 	},
 	{
-		"path": "sign-in"
+		"resourcePath": "sign-in"
 	},
 	{
-		"path": "policies"
+		"resourcePath": "policies"
 	},
 	{
-		"path": "claims"
+		"resourcePath": "claims"
 	},
 	{
-		"path": "documents"
+		"resourcePath": "documents"
 	},
 	{
-		"path": "search"
+		"resourcePath": "search"
 	}
 ]

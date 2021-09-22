@@ -1001,12 +1001,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (int i = 0; i < layoutsJSONArray.length(); i++) {
 			JSONObject layoutPriorityJSONObject = layoutsJSONArray.getJSONObject(i);
 
-			String path = layoutPriorityJSONObject.getString("path");
+			String resourcePath = layoutPriorityJSONObject.getString("resourcePath");
 
 			JSONObject pageJSONObject = JSONFactoryUtil.createJSONObject(
 				_read(
 					StringBundler.concat(
-						"/site-initializer/layouts/", path, "/page.json")));
+						"/site-initializer/layouts/", resourcePath, "/page.json")));
 
 			String type = StringUtil.toLowerCase(
 				pageJSONObject.getString("type"));
@@ -1021,7 +1021,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					JSONFactoryUtil.createJSONObject(StringUtil.replace(
 						_read(
 							StringBundler.concat(
-								"/site-initializer/layouts/", path,
+								"/site-initializer/layouts/", resourcePath,
 								"/page-definition.json")),
 						"\"[$", "$]\"", resourcesMap)),
 					resourcesMap, serviceContext);

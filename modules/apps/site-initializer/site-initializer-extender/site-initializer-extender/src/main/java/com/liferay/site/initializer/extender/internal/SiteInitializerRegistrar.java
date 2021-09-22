@@ -172,7 +172,7 @@ public class SiteInitializerRegistrar {
 				_layoutPageTemplatesImporter,
 				_layoutPageTemplateStructureLocalService,
 				_layoutSetLocalService, _objectDefinitionResourceFactory,
-				_portal, _resourcePermissionLocalService, _roleLocalService, 
+				_portal, _resourcePermissionLocalService, _roleLocalService,
 				_servletContext, _settingsFactory,
 				_siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,

@@ -70,19 +70,19 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
-import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -959,6 +959,74 @@ public class BundleSiteInitializer implements SiteInitializer {
 			zipWriter.getFile(), false);
 	}
 
+	private void _addLayouts(
+			Map<String, List<SiteNavigationMenu>> layoutsSiteNavigationMenuMap,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		JSONArray layoutsJSONArray = JSONFactoryUtil.createJSONArray(
+			_read("/site-initializer/layouts/layouts-priorities.json"));
+
+		Map<String, String> resourcesMap = _getResourcesMap(serviceContext);
+
+		for (int i = 0; i < layoutsJSONArray.length(); i++) {
+			JSONObject layoutPriorityJSONObject =
+				layoutsJSONArray.getJSONObject(i);
+
+			String resourcePath = layoutPriorityJSONObject.getString(
+				"resourcePath");
+
+			JSONObject pageJSONObject = JSONFactoryUtil.createJSONObject(
+				_read(
+					StringBundler.concat(
+						"/site-initializer/layouts/", resourcePath,
+						"/page.json")));
+
+			String type = StringUtil.toLowerCase(
+				pageJSONObject.getString("type"));
+
+			Layout layout = null;
+
+			if (StringUtil.equals(LayoutConstants.TYPE_CONTENT, type) ||
+				StringUtil.equals(LayoutConstants.TYPE_COLLECTION, type)) {
+
+				layout = _addContentLayout(
+					pageJSONObject,
+					JSONFactoryUtil.createJSONObject(
+						StringUtil.replace(
+							_read(
+								StringBundler.concat(
+									"/site-initializer/layouts/", resourcePath,
+									"/page-definition.json")),
+							"\"[$", "$]\"", resourcesMap)),
+					resourcesMap, serviceContext);
+			}
+			else {
+				layout = _layoutLocalService.addLayout(
+					serviceContext.getUserId(),
+					serviceContext.getScopeGroupId(),
+					pageJSONObject.getBoolean("private"),
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+					_generateLocaleMap(pageJSONObject.getString("name_i18n")),
+					_generateLocaleMap(pageJSONObject.getString("title_i18n")),
+					_generateLocaleMap(
+						pageJSONObject.getString("description_i18n")),
+					_generateLocaleMap(
+						pageJSONObject.getString("keywords_i18n")),
+					_generateLocaleMap(pageJSONObject.getString("robots_i18n")),
+					LayoutConstants.TYPE_PORTLET, null,
+					pageJSONObject.getBoolean("hidden"),
+					pageJSONObject.getBoolean("system"),
+					_generateLocaleMap(
+						pageJSONObject.getString("friendlyURL_i18n")),
+					serviceContext);
+			}
+
+			_addNavigationMenuItems(
+				layout, layoutsSiteNavigationMenuMap, serviceContext);
+		}
+	}
+
 	private void _addModelResourcePermissions(
 			String className, String primKey, String resourcePath,
 			ServiceContext serviceContext)
@@ -985,70 +1053,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 							jsonObject.getJSONArray("actionIds"))
 					).build(),
 					null));
-			}
-		}
-	
-	private void _addLayouts(
-			Map<String, List<SiteNavigationMenu>> layoutsSiteNavigationMenuMap,
-			ServiceContext serviceContext)
-		throws Exception {
-
-		JSONArray layoutsJSONArray = JSONFactoryUtil.createJSONArray(
-			_read("/site-initializer/layouts/layouts-priorities.json"));
-
-		Map<String, String> resourcesMap = _getResourcesMap(serviceContext);
-
-		for (int i = 0; i < layoutsJSONArray.length(); i++) {
-			JSONObject layoutPriorityJSONObject = layoutsJSONArray.getJSONObject(i);
-
-			String resourcePath = layoutPriorityJSONObject.getString("resourcePath");
-
-			JSONObject pageJSONObject = JSONFactoryUtil.createJSONObject(
-				_read(
-					StringBundler.concat(
-						"/site-initializer/layouts/", resourcePath, "/page.json")));
-
-			String type = StringUtil.toLowerCase(
-				pageJSONObject.getString("type"));
-
-			Layout layout = null;
-
-			if (StringUtil.equals(LayoutConstants.TYPE_CONTENT, type) ||
-				StringUtil.equals(LayoutConstants.TYPE_COLLECTION, type)) {
-
-				layout = _addContentLayout(
-					pageJSONObject,
-					JSONFactoryUtil.createJSONObject(StringUtil.replace(
-						_read(
-							StringBundler.concat(
-								"/site-initializer/layouts/", resourcePath,
-								"/page-definition.json")),
-						"\"[$", "$]\"", resourcesMap)),
-					resourcesMap, serviceContext);
-			}
-			else {
-				layout = _layoutLocalService.addLayout(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					pageJSONObject.getBoolean("private"),
-					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
-					_generateLocaleMap(pageJSONObject.getString("name_i18n")),
-					_generateLocaleMap(pageJSONObject.getString("title_i18n")),
-					_generateLocaleMap(
-						pageJSONObject.getString("description_i18n")),
-					_generateLocaleMap(
-						pageJSONObject.getString("keywords_i18n")),
-					_generateLocaleMap(pageJSONObject.getString("robots_i18n")),
-					LayoutConstants.TYPE_PORTLET, null,
-					pageJSONObject.getBoolean("hidden"),
-					pageJSONObject.getBoolean("system"),
-					_generateLocaleMap(
-						pageJSONObject.getString("friendlyURL_i18n")),
-					serviceContext);
-			}
-
-			_addNavigationMenuItems(
-				layout, layoutsSiteNavigationMenuMap, serviceContext);
 		}
 	}
 
@@ -1192,7 +1196,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		throws Exception {
 
 		String json = _read("/site-initializer/site-navigation-menus.json");
-		
+
 		JSONArray siteNavigationMenuJSONArray = JSONFactoryUtil.createJSONArray(
 			json);
 
@@ -1520,8 +1524,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		JSONObject pageElementJSONObject = pageDefinitionJSONObject.getJSONObject(
-			"pageElement");
+		JSONObject pageElementJSONObject =
+			pageDefinitionJSONObject.getJSONObject("pageElement");
 
 		String type = pageElementJSONObject.getString("type");
 

@@ -1467,19 +1467,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return taxonomyCategory;
 	}
 
-	private Map<Locale, String> _generateLocaleMap(String page) {
-		if (StringUtil.equals(StringPool.BLANK, page)) {
+	private Map<Locale, String> _generateLocaleMap(String values) {
+		if (StringUtil.equals(StringPool.BLANK, values)) {
 			return Collections.emptyMap();
 		}
 
 		Map<String, String> valuesMap = ObjectMapperUtil.readValue(
-			HashMap.class, page);
+			HashMap.class, values);
 
 		Map<Locale, String> localeMap = new HashMap<>();
 
-		for (Map.Entry<String, String> pair : valuesMap.entrySet()) {
+		for (Map.Entry<String, String> entry : valuesMap.entrySet()) {
 			localeMap.put(
-				LocaleUtil.fromLanguageId(pair.getKey()), pair.getValue());
+				LocaleUtil.fromLanguageId(entry.getKey()), entry.getValue());
 		}
 
 		return localeMap;

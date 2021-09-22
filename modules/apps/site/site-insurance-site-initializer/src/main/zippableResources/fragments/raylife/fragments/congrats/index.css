@@ -1,0 +1,33 @@
+.congrats {
+	text-align: center;
+}
+
+.congrats h1 {
+	color: #4D85FF;
+	font-size: 43px;
+	height: 48px;
+	margin-bottom: 34px;
+	margin-top: 164px;
+}
+
+.congrats h2 {
+	color: #2F313D;
+	font-size: 21px;
+	font-weight: 800;
+	line-height: 32px;
+
+}
+
+.congrats h3{
+	color: #2F313D;
+	font-size: 21px;
+	font-weight: 500;
+	line-height: 32px;
+}
+
+.congrats h4{
+	color: #2F313D;
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 24px;
+}

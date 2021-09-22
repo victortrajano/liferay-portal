@@ -1520,10 +1520,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		JSONObject jsonObject = pageDefinitionJSONObject.getJSONObject(
+		JSONObject pageElementJSONObject = pageDefinitionJSONObject.getJSONObject(
 			"pageElement");
 
-		String type = jsonObject.getString("type");
+		String type = pageElementJSONObject.getString("type");
 
 		if (Validator.isNull(type) || !Objects.equals(type, "Root")) {
 			return;
@@ -1538,7 +1538,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			layoutPageTemplateStructure.getData(
 				SegmentsExperienceConstants.ID_DEFAULT));
 
-		JSONArray pageElementsJSONArray = jsonObject.getJSONArray(
+		JSONArray pageElementsJSONArray = pageElementJSONObject.getJSONArray(
 			"pageElements");
 
 		for (int j = 0; j < pageElementsJSONArray.length(); j++) {

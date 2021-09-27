@@ -113,6 +113,7 @@ import com.liferay.portal.vulcan.multipart.BinaryFile;
 import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.util.ObjectMapperUtil;
+import com.liferay.remote.app.model.RemoteAppEntry;
 import com.liferay.remote.app.service.RemoteAppEntryLocalService;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.site.exception.InitializationException;
@@ -304,9 +305,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_ddmStructureLocalService, _ddmTemplateLocalService,
 				documentsStringUtilReplaceValues, serviceContext);
 
-			_addLayouts(_assetListEntryLocalService, serviceContext);
-			_addRemoteAppEntries(
-				documentsStringUtilReplaceValues, serviceContext);
+			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues =
+				_addRemoteAppEntries(
+					documentsStringUtilReplaceValues, serviceContext);
+
+			_addLayouts(
+				_assetListEntryLocalService,
+				remoteAppEntryIdsStringUtilReplaceValues, serviceContext);
 		}
 		catch (Exception exception) {
 			throw new InitializationException(exception);
@@ -850,6 +855,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addLayout(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
+			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			String resourcePath, ServiceContext serviceContext)
 		throws Exception {
 
@@ -880,10 +886,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
+		json = StringUtil.replace(
+			json, "\"[$", "$]\"", assetListEntryIdsStringUtilReplaceValues);
+
 		JSONObject pageDefinitionJSONObject = JSONFactoryUtil.createJSONObject(
 			StringUtil.replace(
 				json, "\"[$", "$]\"",
-				assetListEntryIdsStringUtilReplaceValues));
+				remoteAppEntryIdsStringUtilReplaceValues));
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -1014,6 +1023,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addLayouts(
 			AssetListEntryLocalService assetListEntryLocalService,
+			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
 
@@ -1046,7 +1056,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (String resourcePath : resourcePaths) {
 			if (resourcePath.endsWith("/")) {
 				_addLayout(
-					assetListEntryIdsStringUtilReplaceValues, resourcePath,
+					assetListEntryIdsStringUtilReplaceValues,
+					remoteAppEntryIdsStringUtilReplaceValues, resourcePath,
 					serviceContext);
 			}
 		}
@@ -1138,7 +1149,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			"/site-initializer/resource-permissions.json", serviceContext);
 	}
 
-	private void _addRemoteAppEntries(
+	private Map<String, String> _addRemoteAppEntries(
 			Map<String, String> documentsStringUtilReplaceValues,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -1146,10 +1157,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 		String json = _read("/site-initializer/remote-app-entries.json");
 
 		if (json == null) {
-			return;
+			return Collections.emptyMap();
 		}
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
+
+		Map<String, String> remoteAppEntryIdsStringUtilReplaceValues =
+			new HashMap<>();
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1168,25 +1182,34 @@ public class BundleSiteInitializer implements SiteInitializer {
 				}
 			}
 
-			_remoteAppEntryLocalService.addCustomElementRemoteAppEntry(
-				serviceContext.getUserId(),
-				StringUtil.replace(
-					StringUtil.merge(
-						JSONUtil.toStringArray(
-							jsonObject.getJSONArray("cssURLs")),
-						StringPool.NEW_LINE),
-					"[$", "$]", documentsStringUtilReplaceValues),
-				jsonObject.getString("htmlElementName"),
-				StringUtil.replace(
-					StringUtil.merge(
-						JSONUtil.toStringArray(
-							jsonObject.getJSONArray("elementURLs")),
-						StringPool.NEW_LINE),
-					"[$", "$]", documentsStringUtilReplaceValues),
-				jsonObject.getBoolean("instanceable"),
-				_toMap(jsonObject.getString("name_i18n")),
-				jsonObject.getString("portletCategoryName"), sb.toString());
+			RemoteAppEntry remoteAppEntry =
+				_remoteAppEntryLocalService.addCustomElementRemoteAppEntry(
+					serviceContext.getUserId(),
+					StringUtil.replace(
+						StringUtil.merge(
+							JSONUtil.toStringArray(
+								jsonObject.getJSONArray("cssURLs")),
+							StringPool.NEW_LINE),
+						"[$", "$]", documentsStringUtilReplaceValues),
+					jsonObject.getString("htmlElementName"),
+					StringUtil.replace(
+						StringUtil.merge(
+							JSONUtil.toStringArray(
+								jsonObject.getJSONArray("elementURLs")),
+							StringPool.NEW_LINE),
+						"[$", "$]", documentsStringUtilReplaceValues),
+					jsonObject.getBoolean("instanceable"),
+					_toMap(jsonObject.getString("name_i18n")),
+					jsonObject.getString("portletCategoryName"), sb.toString());
+
+			remoteAppEntryIdsStringUtilReplaceValues.put(
+				StringBundler.concat(
+					"[$REMOTE_APP_ENTRY_ID:",
+					jsonObject.getString("remoteAppEntryKey"), "$]"),
+				String.valueOf(remoteAppEntry.getRemoteAppEntryId()));
 		}
+
+		return remoteAppEntryIdsStringUtilReplaceValues;
 	}
 
 	private void _addResourcePermissions(

@@ -196,7 +196,7 @@
 															"userToolAssetAddonEntryKeys": "false",
 															"groupId": "",
 															"enableViewCountIncrement": "false",
-															"articleId": "[$BASIC-PRICING-TIER-TEMPLATE$]",
+															"articleId": "BASIC-PRICING-TIER-TEMPLATE",
 															"contentMetadataAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
@@ -258,7 +258,7 @@
 															"userToolAssetAddonEntryKeys": "false",
 															"groupId": "",
 															"enableViewCountIncrement": "false",
-															"articleId": "[$STANDARD-PRICING-TIER-TEMPLATE$]",
+															"articleId": "STANDARD-PRICING-TIER-TEMPLATE",
 															"contentMetadataAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
@@ -321,7 +321,7 @@
 															"userToolAssetAddonEntryKeys": "false",
 															"groupId": "",
 															"enableViewCountIncrement": "false",
-															"articleId": "[$PREMIUM-PRICING-TIER-TEMPLATE$]",
+															"articleId": "PREMIUM-PRICING-TIER-TEMPLATE",
 															"contentMetadataAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"
@@ -384,7 +384,7 @@
 															"userToolAssetAddonEntryKeys": "false",
 															"groupId": "",
 															"enableViewCountIncrement": "false",
-															"articleId": "[$QUOTE-COMPARISON-PROFILE-TEMPLATE$]",
+															"articleId": "QUOTE-COMPARISON-PROFILE-TEMPLATE",
 															"contentMetadataAssetAddonEntryKeys": "false"
 														},
 														"widgetName": "com_liferay_journal_content_web_portlet_JournalContentPortlet"

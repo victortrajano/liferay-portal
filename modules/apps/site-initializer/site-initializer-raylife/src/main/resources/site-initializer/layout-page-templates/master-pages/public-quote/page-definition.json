@@ -4,7 +4,7 @@
 			{
 				"definition": {
 					"fragment": {
-						"key": "public-navbar"
+						"key": "quote-navbar"
 					},
 					"fragmentConfig": {
 					},
@@ -19,41 +19,12 @@
 									}
 								},
 								"fragmentLink": {
-									"href": {
-										"value": "/web/guest/home"
-									},
-									"target": "Self"
+									"value_i18n": {
+									}
 								}
 							}
 						}
 					],
-					"fragmentStyle": {
-						"backgroundFragmentImage": {
-						},
-						"borderRadius": "",
-						"borderWidth": "0",
-						"fontFamily": "",
-						"fontSize": "",
-						"fontWeight": "",
-						"height": "",
-						"marginBottom": "0",
-						"marginLeft": "0",
-						"marginRight": "0",
-						"marginTop": "0",
-						"maxHeight": "",
-						"maxWidth": "",
-						"minHeight": "",
-						"minWidth": "",
-						"opacity": "100",
-						"overflow": "",
-						"paddingBottom": "0",
-						"paddingLeft": "0",
-						"paddingRight": "0",
-						"paddingTop": "0",
-						"shadow": "",
-						"textAlign": "",
-						"width": ""
-					},
 					"widgetInstances": [
 						{
 							"widgetConfig": {
@@ -63,7 +34,7 @@
 								"expandedLevels": "auto",
 								"rootMenuItemLevel": "0",
 								"rootMenuItemType": "absolute",
-								"siteNavigationMenuName": "Public Menu",
+								"siteNavigationMenuId": "48278",
 								"siteNavigationMenuType": "-1"
 							},
 							"widgetInstanceId": "nav",
@@ -81,37 +52,16 @@
 								"key": "BASIC_COMPONENT-slider"
 							},
 							{
-								"key": "FEATURED_CONTENT-features"
+								"key": "FOOTERS-footer-nav-dark"
 							},
 							{
-								"key": "FOOTERS-footer-nav-dark"
+								"key": "NAVIGATION_BARS-header-dark"
 							},
 							{
 								"key": "NAVIGATION_BARS-header-light"
 							},
 							{
 								"key": "BASIC_COMPONENT-social"
-							},
-							{
-								"key": "FEATURED_CONTENT-banner-center"
-							},
-							{
-								"key": "FEATURED_CONTENT-banner"
-							},
-							{
-								"key": "FEATURED_CONTENT-banner-cover-center"
-							},
-							{
-								"key": "FEATURED_CONTENT-highlights"
-							},
-							{
-								"key": "FEATURED_CONTENT-banner-cover"
-							},
-							{
-								"key": "NAVIGATION_BARS-header-dark"
-							},
-							{
-								"key": "FEATURED_CONTENT-highlights-circle"
 							},
 							{
 								"key": "BASIC_COMPONENT-spacer"
@@ -137,31 +87,16 @@
 					"fragmentFields": [
 					],
 					"fragmentStyle": {
-						"backgroundFragmentImage": {
-						},
-						"borderRadius": "",
 						"borderWidth": "0",
-						"fontFamily": "",
-						"fontSize": "",
-						"fontWeight": "",
-						"height": "",
 						"marginBottom": "0",
 						"marginLeft": "0",
 						"marginRight": "0",
 						"marginTop": "0",
-						"maxHeight": "",
-						"maxWidth": "",
-						"minHeight": "",
-						"minWidth": "",
 						"opacity": "100",
-						"overflow": "",
 						"paddingBottom": "0",
 						"paddingLeft": "0",
 						"paddingRight": "0",
-						"paddingTop": "0",
-						"shadow": "",
-						"textAlign": "",
-						"width": ""
+						"paddingTop": "0"
 					}
 				},
 				"type": "Fragment"

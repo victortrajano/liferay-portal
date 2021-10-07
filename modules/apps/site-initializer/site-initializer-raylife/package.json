@@ -3,10 +3,8 @@
 	"name": "@liferay/site-initializer-raylife",
 	"private": true,
 	"scripts": {
-		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
-		"format": "liferay-npm-scripts fix",
-		"test": "env TZ=utc liferay-npm-scripts test"
+		"format": "liferay-npm-scripts fix"
 	},
 	"version": "1.0.0"
 }

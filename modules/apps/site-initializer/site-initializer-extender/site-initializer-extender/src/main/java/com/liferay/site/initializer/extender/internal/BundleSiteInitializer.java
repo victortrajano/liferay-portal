@@ -61,8 +61,8 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
 import com.liferay.layout.util.structure.LayoutStructure;
-import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
-import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
+import com.liferay.object.admin.rest.client.dto.v1_0.ObjectDefinition;
+import com.liferay.object.admin.rest.client.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
@@ -189,7 +189,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		LayoutPageTemplateStructureLocalService
 			layoutPageTemplateStructureLocalService,
 		LayoutSetLocalService layoutSetLocalService,
-		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		ObjectEntryLocalService objectEntryLocalService, Portal portal,
 		RemoteAppEntryLocalService remoteAppEntryLocalService,
 		ResourcePermissionLocalService resourcePermissionLocalService,
@@ -236,7 +235,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_layoutPageTemplateStructureLocalService =
 			layoutPageTemplateStructureLocalService;
 		_layoutSetLocalService = layoutSetLocalService;
-		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_objectEntryLocalService = objectEntryLocalService;
 		_portal = portal;
 		_remoteAppEntryLocalService = remoteAppEntryLocalService;
@@ -1247,12 +1245,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		ObjectDefinitionResource.Builder objectDefinitionResourceBuilder =
-			_objectDefinitionResourceFactory.create();
+		ObjectDefinitionResource.Builder builder =
+			ObjectDefinitionResource.builder();
 
 		ObjectDefinitionResource objectDefinitionResource =
-			objectDefinitionResourceBuilder.user(
-				serviceContext.fetchUser()
+			builder.authentication(
+				"test@liferay.com", "test"
+			).locale(
+				LocaleUtil.getDefault()
 			).build();
 
 		for (String resourcePath : resourcePaths) {
@@ -1271,9 +1271,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			Page<ObjectDefinition> objectDefinitionsPage =
-				objectDefinitionResource.getObjectDefinitionsPage(
-					objectDefinition.getName(), null);
+			com.liferay.object.admin.rest.client.pagination.Page
+				<ObjectDefinition> objectDefinitionsPage =
+					objectDefinitionResource.getObjectDefinitionsPage(
+						objectDefinition.getName(), null);
 
 			ObjectDefinition existingObjectDefinition =
 				objectDefinitionsPage.fetchFirstItem();
@@ -2041,8 +2042,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final LayoutPageTemplateStructureLocalService
 		_layoutPageTemplateStructureLocalService;
 	private final LayoutSetLocalService _layoutSetLocalService;
-	private final ObjectDefinitionResource.Factory
-		_objectDefinitionResourceFactory;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final Portal _portal;
 	private final RemoteAppEntryLocalService _remoteAppEntryLocalService;

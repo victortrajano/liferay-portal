@@ -38,7 +38,6 @@ import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
-import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -97,7 +96,6 @@ public class SiteInitializerRegistrar {
 		LayoutPageTemplateStructureLocalService
 			layoutPageTemplateStructureLocalService,
 		LayoutSetLocalService layoutSetLocalService,
-		ObjectDefinitionResource.Factory objectDefinitionResourceFactory,
 		ObjectEntryLocalService objectEntryLocalService, Portal portal,
 		RemoteAppEntryLocalService remoteAppEntryLocalService,
 		ResourcePermissionLocalService resourcePermissionLocalService,
@@ -145,7 +143,6 @@ public class SiteInitializerRegistrar {
 		_layoutPageTemplateStructureLocalService =
 			layoutPageTemplateStructureLocalService;
 		_layoutSetLocalService = layoutSetLocalService;
-		_objectDefinitionResourceFactory = objectDefinitionResourceFactory;
 		_objectEntryLocalService = objectEntryLocalService;
 		_portal = portal;
 		_remoteAppEntryLocalService = remoteAppEntryLocalService;
@@ -188,11 +185,10 @@ public class SiteInitializerRegistrar {
 				_layoutLocalService, _layoutPageTemplateEntryLocalService,
 				_layoutPageTemplatesImporter,
 				_layoutPageTemplateStructureLocalService,
-				_layoutSetLocalService, _objectDefinitionResourceFactory,
-				_objectEntryLocalService, _portal, _remoteAppEntryLocalService,
-				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService, _servletContext, _settingsFactory,
-				_siteNavigationMenuItemLocalService,
+				_layoutSetLocalService, _objectEntryLocalService, _portal,
+				_remoteAppEntryLocalService, _resourcePermissionLocalService,
+				_roleLocalService, _sapEntryLocalService, _servletContext,
+				_settingsFactory, _siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
 				_structuredContentFolderResourceFactory,
@@ -237,8 +233,6 @@ public class SiteInitializerRegistrar {
 	private final LayoutPageTemplateStructureLocalService
 		_layoutPageTemplateStructureLocalService;
 	private final LayoutSetLocalService _layoutSetLocalService;
-	private final ObjectDefinitionResource.Factory
-		_objectDefinitionResourceFactory;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final Portal _portal;
 	private final RemoteAppEntryLocalService _remoteAppEntryLocalService;

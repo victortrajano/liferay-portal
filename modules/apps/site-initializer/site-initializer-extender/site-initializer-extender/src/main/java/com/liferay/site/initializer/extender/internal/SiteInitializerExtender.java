@@ -38,7 +38,6 @@ import com.liferay.layout.page.template.importer.LayoutPageTemplatesImporter;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
-import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -107,10 +106,9 @@ public class SiteInitializerExtender
 				_layoutLocalService, _layoutPageTemplateEntryLocalService,
 				_layoutPageTemplatesImporter,
 				_layoutPageTemplateStructureLocalService,
-				_layoutSetLocalService, _objectDefinitionResourceFactory,
-				_objectEntryLocalService, _portal, _remoteAppEntryLocalService,
-				_resourcePermissionLocalService, _roleLocalService,
-				_sapEntryLocalService, _settingsFactory,
+				_layoutSetLocalService, _objectEntryLocalService, _portal,
+				_remoteAppEntryLocalService, _resourcePermissionLocalService,
+				_roleLocalService, _sapEntryLocalService, _settingsFactory,
 				_siteNavigationMenuItemLocalService,
 				_siteNavigationMenuItemTypeRegistry,
 				_siteNavigationMenuLocalService,
@@ -233,9 +231,6 @@ public class SiteInitializerExtender
 
 	@Reference
 	private LayoutSetLocalService _layoutSetLocalService;
-
-	@Reference
-	private ObjectDefinitionResource.Factory _objectDefinitionResourceFactory;
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;

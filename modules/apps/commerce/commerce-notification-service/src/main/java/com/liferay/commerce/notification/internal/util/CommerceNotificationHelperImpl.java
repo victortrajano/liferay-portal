@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.EmailAddressValidator;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -210,13 +211,41 @@ public class CommerceNotificationHelperImpl
 					_log.info("No User found with key: " + toUserString);
 				}
 
-				continue;
+				_addNotificationQueueEntry(
+					groupId, commerceNotificationType,
+					commerceNotificationTemplate, fromName, toUserString,
+					toUserString, subject, body, object);
 			}
-
-			_addNotificationQueueEntry(
-				groupId, commerceNotificationType, commerceNotificationTemplate,
-				fromName, toUser, subject, body, object);
+			else {
+				_addNotificationQueueEntry(
+					groupId, commerceNotificationType,
+					commerceNotificationTemplate, fromName, toUser, subject,
+					body, object);
+			}
 		}
+	}
+
+	private void _addNotificationQueueEntry(
+			long groupId, CommerceNotificationType commerceNotificationType,
+			CommerceNotificationTemplate commerceNotificationTemplate,
+			String fromName, String toEmailAddress, String toFullName,
+			String subject, String body, Object object)
+		throws PortalException {
+
+		User user = _userLocalService.getDefaultUser(
+			CompanyThreadLocal.getCompanyId());
+
+		_commerceNotificationQueueEntryLocalService.
+			addCommerceNotificationQueueEntry(
+				user.getUserId(), groupId,
+				commerceNotificationType.getClassName(object),
+				commerceNotificationType.getClassPK(object),
+				commerceNotificationTemplate.
+					getCommerceNotificationTemplateId(),
+				commerceNotificationTemplate.getFrom(), fromName,
+				toEmailAddress, toFullName,
+				commerceNotificationTemplate.getCc(),
+				commerceNotificationTemplate.getBcc(), subject, body, 0);
 	}
 
 	private void _addNotificationQueueEntry(

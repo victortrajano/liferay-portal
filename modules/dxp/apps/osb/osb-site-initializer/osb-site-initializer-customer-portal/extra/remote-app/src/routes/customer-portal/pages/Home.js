@@ -41,18 +41,18 @@ const Home = () => {
 		})]
 	) || [];
 
-	const getStatus = (slaCurrent, slaExpired, slaFuture) => {
-		if (slaCurrent.length) {
-			return status.active
-		} else if (slaExpired.length) {
-			return status.expired
-		} else if (slaFuture.length) {
-			return status.future
+	const getStatus = (slaCurrent, slaFuture) => {
+		if (slaCurrent) {
+			return status.active;
+		} else if (slaFuture) {
+			return status.future;
+		} else {
+			return status.expired;
 		}
 	}
 
 	const projects = koroneikiAccountsData?.koroneikiAccounts.map(
-		({ accountKey, code, liferayContactEmailAddress, liferayContactName, liferayContactRole, region, slaCurrent, slaCurrentEndDate, slaExpired, slaFuture }) => ({
+		({ accountKey, code, liferayContactEmailAddress, liferayContactName, liferayContactRole, region, slaCurrent, slaCurrentEndDate, slaFuture }) => ({
 			code,
 			contact: {
 				emailAddress: liferayContactEmailAddress,
@@ -63,10 +63,9 @@ const Home = () => {
 			sla: {
 				current: slaCurrent,
 				currentEndDate: slaCurrentEndDate,
-				expired: slaExpired,
 				future: slaFuture,
 			},
-			status: getStatus(slaCurrent, slaExpired, slaFuture),
+			status: getStatus(slaCurrent, slaFuture),
 			title: accountBriefs.find(({ externalReferenceCode }) => externalReferenceCode === accountKey).name
 		})) || [];
 

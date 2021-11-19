@@ -5,7 +5,7 @@ import { PARAMS_KEYS } from '../services/liferay/search-params';
 import useGraphQL from './useGraphQL';
 
 const liferaySiteName = LiferayTheme.getLiferaySiteName();
-const PROJECT_PAGE_KEY = 'projects';
+const PROJECT_PAGE_KEY = 'home';
 
 const validateExternalReferenceCode = (accountBriefs, externalReferenceCode) => {
 	const accountBrief = accountBriefs.find((accountBrief) => accountBrief.externalReferenceCode === externalReferenceCode);
@@ -15,7 +15,7 @@ const validateExternalReferenceCode = (accountBriefs, externalReferenceCode) => 
 
 const onboardingPageGuard = (userAccount, accountFlags, externalReferenceCode) => {
 	return {
-		location: `${liferaySiteName}/onboarding?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${externalReferenceCode}`,
+		location: `${window.location.origin}${liferaySiteName}/onboarding?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${externalReferenceCode}`,
 		validate:
 			!accountFlags.length &&
 			userAccount.roleBriefs.find(
@@ -37,7 +37,7 @@ const overviewPageGuard = (userAccount, _accountFlags, externalReferenceCode) =>
 	};
 
 	return {
-		location: `${liferaySiteName}/overview?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${getExternalReferenceCode()}`,
+		location: `${window.location.origin}${liferaySiteName}/overview?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${getExternalReferenceCode()}`,
 		validate: validation,
 	};
 };
@@ -59,8 +59,6 @@ const usePageGuard = (
 	]);
 
 	if (!isLoadingGraphQL) {
-		setLoading(isLoadingGraphQL);
-
 		if (!validateExternalReferenceCode(userAccount.accountBriefs, externalReferenceCode) || !guard(userAccount, data.accountFlags, externalReferenceCode).validate) {
 			const { location, validate: alternativeValidate } = alternativeGuard(
 				userAccount,
@@ -71,10 +69,12 @@ const usePageGuard = (
 			if (alternativeValidate) {
 				window.location.href = location;
 			} else {
-				window.location.href = `${liferaySiteName}/${PROJECT_PAGE_KEY}`;
+				window.location.href = `${window.location.origin}${liferaySiteName}/${PROJECT_PAGE_KEY}`;
 			}
 		}
 	}
+
+	setLoading(isLoadingGraphQL);
 
 	return {
 		isLoading,

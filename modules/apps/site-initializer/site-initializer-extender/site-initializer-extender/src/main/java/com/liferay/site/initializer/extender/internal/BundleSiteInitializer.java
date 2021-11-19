@@ -1459,11 +1459,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 						existingObjectDefinition.getId(), objectDefinition);
 			}
 
-			Long objectDefinitionId = objectDefinition.getId();
-
 			objectDefinitionMap.put(
 				"OBJECT_DEFINITION_NAME:C_" + objectDefinition.getName(),
-				objectDefinitionId.toString());
+				String.valueOf(objectDefinition.getId()));
 
 			String objectEntriesJSON = _read(
 				StringUtil.replaceLast(
@@ -1550,16 +1548,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 				}
 			}
 
-			if (existingObjectRelationshipDefinition != null) {
-				objectRelationshipResource.putObjectRelationship(
-					existingObjectRelationshipDefinition.getId(),
-					objectRelationship1);
-			}
-			else {
+			if (existingObjectRelationshipDefinition == null) {
 				objectRelationshipResource.
 					postObjectDefinitionObjectRelationship(
 						objectRelationship1.getObjectDefinitionId1(),
 						objectRelationship1);
+			}
+			else {
+				objectRelationshipResource.putObjectRelationship(
+					existingObjectRelationshipDefinition.getId(),
+					objectRelationship1);
 			}
 		}
 	}

@@ -36,6 +36,7 @@ const Home = ({ userAccount }) => {
 
 	const projects = koroneikiAccountsData?.koroneikiAccounts.map(
 		({ accountKey, code, liferayContactEmailAddress, liferayContactName, liferayContactRole, region, slaCurrent, slaCurrentEndDate, slaFuture }) => ({
+			accountKey,
 			code,
 			contact: {
 				emailAddress: liferayContactEmailAddress,
@@ -55,7 +56,7 @@ const Home = ({ userAccount }) => {
 	const projectsFiltered = projects
 		.filter((project) => keyword ? project.title.toLowerCase().includes(keyword.toLowerCase()) : true)
 	const nextPage = (project) => {
-		window.location.href = `${liferaySiteName}/overview?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${project.externalReferenceCode}`;
+		window.location.href = `${window.location.origin}${liferaySiteName}/overview?${PARAMS_KEYS.PROJECT_APPLICATION_EXTERNAL_REFERENCE_CODE}=${project.accountKey}`;
 	};
 	const withManyProjects = projects.length > PROJECT_THRESHOLD_COUNT;
 
@@ -91,9 +92,9 @@ const Home = ({ userAccount }) => {
 						>
 							{projectsFiltered.map((project, index) => (
 								<ProjectCard
+									isSmall={withManyProjects}
 									key={index}
 									onClick={() => nextPage(project)}
-									small={withManyProjects}
 									{...project}
 								/>
 							))}

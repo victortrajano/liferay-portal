@@ -16,6 +16,7 @@ package com.liferay.site.initializer.extender.internal;
 
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.commerce.initializer.util.DDMFormImporter;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
@@ -25,8 +26,6 @@ import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeDefinitionReso
 import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeEntryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
-import com.liferay.headless.admin.user.resource.v1_0.AccountResource;
-import com.liferay.headless.admin.user.resource.v1_0.UserAccountResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
 import com.liferay.headless.delivery.resource.v1_0.StructuredContentFolderResource;
@@ -77,6 +76,7 @@ public class SiteInitializerExtension {
 		AssetCategoryLocalService assetCategoryLocalService,
 		AssetListEntryLocalService assetListEntryLocalService, Bundle bundle,
 		BundleContext bundleContext,
+		DDMFormImporter ddmFormImporter,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
@@ -115,7 +115,6 @@ public class SiteInitializerExtension {
 		TaxonomyCategoryResource.Factory taxonomyCategoryResourceFactory,
 		TaxonomyVocabularyResource.Factory taxonomyVocabularyResourceFactory,
 		ThemeLocalService themeLocalService,
-		UserAccountResource.Factory userAccountResourceFactory,
 		UserLocalService userLocalService) {
 
 		_dependencyManager = new DependencyManager(bundle.getBundleContext());
@@ -125,7 +124,7 @@ public class SiteInitializerExtension {
 		_component.setImplementation(
 			new BundleSiteInitializer(
 				accountResourceFactory, assetCategoryLocalService,
-				assetListEntryLocalService, bundle, ddmStructureLocalService,
+				assetListEntryLocalService, bundle, ddmFormImporter, ddmStructureLocalService,
 				ddmTemplateLocalService, defaultDDMStructureHelper, dlURLHelper,
 				documentFolderResourceFactory, documentResourceFactory,
 				fragmentsImporter, groupLocalService,

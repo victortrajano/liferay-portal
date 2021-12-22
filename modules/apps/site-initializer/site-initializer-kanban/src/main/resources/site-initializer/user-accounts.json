@@ -1,0 +1,42 @@
+[
+	{
+		"additionalName":"testtest",
+		"alternateName":"testtesttest",
+		"birthDate":"1977-01-01T00:00:00Z",
+		"customFields":[
+
+		],
+		"emailAddress":"crystal.santos@liferay.com.broken",
+		"externalReferenceCode":"ERC-1234",
+		"familyName":"Santos",
+		"givenName":"Crystal",
+		"jobTitle":"",
+		"keywords":[
+
+		],
+		"lastLoginDate":"2021-12-20T09:34:11Z",
+		"name":"Crystal Santos",
+		"organizationBriefs":[
+
+		],
+		"userAccountContactInformation":{
+			"emailAddresses":[
+
+			],
+			"facebook":"",
+			"jabber":"",
+			"postalAddresses":[
+
+			],
+			"skype":"",
+			"sms":"",
+			"telephones":[
+
+			],
+			"twitter":"",
+			"webUrls":[
+
+			]
+		}
+	}
+]

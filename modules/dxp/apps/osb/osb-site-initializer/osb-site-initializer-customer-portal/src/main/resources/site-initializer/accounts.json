@@ -1,0 +1,27 @@
+[
+	{
+		"externalReferenceCode": "ERC-001",
+		"name": "Test Account 1",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "ERC-002",
+		"name": "Test Account 2",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "ERC-003",
+		"name": "Test Account 3",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "ERC-004",
+		"name": "Test Account 4",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "ERC-005",
+		"name": "Test Account 5",
+		"type": "business"
+	}
+]

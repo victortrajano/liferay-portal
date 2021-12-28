@@ -1,0 +1,27 @@
+[
+	{
+		"externalReferenceCode": "KOR-1513847",
+		"name": "Grupo Saesa - TBD",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "KOR-1677389",
+		"name": "Liferay - LPSP - LATAM",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "KOR-1407632",
+		"name": "Financial Intelligence Network 2.0",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "KOR-1881209",
+		"name": "Siemens Financial Services GmbH - SFS PEPSie",
+		"type": "business"
+	},
+	{
+		"externalReferenceCode": "KOR-3699968",
+		"name": "IPDC Finance Commerce / Market Place Project",
+		"type": "business"
+	}
+]

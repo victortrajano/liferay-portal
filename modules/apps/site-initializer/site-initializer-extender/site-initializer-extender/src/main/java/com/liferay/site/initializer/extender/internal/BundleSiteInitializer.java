@@ -437,17 +437,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Account account = Account.toDTO(
 				String.valueOf(jsonArray.getJSONObject(i)));
 
-			Account existingAccount =
-				accountResource.getAccountByExternalReferenceCode(
-					account.getExternalReferenceCode());
-
-			if (existingAccount == null) {
-				accountResource.postAccount(account);
-
-				continue;
-			}
-
-			accountResource.patchAccount(existingAccount.getId(), account);
+			accountResource.putAccountByExternalReferenceCode(account.getExternalReferenceCode(), account);
 		}
 	}
 
@@ -2732,6 +2722,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private static final ObjectMapper _objectMapper = new ObjectMapper();
 
+	private final AccountEntryService _accountEntryService;
 	private final AccountResource.Factory _accountResourceFactory;
 	private final AssetCategoryLocalService _assetCategoryLocalService;
 	private final AssetListEntryLocalService _assetListEntryLocalService;

@@ -1,0 +1,11 @@
+{
+	"deletionType": "prevent",
+	"label": {
+		"en_US": "DXP Cloud Environment to Admin DXP Cloud"
+	},
+	"name": "DXPCloudEnvironmentToAdminDXPCloud",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_NAME:DXPCloudEnvironment$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_NAME:AdminDXPCloud$]",
+	"objectDefinitionName2": "AdminDXPCloud",
+	"type": "oneToMany"
+}

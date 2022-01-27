@@ -28,6 +28,7 @@ definition {
 	test CanExportMultipleWCsWithMultipleLanguages {
 		property osgi.module.configuration.file.names = "com.liferay.journal.web.internal.configuration.FFBulkTranslationConfiguration.config";
 		property osgi.module.configurations = "bulkTranslationEnabled=&quot;true&quot;";
+		property portal.acceptance = "false";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -37,7 +38,7 @@ definition {
 				title = "Web Content Title${i}");
 		}
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		Translations.gotoBulkExportTranslation(
 			exportTranslationEntry = "Web Content Title1,Web Content Title3",
@@ -59,7 +60,7 @@ definition {
 			groupName = "Guest",
 			title = "Web Content Title");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "Web Content Title");
 
@@ -81,7 +82,7 @@ definition {
 			groupName = "Guest",
 			title = "Web Content Title");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "Web Content Title");
 
@@ -102,7 +103,7 @@ definition {
 			groupName = "Guest",
 			title = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
 
@@ -123,7 +124,7 @@ definition {
 			webContentDescription = "Description",
 			webContentTitle = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.importTranslation(
 			fileName = "WebContentTitle-en_US-es_ES.xlf",
@@ -145,6 +146,7 @@ definition {
 	test CanImportMultipleWCs {
 		property osgi.module.configuration.file.names = "com.liferay.journal.web.internal.configuration.FFBulkTranslationConfiguration.config";
 		property osgi.module.configurations = "bulkTranslationEnabled=&quot;true&quot;";
+		property portal.acceptance = "false";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -154,7 +156,7 @@ definition {
 				title = "WebContentTitle${i}");
 		}
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		Translations.gotoBulkExportTranslation(exportTranslationEntry = "WebContentTitle1,WebContentTitle3");
 
@@ -186,7 +188,7 @@ definition {
 			webContentDescription = "Description3",
 			webContentTitle = "WebContentTitle3");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		Translations.gotoBulkImportTranslation();
 
@@ -204,7 +206,7 @@ definition {
 				webContentDescription = "Descripcion${i}",
 				webContentTitle = "Titulodelcontenidoweb${i}");
 
-			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+			WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 		}
 
 		WebContentNavigator.gotoEditCP(webContentTitle = "WebContentTitle2");
@@ -222,7 +224,7 @@ definition {
 			groupName = "Guest",
 			title = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
 
@@ -254,7 +256,7 @@ definition {
 			webContentDescription = "Description",
 			webContentTitle = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.importTranslation(
 			fileName = "WebContentTitle-en_US_translated.zip",
@@ -290,7 +292,7 @@ definition {
 			groupName = "Guest",
 			title = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
 
@@ -335,7 +337,7 @@ definition {
 			groupName = "Guest",
 			title = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
 
@@ -355,7 +357,7 @@ definition {
 			webContentDescription = "Description",
 			webContentTitle = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.importTranslation(
 			fileName = "WebContentTitle-en_US-ja_JP_utf8.xlf",
@@ -384,7 +386,7 @@ definition {
 			groupName = "Guest",
 			title = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoExportTranslation(webContentTitle = "WebContentTitle");
 
@@ -405,7 +407,7 @@ definition {
 			webContentDescription = "Description",
 			webContentTitle = "WebContentTitle");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.importTranslation(
 			fileName = "WebContentTitle-en_US-de_DE.xliff",
@@ -427,6 +429,7 @@ definition {
 	test CanImportWithLongInputs {
 		property osgi.module.configuration.file.names = "com.liferay.journal.web.internal.configuration.FFBulkTranslationConfiguration.config";
 		property osgi.module.configurations = "bulkTranslationEnabled=&quot;true&quot;";
+		property portal.acceptance = "false";
 
 		JSONWebcontent.addWebContent(
 			content = "WebContentContent",
@@ -434,7 +437,7 @@ definition {
 			groupName = "Guest",
 			title = "LongInputsForWebContentTitleToCheckTheTranslationsExportingAndImportingProcess");
 
-		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
 
 		Translations.gotoBulkExportTranslation(exportTranslationEntry = "LongInputsForWebContentTitleToCheckTheTranslationsExportingAndImportingProcess");
 
@@ -474,7 +477,7 @@ definition {
 	test CanImportWithSpecialCharacters {
 		WebContentNavigator.openToAddBasicArticle(
 			groupName = "Guest",
-			siteUrlKey = "guest");
+			siteURLKey = "guest");
 
 		WebContent.addCP(
 			webContentContent = "WebContentContent@!#",
@@ -521,6 +524,7 @@ definition {
 	test CanPartiallyImportMultipleWCs {
 		property osgi.module.configuration.file.names = "com.liferay.journal.web.internal.configuration.FFBulkTranslationConfiguration.config";
 		property osgi.module.configurations = "bulkTranslationEnabled=&quot;true&quot;";
+		property portal.acceptance = "false";
 
 		for (var i : list "1,2,3") {
 			JSONWebcontent.addWebContent(
@@ -530,7 +534,7 @@ definition {
 				title = "WebContentTitle${i}");
 		}
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		Translations.gotoBulkExportTranslation(exportTranslationEntry = "WebContentTitle1,WebContentTitle3");
 
@@ -579,7 +583,7 @@ definition {
 			webContentDescription = "Description3",
 			webContentTitle = "WebContentTitle3");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		Translations.gotoBulkImportTranslation();
 
@@ -604,14 +608,14 @@ definition {
 				webContentDescription = "Descripcion${i}",
 				webContentTitle = "Titulodelcontenidoweb${i}");
 
-			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+			WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 		}
 
 		WebContentNavigator.gotoEditCP(webContentTitle = "WebContentTitle1");
 
 		Translations.viewUntranslatedStatus(locale = "ja-JP");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteUrlKey = "guest");
 
 		WebContentNavigator.gotoEditCP(webContentTitle = "WebContentTitle3");
 

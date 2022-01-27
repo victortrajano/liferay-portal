@@ -23,9 +23,9 @@
 	{
 		"actionId": "VIEW",
 		"primKey": "0",
-		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:AccountSubscription$]",
+		"resourceName": "com.liferay.journal.model.JournalFolder",
 		"roleName": "Customer Portal Member",
-		"scope": "1"
+		"scope": "2"
 	},
 	{
 		"actionId": "VIEW",
@@ -58,7 +58,7 @@
 	{
 		"actionId": "VIEW",
 		"primKey": "0",
-		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:DXPCDataCenterRegion$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:BannedEmailDomain$]",
 		"roleName": "Customer Portal Member",
 		"scope": "1"
 	},
@@ -72,15 +72,8 @@
 	{
 		"actionId": "VIEW",
 		"primKey": "0",
-		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:DXPCloudEnvironment$]",
-		"roleName": "Customer Portal Member",
-		"scope": "1"
-	},
-	{
-		"actionId": "VIEW",
-		"primKey": "0",
 		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TeamMembersInvitation$]",
 		"roleName": "Customer Portal Member",
-		"scope": "1"
+		"scope": "2"
 	}
 ]

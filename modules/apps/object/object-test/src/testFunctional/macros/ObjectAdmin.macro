@@ -434,6 +434,12 @@ definition {
 		AssertElementPresent(locator1 = "ObjectAdmin#LABEL_FIELD_REQUIRED");
 	}
 
+	macro assertNoItemsWereFound {
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO",
+			value1 = "No items were found.");
+	}
+
 	macro assertNotPossibleAddFieldOnBlockWithoutChooseOptionField {
 		Click(locator1 = "ObjectAdmin#ADD_FIELD_ON_BLOCK");
 

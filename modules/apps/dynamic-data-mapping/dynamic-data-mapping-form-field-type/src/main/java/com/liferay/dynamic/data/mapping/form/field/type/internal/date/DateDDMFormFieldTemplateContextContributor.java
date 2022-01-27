@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,6 +72,11 @@ public class DateDDMFormFieldTemplateContextContributor
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
 				"predefinedValue")
+		).put(
+			"tooltip",
+			DDMFormFieldTypeUtil.getPropertyValue(
+				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
+				"tooltip")
 		).put(
 			"weekdaysShort",
 			Stream.of(

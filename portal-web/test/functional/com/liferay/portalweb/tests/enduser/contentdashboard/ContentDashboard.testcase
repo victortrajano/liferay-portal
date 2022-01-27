@@ -281,13 +281,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -347,13 +347,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -650,7 +650,7 @@ definition {
 				title = "Substage_4",
 				vocabularyName = "Stage");
 
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			WebContentNavigator.gotoEditCP(webContentTitle = "Webcontent Title");
 
@@ -722,13 +722,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -790,13 +790,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -902,13 +902,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -1064,7 +1064,7 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
@@ -1164,7 +1164,7 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
@@ -1243,7 +1243,7 @@ definition {
 		}
 
 		task ("Configure Web Content Article workflow to Single Approver") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			ProductMenu.gotoPortlet(
 				category = "Configuration",
@@ -1255,13 +1255,13 @@ definition {
 		}
 
 		task ("Edit the Web Content article and submit it for publication") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			WebContentNavigator.gotoEditCP(webContentTitle = "WC Title");
 
 			Button.clickSubmitForPublication();
 
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 		}
 
 		task ("Go to Content Dashboard and click on the title") {
@@ -1297,7 +1297,7 @@ definition {
 		}
 
 		task ("Change display date of Web Content") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			WebContentNavigator.gotoEditCP(webContentTitle = "WC Title");
 
@@ -1343,13 +1343,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -1449,7 +1449,7 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
@@ -1870,7 +1870,7 @@ definition {
 		}
 
 		task ("Delete the vocabulary") {
-			Category.openCategoriesAdmin(siteUrlKey = "test-site-name");
+			Category.openCategoriesAdmin(siteURLKey = "test-site-name");
 
 			Vocabulary.deleteByMenuCP(vocabularyName = "Vocabulary Name");
 		}
@@ -2278,7 +2278,7 @@ definition {
 		}
 
 		task ("Change display date of Web Content") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			WebContentNavigator.gotoEditCP(webContentTitle = "WC Title Scheduled");
 
@@ -2385,7 +2385,7 @@ definition {
 		}
 
 		task ("Create a web content structure") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			NavItem.gotoStructures();
 
@@ -2539,13 +2539,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -2648,13 +2648,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -2666,7 +2666,7 @@ definition {
 				groupName = "Test Site Name",
 				title = "WC WebContent Title");
 
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "Test Site Name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "Test Site Name");
 
 			Translations.gotoTranslate(webContentTitle = "WC WebContent Title");
 
@@ -2949,7 +2949,7 @@ definition {
 		}
 
 		task ("Choose the site of interest") {
-			PagesAdmin.openPagesAdmin(siteUrlKey = "global");
+			PagesAdmin.openPagesAdmin(siteURLKey = "global");
 		}
 
 		task ("Go to Documents and Media and clik on Add Button and File Upload") {
@@ -2984,7 +2984,7 @@ definition {
 		}
 
 		task ("Choose the site of interest") {
-			PagesAdmin.openPagesAdmin(siteUrlKey = "test-site-name");
+			PagesAdmin.openPagesAdmin(siteURLKey = "test-site-name");
 		}
 
 		task ("Go to Documents and Media and clik on Add Button and File Upload") {
@@ -3461,7 +3461,7 @@ definition {
 		}
 
 		task ("Go to Content Dashboard and Edit WC") {
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			ApplicationsMenu.gotoPortlet(
 				category = "Content",
@@ -3488,13 +3488,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -3590,7 +3590,7 @@ definition {
 				userLoginEmailAddress = "userea@liferay.com",
 				userLoginFullName = "userfn userln");
 
-			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
 
 			WebContentNavigator.gotoAddCP();
 
@@ -3622,23 +3622,74 @@ definition {
 		}
 	}
 
-	@description = "LPS-133181 When Filter by Author 'Me', displays content where the current user is the last editor of the approved version."
+	@description = "When the user selects one or more authors in the item selector, the list of contents displays content where the selected users are the creators"
 	@priority = "5"
-	test ShowOnlyContentCreatedByUser {
-		task ("Disable option to strangers to verify email") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+	test ShowAllContentsCreatedByUsers {
+		task ("Create and configure second user") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
 
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "User Authentication",
-				configurationName = "General",
-				configurationScope = "Virtual Instance Scope");
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
 
-			PortalSettings.uncheckStrangersVerifyEmailCheckbox();
+			JSONRole.assignRoleToUser(
+				roleTitle = "Administrator",
+				userEmailAddress = "userea@liferay.com");
 		}
 
+		task ("Create a Web Content authored by Test Test") {
+			JSONWebcontent.addWebContent(
+				content = "WC Content",
+				groupName = "Test Site Name",
+				title = "WC Title 1");
+		}
+
+		task ("Change to second user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "userea@liferay.com",
+				userLoginFullName = "userfn userln");
+		}
+
+		task ("Create a Web Content authored by userfn userln") {
+			JSONWebcontent.addWebContent(
+				content = "WC Content",
+				groupName = "Test Site Name",
+				title = "WC Title 2",
+				userEmailAddress = "userea@liferay.com",
+				userPassword = "test");
+		}
+
+		task ("Navigate to Content Dashboard") {
+			ContentDashboard.goToContentDashboard();
+		}
+
+		task ("Filter by both authors and assert both assets are displayed") {
+			ContentDashboard.filterByAuthorTable(
+				authorNameList = "Test,userfn",
+				filterOption = "Author");
+
+			AssertTextPresent(
+				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
+				value1 = "WC Title 2");
+
+			AssertTextPresent(
+				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
+				value1 = "WC Title 1");
+		}
+
+		task ("Delete user created") {
+			JSONUser.deleteUserByEmailAddress(userEmailAddress = "userea@liferay.com");
+		}
+	}
+
+	@description = "LPS-133181 When the user selects the option Filter by Author: Me in the 'Filter and Order' dropdown, the list of contents displays content where the user is the creator"
+	@priority = "5"
+	test ShowOnlyContentCreatedByUser {
 		task ("Create and configure second user") {
 			JSONUser.addUser(
 				userEmailAddress = "userea@liferay.com",
@@ -3660,7 +3711,7 @@ definition {
 			JSONWebcontent.addWebContent(
 				content = "WC Content",
 				groupName = "Test Site Name",
-				title = "WC Title");
+				title = "WC Title 1");
 		}
 
 		task ("Change to second user") {
@@ -3669,16 +3720,37 @@ definition {
 				userLoginFullName = "userfn userln");
 		}
 
-		task ("Go to Content Dashboard and Edit web content") {
-			ContentDashboard.goToContentDashboard();
+		task ("Add a Web Content using second user") {
+			JSONWebcontent.addWebContent(
+				content = "WC Content",
+				groupName = "Test Site Name",
+				title = "WC Title 2",
+				userEmailAddress = "userea@liferay.com",
+				userPassword = "test");
+		}
 
-			ContentDashboard.editAsset(assetTitle = "WC Title Edit");
+		task ("Edit Web Content created by Test user") {
+			WebContentNavigator.openWebContentAdmin(siteUrlKey = "test-site-name");
+
+			WebContentNavigator.gotoEditCP(webContentTitle = "WC Title 1");
+
+			WebContent.editCP(
+				webContentTitle = "WC Title 1",
+				webContentTitleEdit = "WC Title Edit");
+		}
+
+		task ("Navigate to Content Dashboard") {
+			ContentDashboard.goToContentDashboard();
 		}
 
 		task ("Filter by author Me and assert asset displayed") {
 			ContentDashboard.filterByAuthorMe(filterOption = "Me");
 
 			AssertTextPresent(
+				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
+				value1 = "WC Title 2");
+
+			AssertTextNotPresent(
 				locator1 = "ContentDashboard#FIRST_ELEMENT_LISTED",
 				value1 = "WC Title Edit");
 		}
@@ -3842,13 +3914,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -3904,13 +3976,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Document");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}
@@ -3958,13 +4030,13 @@ definition {
 				groupName = "Test Site Name",
 				subType = "Basic Web Content");
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
 
 			Button.clickPublish();
 
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteUrlKey = "test-site-name");
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
 			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
 		}

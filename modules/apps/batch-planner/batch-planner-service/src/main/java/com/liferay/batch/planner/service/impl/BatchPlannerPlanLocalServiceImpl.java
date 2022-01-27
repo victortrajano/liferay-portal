@@ -131,16 +131,26 @@ public class BatchPlannerPlanLocalServiceImpl
 
 	@Override
 	public BatchPlannerPlan updateBatchPlannerPlan(
-			long userId, long batchPlannerPlanId, String name)
+			long userId, long batchPlannerPlanId, String externalType,
+			String internalClassName, String name)
 		throws PortalException {
 
 		BatchPlannerPlan batchPlannerPlan =
 			batchPlannerPlanPersistence.findByPrimaryKey(batchPlannerPlanId);
 
+		if (!batchPlannerPlan.isTemplate()) {
+
+			// TODO Change this to RequiredBatchPlannerPlanException
+
+			throw new UnsupportedOperationException();
+		}
+
 		User user = userLocalService.getUser(userId);
 
 		_validateName(batchPlannerPlanId, user.getCompanyId(), name);
 
+		batchPlannerPlan.setExternalType(externalType);
+		batchPlannerPlan.setInternalClassName(internalClassName);
 		batchPlannerPlan.setName(name);
 
 		return batchPlannerPlanPersistence.update(batchPlannerPlan);

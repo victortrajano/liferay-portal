@@ -26,6 +26,8 @@ import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeDefinitionReso
 import com.liferay.headless.admin.list.type.resource.v1_0.ListTypeEntryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyCategoryResource;
 import com.liferay.headless.admin.taxonomy.resource.v1_0.TaxonomyVocabularyResource;
+import com.liferay.headless.admin.user.resource.v1_0.AccountResource;
+import com.liferay.headless.admin.user.resource.v1_0.UserAccountResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentFolderResource;
 import com.liferay.headless.delivery.resource.v1_0.DocumentResource;
 import com.liferay.headless.delivery.resource.v1_0.StructuredContentFolderResource;
@@ -116,7 +118,7 @@ public class SiteInitializerExtender
 				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _themeLocalService,
-				_userLocalService);
+				_userAccountResourceFactory,_userLocalService);
 
 		siteInitializerExtension.start();
 
@@ -151,6 +153,9 @@ public class SiteInitializerExtender
 	protected void deactivate() {
 		_bundleTracker.close();
 	}
+
+	@Reference
+	private AccountResource.Factory _accountResourceFactory;
 
 	@Reference
 	private AssetCategoryLocalService _assetCategoryLocalService;
@@ -285,6 +290,9 @@ public class SiteInitializerExtender
 
 	@Reference
 	private ThemeLocalService _themeLocalService;
+
+	@Reference
+	private UserAccountResource.Factory _userAccountResourceFactory;
 
 	@Reference
 	private UserLocalService _userLocalService;

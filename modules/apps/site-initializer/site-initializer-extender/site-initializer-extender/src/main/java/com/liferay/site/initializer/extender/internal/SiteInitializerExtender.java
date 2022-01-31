@@ -118,7 +118,7 @@ public class SiteInitializerExtender
 				_structuredContentFolderResourceFactory,
 				_styleBookEntryZipProcessor, _taxonomyCategoryResourceFactory,
 				_taxonomyVocabularyResourceFactory, _themeLocalService,
-				_userAccountResourceFactory,_userLocalService);
+				_userAccountResourceFactory, _userLocalService);
 
 		siteInitializerExtension.start();
 

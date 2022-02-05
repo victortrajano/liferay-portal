@@ -44,7 +44,7 @@ const PAGE = 1;
 
 const DXPActivationKeysTable = ({project, sessionId}) => {
 	const [{assetsPath}] = useCustomerPortal();
-	const {licenseKeyDownloadURL} = useApplicationProvider();
+	const {provisioningServerAPI} = useApplicationProvider();
 
 	const [activationKeys, setActivationKeys] = useState([]);
 	const [statusBar, setStatusBar] = useState({});
@@ -88,7 +88,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 		const fetchActivationKeysData = async () => {
 			const {items} = await getActivationLicenseKey(
 				project.accountKey,
-				licenseKeyDownloadURL,
+				provisioningServerAPI,
 				encodeURI('active eq true'),
 				PAGE,
 				MAX_ITEMS,
@@ -102,7 +102,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 		};
 
 		fetchActivationKeysData();
-	}, [licenseKeyDownloadURL, project, sessionId]);
+	}, [provisioningServerAPI, project, sessionId]);
 
 	useEffect(() => {
 		if (activationKeys.length) {
@@ -198,7 +198,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 					assetsPath={assetsPath}
 					downloadActivationLicenseKey={downloadActivationLicenseKey}
 					isVisibleModal={isVisibleModal}
-					licenseKeyDownloadURL={licenseKeyDownloadURL}
+					licenseKeyDownloadURL={provisioningServerAPI}
 					observer={observer}
 					onClose={onClose}
 					project={project}
@@ -225,7 +225,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 						<DXPActivationKeysTableHeader
 							accountKey={project.accountKey}
 							activationKeys={activationKeysFiltered}
-							licenseKeyDownloadURL={licenseKeyDownloadURL}
+							licenseKeyDownloadURL={provisioningServerAPI}
 							project={project}
 							selectedKeys={activationKeysChecked}
 							sessionId={sessionId}
@@ -255,7 +255,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 									onClick={() =>
 										getActivationKeyDownload(
 											activationKey.id,
-											licenseKeyDownloadURL,
+											provisioningServerAPI,
 											sessionId,
 											handleAlertStatus,
 											activationKey.productName,

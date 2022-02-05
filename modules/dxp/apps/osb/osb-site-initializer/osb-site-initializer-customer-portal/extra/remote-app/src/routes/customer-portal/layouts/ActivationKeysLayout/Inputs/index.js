@@ -31,10 +31,8 @@ const ActivationKeysInputs = ({
 	productTitle,
 	sessionId,
 }) => {
-	const {
-		createSupportRequest,
-		licenseKeyDownloadURL,
-	} = useApplicationProvider();
+	const {submitSupportTicketURL, provisioningServerAPI} =
+		useApplicationProvider();
 
 	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
 
@@ -43,10 +41,8 @@ const ActivationKeysInputs = ({
 		setSelectedAccountSubscriptionName,
 	] = useState('');
 
-	const [
-		accountSubscriptionsTermsDates,
-		setAccountSubscriptionsTermsDates,
-	] = useState([]);
+	const [accountSubscriptionsTermsDates, setAccountSubscriptionsTermsDates] =
+		useState([]);
 	const [selectDateInterval, setSelectedDateInterval] = useState();
 
 	const [hasLicenseDownloadError, setLicenseDownloadError] = useState(false);
@@ -114,7 +110,7 @@ const ActivationKeysInputs = ({
 			selectDateInterval.endDate.toISOString(),
 			selectDateInterval.startDate.toISOString(),
 			selectedAccountSubscriptionName.toLowerCase(),
-			licenseKeyDownloadURL,
+			provisioningServerAPI,
 			encodeURI(productTitle),
 			sessionId
 		);
@@ -229,7 +225,7 @@ const ActivationKeysInputs = ({
 					activation keys, please `}
 
 					<a
-						href={createSupportRequest}
+						href={submitSupportTicketURL}
 						rel="noreferrer"
 						target="_blank"
 					>

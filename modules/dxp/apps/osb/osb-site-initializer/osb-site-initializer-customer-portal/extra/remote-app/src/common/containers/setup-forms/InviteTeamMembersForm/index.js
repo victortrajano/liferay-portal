@@ -52,7 +52,10 @@ const InviteTeamMembersPage = ({
 	touched,
 	values,
 }) => {
-	const {licenseKeyDownloadURL, supportLink} = useApplicationProvider();
+	const {
+		articleAccountSupportURL,
+		provisioningServerAPI,
+	} = useApplicationProvider();
 
 	const [addTeamMemberInvitation, {error: addTeamMemberError}] = useMutation(
 		addTeamMembersInvitation
@@ -198,8 +201,7 @@ const InviteTeamMembersPage = ({
 
 			setInitialError(false);
 			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
-		}
-		else if (touched['invites']?.some((field) => field?.email)) {
+		} else if (touched['invites']?.some((field) => field?.email)) {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 		}
@@ -231,7 +233,7 @@ const InviteTeamMembersPage = ({
 
 					associateContactRoleNameByEmailByProject(
 						project.accountKey,
-						licenseKeyDownloadURL,
+						provisioningServerAPI,
 						sessionId,
 						encodeURI(email),
 						role.name
@@ -242,8 +244,7 @@ const InviteTeamMembersPage = ({
 			if (!addTeamMemberError && !associateUserAccountError) {
 				handlePage();
 			}
-		}
-		else {
+		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
 			setTouched({
@@ -353,7 +354,7 @@ const InviteTeamMembersPage = ({
 
 						<a
 							className="font-weight-bold text-neutral-9"
-							href={supportLink}
+							href={articleAccountSupportURL}
 							rel="noreferrer"
 							target="_blank"
 						>

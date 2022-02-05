@@ -42,7 +42,7 @@ const EVENT_OPTION = {
 };
 
 const AppContextProvider = ({assetsPath, children, page}) => {
-	const {oktaSessionURL} = useApplicationProvider();
+	const {oktaAPI} = useApplicationProvider();
 	const eventUserAccount = Liferay.publish(
 		CUSTOM_EVENT_TYPES.userAccount,
 		EVENT_OPTION
@@ -157,7 +157,7 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 		};
 
 		const getSessionId = async () => {
-			const session = await getCurrentSession(oktaSessionURL);
+			const session = await getCurrentSession(oktaAPI);
 
 			if (session) {
 				dispatch({
@@ -236,7 +236,7 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 
 		fetchData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [oktaSessionURL]);
+	}, [oktaAPI]);
 
 	return (
 		<AppContext.Provider value={[state, dispatch]}>

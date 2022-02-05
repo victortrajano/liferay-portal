@@ -39,10 +39,8 @@ const DeveloperKeysInputs = ({
 	projectName,
 	sessionId,
 }) => {
-	const {
-		deployingActivationKeysURL,
-		licenseKeyDownloadURL,
-	} = useApplicationProvider();
+	const {articleDeployingActivationKeysURL, provisioningServerAPI} =
+		useApplicationProvider();
 	const [dxpVersions, setDxpVersions] = useState([]);
 	const [selectedVersion, setSelectedVersion] = useState(dxpVersion);
 	const [
@@ -78,7 +76,7 @@ const DeveloperKeysInputs = ({
 	const developerKeyDownload = async () => {
 		const license = await getDevelopmentLicenseKey(
 			accountKey,
-			licenseKeyDownloadURL,
+			provisioningServerAPI,
 			sessionId,
 			selectedVersion
 		);
@@ -153,7 +151,7 @@ const DeveloperKeysInputs = ({
 				Portal instance, please read the `}
 
 				<a
-					href={deployingActivationKeysURL}
+					href={articleDeployingActivationKeysURL}
 					rel="noreferrer noopener"
 					target="_blank"
 				>

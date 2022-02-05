@@ -20,38 +20,42 @@ import ClayProvider from './common/providers/ClayProvider';
 import CustomerPortal from './routes/customer-portal';
 import Onboarding from './routes/onboarding';
 
-const CustomerPortalApplication = ({liferaywebdavurl, page, route}) => {
+const CustomerPortalApplication = ({liferayWebDAV, page, route}) => {
 	if (route === 'portal') {
-		return <CustomerPortal assetsPath={liferaywebdavurl} page={page} />;
+		return <CustomerPortal assetsPath={liferayWebDAV} page={page} />;
 	}
 
 	if (route === 'onboarding') {
-		return <Onboarding assetsPath={liferaywebdavurl} />;
+		return <Onboarding assetsPath={liferayWebDAV} />;
 	}
 };
 
 class CustomerPortalWebComponent extends HTMLElement {
 	connectedCallback() {
 		const properties = {
-			createSupportRequest: super.getAttribute('create-support-request'),
-			deployingActivationKeysURL: super.getAttribute(
-				'deploying-activation-keys-url'
+			submitSupportTicketURL: super.getAttribute(
+				'submit-support-ticket-url'
 			),
-			licenseKeyDownloadURL: super.getAttribute(
-				'license-key-download-url'
+			articleDeployingActivationKeysURL: super.getAttribute(
+				'article-deploying-activation-keys-url'
 			),
-			liferaywebdavurl: super.getAttribute('liferaywebdavurl'),
-			oktaSessionURL: super.getAttribute('okta-session-url'),
+			provisioningServerAPI: super.getAttribute(
+				'provisioning-server-api'
+			),
+			liferayWebDAV: super.getAttribute('liferaywebdavurl'),
+			oktaAPI: super.getAttribute('okta-api'),
 			page: super.getAttribute('page'),
 			route: super.getAttribute('route'),
-			supportLink: super.getAttribute('support-link'),
+			articleAccountSupportURL: super.getAttribute(
+				'article-account-support-url'
+			),
 		};
 		ReactDOM.render(
 			<ClayProvider>
 				<ApolloProvider client={apolloClient}>
 					<AppContextProvider properties={properties}>
 						<CustomerPortalApplication
-							liferaywebdavurl={properties.liferaywebdavurl}
+							liferaywebdavurl={properties.liferayWebDAV}
 							page={properties.page}
 							route={properties.route}
 						/>

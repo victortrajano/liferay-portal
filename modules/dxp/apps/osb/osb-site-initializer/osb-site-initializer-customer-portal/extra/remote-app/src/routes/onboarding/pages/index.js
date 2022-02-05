@@ -12,7 +12,7 @@
 import InviteTeamMembersForm from '../../../common/containers/setup-forms/InviteTeamMembersForm';
 import SetupDXPCloud from '../../../common/containers/setup-forms/SetupDXPCloudForm';
 import {PAGE_ROUTER_TYPES} from '../../../common/utils/constants';
-import {useOnboarding} from '../context';
+import {useOnboardingContext} from '../context';
 import {actionTypes} from '../context/reducer';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
 import SuccessDXPCloud from './SuccessDXPCloud';
@@ -22,7 +22,7 @@ const Pages = () => {
 	const [
 		{project, sessionId, step, subscriptionGroups},
 		dispatch,
-	] = useOnboarding();
+	] = useOnboardingContext();
 
 	const invitesPageHandle = () => {
 		const hasSubscriptionsDXPCloud = !!subscriptionGroups?.length;

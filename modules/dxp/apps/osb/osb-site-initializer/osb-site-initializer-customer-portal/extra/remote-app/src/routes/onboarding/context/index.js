@@ -27,9 +27,9 @@ import {PRODUCT_TYPES} from '../../customer-portal/utils/constants';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
 import reducer, {actionTypes} from './reducer';
 
-const AppContext = createContext();
+const OnboardingContext = createContext();
 
-const AppContextProvider = ({children}) => {
+const OnboardingProvider = ({children}) => {
 	const {liferayWebDAV, oktaAPI} = useApplicationProvider();
 	const [state, dispatch] = useReducer(reducer, {
 		koroneikiAccount: {},
@@ -168,12 +168,13 @@ const AppContextProvider = ({children}) => {
 	}, [oktaAPI]);
 
 	return (
-		<AppContext.Provider value={[state, dispatch]}>
+		<OnboardingContext.Provider value={[state, dispatch]}>
 			{children}
-		</AppContext.Provider>
+		</OnboardingContext.Provider>
 	);
 };
 
-const useOnboarding = () => useContext(AppContext);
+const useOnboardingContext = () => useContext(OnboardingContext);
 
-export {AppContext, AppContextProvider, useOnboarding};
+export default OnboardingProvider;
+export {useOnboardingContext};

@@ -11,13 +11,13 @@
 
 import {Button} from '../../../../common/components';
 import Layout from '../../../../common/containers/setup-forms/Layout';
-import {useOnboarding} from '../../context';
+import {useOnboardingContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {ONBOARDING_STEP_TYPES} from '../../utils/constants';
 import WelcomeSkeleton from './Skeleton';
 
 const Welcome = () => {
-	const [{liferayWebDAV}, dispatch] = useOnboarding();
+	const [{liferayWebDAV}, dispatch] = useOnboardingContext();
 
 	return (
 		<Layout

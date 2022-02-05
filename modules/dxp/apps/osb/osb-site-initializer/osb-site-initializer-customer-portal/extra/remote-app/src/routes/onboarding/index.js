@@ -9,15 +9,13 @@
  * distribution rights of the Software.
  */
 
-import {AppContextProvider} from './context';
+import OnboardingProvider from './context';
 import Pages from './pages';
 
-const Onboarding = () => {
-	return (
-		<AppContextProvider>
-			<Pages />
-		</AppContextProvider>
-	);
-};
+const Onboarding = () => (
+	<OnboardingProvider>
+		<Pages />
+	</OnboardingProvider>
+);
 
 export default Onboarding;

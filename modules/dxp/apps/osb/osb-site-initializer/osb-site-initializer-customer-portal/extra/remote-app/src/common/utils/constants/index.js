@@ -9,7 +9,6 @@
  * distribution rights of the Software.
  */
 
-export * from './apiBaseUrl';
 export * from './roleTypes';
 export * from './routeTypes';
 export * from './storageKeys';

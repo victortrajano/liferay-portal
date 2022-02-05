@@ -14,7 +14,6 @@ import {BatchHttpLink} from '@apollo/client/link/batch-http';
 import {LocalStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {useEffect, useState} from 'react';
 import {Liferay} from '../services/liferay';
-import {API_BASE_URL} from '../utils/constants';
 
 export default function useApollo() {
 	const [client, setClient] = useState();
@@ -26,7 +25,7 @@ export default function useApollo() {
 				headers: {
 					'x-csrf-token': Liferay.authToken,
 				},
-				uri: `${API_BASE_URL}/o/graphql`,
+				uri: `${Liferay.ThemeDisplay.getPortalURL()}/o/graphql`,
 			});
 
 			await persistCache({

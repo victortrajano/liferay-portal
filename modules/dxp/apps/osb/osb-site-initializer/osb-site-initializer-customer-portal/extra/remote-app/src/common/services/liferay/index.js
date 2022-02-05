@@ -18,6 +18,7 @@ export const Liferay = window.Liferay || {
 		getCanonicalURL: () => window.location.href,
 		getCompanyGroupId: () => 0,
 		getPathThemeImages: () => null,
+		getPortalURL: () => window.location.origin,
 		getScopeGroupId: () => 0,
 		getSiteGroupId: () => 0,
 		getUserId: () => 0,

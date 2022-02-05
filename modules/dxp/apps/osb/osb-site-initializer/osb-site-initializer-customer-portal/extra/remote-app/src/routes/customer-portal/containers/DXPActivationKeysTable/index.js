@@ -43,7 +43,7 @@ const MAX_ITEMS = 9999;
 const PAGE = 1;
 
 const DXPActivationKeysTable = ({project, sessionId}) => {
-	const [{assetsPath}] = useCustomerPortal();
+	const [{liferayWebDAV}] = useCustomerPortal();
 	const {provisioningServerAPI} = useApplicationProvider();
 
 	const [activationKeys, setActivationKeys] = useState([]);
@@ -195,7 +195,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 			{isVisibleModal && (
 				<ModalKeyDetails
 					activationKeys={currentActivationKey}
-					assetsPath={assetsPath}
+					assetsPath={liferayWebDAV}
 					downloadActivationLicenseKey={downloadActivationLicenseKey}
 					isVisibleModal={isVisibleModal}
 					licenseKeyDownloadURL={provisioningServerAPI}
@@ -297,7 +297,7 @@ const DXPActivationKeysTable = ({project, sessionId}) => {
 							keyType: (
 								<KeyTypeColumn
 									activationKey={activationKey}
-									assetsPath={assetsPath}
+									assetsPath={liferayWebDAV}
 								/>
 							),
 							status: (

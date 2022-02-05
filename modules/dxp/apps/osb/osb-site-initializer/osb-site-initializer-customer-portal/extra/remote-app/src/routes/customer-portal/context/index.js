@@ -53,8 +53,8 @@ const AppContextProvider = ({children}) => {
 	);
 
 	const [state, dispatch] = useReducer(reducer, {
-		assetsPath: liferayWebDAV,
 		isQuickLinksExpanded: true,
+		liferayWebDAV,
 		page,
 		project: undefined,
 		quickLinks: undefined,

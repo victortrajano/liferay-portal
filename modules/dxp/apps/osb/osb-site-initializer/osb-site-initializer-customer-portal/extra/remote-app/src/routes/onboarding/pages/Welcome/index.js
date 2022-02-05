@@ -17,7 +17,7 @@ import {ONBOARDING_STEP_TYPES} from '../../utils/constants';
 import WelcomeSkeleton from './Skeleton';
 
 const Welcome = () => {
-	const [{assetsPath}, dispatch] = useOnboarding();
+	const [{liferayWebDAV}, dispatch] = useOnboarding();
 
 	return (
 		<Layout
@@ -47,7 +47,7 @@ const Welcome = () => {
 				className="mb-4 pb-1"
 				draggable={false}
 				height={237}
-				src={`${assetsPath}/assets/intro_onboarding.svg`}
+				src={`${liferayWebDAV}/assets/intro_onboarding.svg`}
 				width={331}
 			/>
 

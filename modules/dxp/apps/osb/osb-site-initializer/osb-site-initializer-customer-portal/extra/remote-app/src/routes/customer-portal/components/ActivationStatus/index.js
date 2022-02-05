@@ -51,7 +51,7 @@ const ActivationStatus = ({
 	subscriptionGroupDXPCloud,
 	userAccount,
 }) => {
-	const [{assetsPath}, dispatch] = useCustomerPortal();
+	const [{liferayWebDAV}, dispatch] = useCustomerPortal();
 	const [activationStatusDate, setActivationStatusDate] = useState('');
 	const [visible, setVisible] = useState(false);
 	const modalProps = useModal({
@@ -203,7 +203,7 @@ const ActivationStatus = ({
 									)}
 									draggable={false}
 									height={30.55}
-									src={`${assetsPath}/assets/navigation-menu/dxp_icon.svg`}
+									src={`${liferayWebDAV}/assets/navigation-menu/dxp_icon.svg`}
 									width={30.55}
 								/>
 

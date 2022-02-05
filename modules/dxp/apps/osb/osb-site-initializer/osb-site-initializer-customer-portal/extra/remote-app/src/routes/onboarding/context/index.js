@@ -32,8 +32,8 @@ const AppContext = createContext();
 const AppContextProvider = ({children}) => {
 	const {liferayWebDAV, oktaAPI} = useApplicationProvider();
 	const [state, dispatch] = useReducer(reducer, {
-		assetsPath: liferayWebDAV,
 		koroneikiAccount: {},
+		liferayWebDAV,
 		project: undefined,
 		sessionId: '',
 		step: ONBOARDING_STEP_TYPES.welcome,

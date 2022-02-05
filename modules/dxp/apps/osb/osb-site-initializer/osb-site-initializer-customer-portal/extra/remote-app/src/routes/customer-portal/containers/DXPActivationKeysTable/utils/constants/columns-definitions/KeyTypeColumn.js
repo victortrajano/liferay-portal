@@ -11,7 +11,7 @@
 
 import {hasVirtualCluster} from '../../index';
 
-const KeyTypeColumn = ({activationKey, assetsPath}) => {
+const KeyTypeColumn = ({activationKey, liferayWebDAV}) => {
 	const hasVirtualClusterForActivationKeys = hasVirtualCluster(
 		activationKey?.licenseEntryType
 	);
@@ -21,7 +21,7 @@ const KeyTypeColumn = ({activationKey, assetsPath}) => {
 			{hasVirtualClusterForActivationKeys && (
 				<img
 					className="ml-n4 mr-1"
-					src={`${assetsPath}/assets/virtual_cluster.svg`}
+					src={`${liferayWebDAV}/assets/virtual_cluster.svg`}
 				/>
 			)}
 

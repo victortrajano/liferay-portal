@@ -12,14 +12,14 @@
 import {createContext, useContext} from 'react';
 
 const defaultProperties = {
-	submitSupportTicketURL: '',
+	articleAccountSupportURL: '',
 	articleDeployingActivationKeysURL: '',
-	provisioningServerAPI: '',
 	liferayWebDAV: '',
 	oktaAPI: '',
 	page: '',
+	provisioningServerAPI: '',
 	route: '',
-	articleAccountSupportURL: '',
+	submitSupportTicketURL: '',
 };
 
 export const AppContext = createContext(defaultProperties);

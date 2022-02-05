@@ -14,9 +14,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import './common/styles/global.scss';
+import {ClayIconSpriteContext} from '@clayui/icon';
 import apolloClient from './apolloClient';
 import AppContextProvider from './common/context/AppPropertiesProvider';
-import ClayProvider from './common/providers/ClayProvider';
+import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import CustomerPortal from './routes/customer-portal';
 import Onboarding from './routes/onboarding';
 
@@ -33,25 +34,25 @@ const CustomerPortalApplication = ({liferayWebDAV, page, route}) => {
 class CustomerPortalWebComponent extends HTMLElement {
 	connectedCallback() {
 		const properties = {
-			submitSupportTicketURL: super.getAttribute(
-				'submit-support-ticket-url'
+			articleAccountSupportURL: super.getAttribute(
+				'article-account-support-url'
 			),
 			articleDeployingActivationKeysURL: super.getAttribute(
 				'article-deploying-activation-keys-url'
 			),
-			provisioningServerAPI: super.getAttribute(
-				'provisioning-server-api'
-			),
 			liferayWebDAV: super.getAttribute('liferaywebdavurl'),
 			oktaAPI: super.getAttribute('okta-api'),
 			page: super.getAttribute('page'),
+			provisioningServerAPI: super.getAttribute(
+				'provisioning-server-api'
+			),
 			route: super.getAttribute('route'),
-			articleAccountSupportURL: super.getAttribute(
-				'article-account-support-url'
+			submitSupportTicketURL: super.getAttribute(
+				'submit-support-ticket-url'
 			),
 		};
 		ReactDOM.render(
-			<ClayProvider>
+			<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
 				<ApolloProvider client={apolloClient}>
 					<AppContextProvider properties={properties}>
 						<CustomerPortalApplication
@@ -61,7 +62,7 @@ class CustomerPortalWebComponent extends HTMLElement {
 						/>
 					</AppContextProvider>
 				</ApolloProvider>
-			</ClayProvider>,
+			</ClayIconSpriteContext.Provider>,
 			this
 		);
 	}

@@ -41,8 +41,8 @@ const EVENT_OPTION = {
 	fireOnce: true,
 };
 
-const AppContextProvider = ({assetsPath, children, page}) => {
-	const {oktaAPI} = useApplicationProvider();
+const AppContextProvider = ({children}) => {
+	const {liferayWebDAV, oktaAPI, page} = useApplicationProvider();
 	const eventUserAccount = Liferay.publish(
 		CUSTOM_EVENT_TYPES.userAccount,
 		EVENT_OPTION
@@ -53,7 +53,7 @@ const AppContextProvider = ({assetsPath, children, page}) => {
 	);
 
 	const [state, dispatch] = useReducer(reducer, {
-		assetsPath,
+		assetsPath: liferayWebDAV,
 		isQuickLinksExpanded: true,
 		page,
 		project: undefined,

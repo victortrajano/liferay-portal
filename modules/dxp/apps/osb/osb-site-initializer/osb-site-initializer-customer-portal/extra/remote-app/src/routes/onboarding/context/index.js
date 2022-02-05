@@ -29,10 +29,10 @@ import reducer, {actionTypes} from './reducer';
 
 const AppContext = createContext();
 
-const AppContextProvider = ({assetsPath, children}) => {
-	const {oktaSessionURL} = useApplicationProvider();
+const AppContextProvider = ({children}) => {
+	const {liferayWebDAV, oktaAPI} = useApplicationProvider();
 	const [state, dispatch] = useReducer(reducer, {
-		assetsPath,
+		assetsPath: liferayWebDAV,
 		koroneikiAccount: {},
 		project: undefined,
 		sessionId: '',
@@ -96,7 +96,7 @@ const AppContextProvider = ({assetsPath, children}) => {
 		};
 
 		const getSessionId = async () => {
-			const session = await getCurrentSession(oktaSessionURL);
+			const session = await getCurrentSession(oktaAPI);
 
 			if (session) {
 				dispatch({
@@ -165,7 +165,7 @@ const AppContextProvider = ({assetsPath, children}) => {
 		};
 
 		fetchData();
-	}, [oktaSessionURL]);
+	}, [oktaAPI]);
 
 	return (
 		<AppContext.Provider value={[state, dispatch]}>

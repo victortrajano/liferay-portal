@@ -10,25 +10,38 @@
  */
 
 import {ApolloProvider} from '@apollo/client';
-import React from 'react';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ReactDOM from 'react-dom';
 
 import './common/styles/global.scss';
 import {ClayIconSpriteContext} from '@clayui/icon';
-import apolloClient from './apolloClient';
 import AppContextProvider from './common/context/AppPropertiesProvider';
+import useApollo from './common/hooks/useApollo';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import CustomerPortal from './routes/customer-portal';
 import Onboarding from './routes/onboarding';
 
-const CustomerPortalApplication = ({liferayWebDAV, page, route}) => {
-	if (route === 'portal') {
-		return <CustomerPortal assetsPath={liferayWebDAV} page={page} />;
+const ELEMENT_ID = 'liferay-remote-app-customer-portal';
+
+const RouteApps = {
+	onboarding: <Onboarding />,
+	portal: <CustomerPortal />,
+};
+
+const CustomerPortalApp = ({route, ...properties}) => {
+	const apolloClient = useApollo();
+
+	if (!apolloClient) {
+		return <ClayLoadingIndicator />;
 	}
 
-	if (route === 'onboarding') {
-		return <Onboarding assetsPath={liferayWebDAV} />;
-	}
+	return (
+		<ApolloProvider client={apolloClient}>
+			<AppContextProvider properties={properties}>
+				{RouteApps[route]}
+			</AppContextProvider>
+		</ApolloProvider>
+	);
 };
 
 class CustomerPortalWebComponent extends HTMLElement {
@@ -46,29 +59,22 @@ class CustomerPortalWebComponent extends HTMLElement {
 			provisioningServerAPI: super.getAttribute(
 				'provisioning-server-api'
 			),
-			route: super.getAttribute('route'),
 			submitSupportTicketURL: super.getAttribute(
 				'submit-support-ticket-url'
 			),
 		};
+
 		ReactDOM.render(
 			<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
-				<ApolloProvider client={apolloClient}>
-					<AppContextProvider properties={properties}>
-						<CustomerPortalApplication
-							liferaywebdavurl={properties.liferayWebDAV}
-							page={properties.page}
-							route={properties.route}
-						/>
-					</AppContextProvider>
-				</ApolloProvider>
+				<CustomerPortalApp
+					{...properties}
+					route={super.getAttribute('route')}
+				/>
 			</ClayIconSpriteContext.Provider>,
 			this
 		);
 	}
 }
-
-const ELEMENT_ID = 'liferay-remote-app-customer-portal';
 
 if (!customElements.get(ELEMENT_ID)) {
 	customElements.define(ELEMENT_ID, CustomerPortalWebComponent);

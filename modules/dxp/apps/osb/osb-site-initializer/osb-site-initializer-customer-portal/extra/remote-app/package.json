@@ -27,6 +27,7 @@
 		"@clayui/icon": "^3.32.0",
 		"@clayui/label": "^3.32.0",
 		"@clayui/layout": "^3.32.0",
+		"@clayui/loading-indicator": "^3.40.0",
 		"@clayui/pagination": "^3.41.0",
 		"@clayui/pagination-bar": "^3.41.0",
 		"@clayui/tooltip": "^3.40.0",

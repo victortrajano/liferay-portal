@@ -9,8 +9,16 @@
  * distribution rights of the Software.
  */
 
-export * from './roleTypes';
-export * from './locations';
-export * from './routeTypes';
-export * from './storageKeys';
-export * from './pageRouterTypes';
+import {useEffect, useState} from 'react';
+
+export default function useRedirectURL() {
+	const [redirectURL, setRedirectURL] = useState();
+
+	useEffect(() => {
+		if (redirectURL) {
+			window.location.replace(redirectURL);
+		}
+	}, [redirectURL]);
+
+	return setRedirectURL;
+}

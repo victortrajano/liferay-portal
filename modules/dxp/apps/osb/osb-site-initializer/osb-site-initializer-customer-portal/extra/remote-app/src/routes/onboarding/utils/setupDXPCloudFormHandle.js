@@ -9,8 +9,23 @@
  * distribution rights of the Software.
  */
 
-export * from './roleTypes';
-export * from './locations';
-export * from './routeTypes';
-export * from './storageKeys';
-export * from './pageRouterTypes';
+import {LOCATIONS} from '../../../common/utils/constants';
+import {actionTypes} from '../context/reducer';
+import {ONBOARDING_STEP_TYPES} from './constants';
+
+export default function setupDXPCloudFormHandle(
+	dispatch,
+	isSuccess,
+	koroneikiAccount,
+	setRedirectURL
+) {
+	if (isSuccess) {
+		dispatch({
+			payload: ONBOARDING_STEP_TYPES.successDxpCloud,
+			type: actionTypes.CHANGE_STEP,
+		});
+	}
+	else {
+		setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey));
+	}
+}

@@ -9,163 +9,16 @@
  * distribution rights of the Software.
  */
 
-import {createContext, useContext, useEffect, useReducer} from 'react';
-import client from '../../../apolloClient';
-import {useApplicationProvider} from '../../../common/context/AppPropertiesProvider';
-import {Liferay} from '../../../common/services/liferay';
-import {
-	addAccountFlag,
-	getAccountSubscriptionGroups,
-	getKoroneikiAccounts,
-	getUserAccount,
-} from '../../../common/services/liferay/graphql/queries';
-import {getCurrentSession} from '../../../common/services/okta/rest/sessions';
-import {ROLE_TYPES, ROUTE_TYPES} from '../../../common/utils/constants';
-import {getAccountKey} from '../../../common/utils/getAccountKey';
-import {isValidPage} from '../../../common/utils/page.validation';
-import {PRODUCT_TYPES} from '../../customer-portal/utils/constants';
+import {createContext, useContext, useReducer} from 'react';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
-import reducer, {actionTypes} from './reducer';
+import reducer from './reducer';
 
 const OnboardingContext = createContext();
 
 const OnboardingProvider = ({children}) => {
-	const {liferayWebDAV, oktaAPI} = useApplicationProvider();
 	const [state, dispatch] = useReducer(reducer, {
-		koroneikiAccount: {},
-		liferayWebDAV,
-		project: undefined,
-		sessionId: '',
 		step: ONBOARDING_STEP_TYPES.welcome,
-		subscriptionGroups: undefined,
-		userAccount: undefined,
 	});
-
-	useEffect(() => {
-		const getUser = async (projectExternalReferenceCode) => {
-			const {data} = await client.query({
-				query: getUserAccount,
-				variables: {
-					id: Liferay.ThemeDisplay.getUserId(),
-				},
-			});
-
-			if (data) {
-				const isAccountAdministrator = !!data.userAccount?.accountBriefs
-					?.find(
-						({externalReferenceCode}) =>
-							externalReferenceCode ===
-							projectExternalReferenceCode
-					)
-					?.roleBriefs?.find(
-						({name}) => name === ROLE_TYPES.admin.key
-					);
-
-				const userAccount = {
-					...data.userAccount,
-					isAdmin: isAccountAdministrator,
-				};
-
-				dispatch({
-					payload: userAccount,
-					type: actionTypes.UPDATE_USER_ACCOUNT,
-				});
-
-				return userAccount;
-			}
-		};
-
-		const getProject = async (externalReferenceCode, accountBrief) => {
-			const {data: projects} = await client.query({
-				query: getKoroneikiAccounts,
-				variables: {
-					filter: `accountKey eq '${externalReferenceCode}'`,
-				},
-			});
-
-			if (projects) {
-				dispatch({
-					payload: {
-						...projects.c.koroneikiAccounts.items[0],
-						id: accountBrief.id,
-						name: accountBrief.name,
-					},
-					type: actionTypes.UPDATE_PROJECT,
-				});
-			}
-		};
-
-		const getSessionId = async () => {
-			const session = await getCurrentSession(oktaAPI);
-
-			if (session) {
-				dispatch({
-					payload: session.id,
-					type: actionTypes.UPDATE_SESSION_ID,
-				});
-			}
-		};
-
-		const getSubscriptionGroups = async (accountKey) => {
-			const {data} = await client.query({
-				query: getAccountSubscriptionGroups,
-				variables: {
-					filter: `(accountKey eq '${accountKey}') and (name eq '${PRODUCT_TYPES.dxpCloud}')`,
-				},
-			});
-
-			if (data) {
-				const items = data.c?.accountSubscriptionGroups?.items;
-				dispatch({
-					payload: items,
-					type: actionTypes.UPDATE_SUBSCRIPTION_GROUPS,
-				});
-			}
-		};
-
-		const fetchData = async () => {
-			const projectExternalReferenceCode = getAccountKey();
-
-			const user = await getUser(projectExternalReferenceCode);
-
-			if (!user) {
-				return;
-			}
-
-			const isValid = await isValidPage(
-				user,
-				projectExternalReferenceCode,
-				ROUTE_TYPES.onboarding
-			);
-
-			if (user && isValid) {
-				const accountBrief = user.accountBriefs?.find(
-					(accountBrief) =>
-						accountBrief.externalReferenceCode ===
-						projectExternalReferenceCode
-				);
-
-				if (accountBrief) {
-					getProject(projectExternalReferenceCode, accountBrief);
-					getSubscriptionGroups(projectExternalReferenceCode);
-					getSessionId();
-
-					client.mutate({
-						mutation: addAccountFlag,
-						variables: {
-							accountFlag: {
-								accountKey: projectExternalReferenceCode,
-								finished: true,
-								name: ROUTE_TYPES.onboarding,
-							},
-						},
-					});
-				}
-			}
-		};
-
-		fetchData();
-	}, [oktaAPI]);
 
 	return (
 		<OnboardingContext.Provider value={[state, dispatch]}>

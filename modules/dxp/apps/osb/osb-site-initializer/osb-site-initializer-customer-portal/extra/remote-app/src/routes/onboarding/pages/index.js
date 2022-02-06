@@ -9,85 +9,60 @@
  * distribution rights of the Software.
  */
 
-import InviteTeamMembersForm from '../../../common/containers/setup-forms/InviteTeamMembersForm';
-import SetupDXPCloud from '../../../common/containers/setup-forms/SetupDXPCloudForm';
-import {PAGE_ROUTER_TYPES} from '../../../common/utils/constants';
+import useRedirectURL from '../../../common/hooks/useRedirectURL';
+import {Liferay} from '../../../common/services/liferay';
+import {useGetAccountSubscriptionGroups} from '../../../common/services/liferay/graphql/account-subscription-groups';
+import {useGetKoroneikiAccounts} from '../../../common/services/liferay/graphql/koroneiki-accounts/queries/useGetKoroneikiAccounts';
+import {useGetUserAccount} from '../../../common/services/liferay/graphql/user-accounts';
+import {PRODUCT_TYPES} from '../../customer-portal/utils/constants/productTypes';
 import {useOnboardingContext} from '../context';
-import {actionTypes} from '../context/reducer';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
-import SuccessDXPCloud from './SuccessDXPCloud';
-import Welcome from './Welcome';
+import getStepsComponent from '../utils/getStepsComponent';
 
 const Pages = () => {
-	const [
-		{project, sessionId, step, subscriptionGroups},
+	const setRedirectURL = useRedirectURL();
+	const [{step}, dispatch] = useOnboardingContext();
+
+	const {
+		data: userAccountData,
+		loading: userAccountLoading,
+	} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
+
+	const selectAccountBrief =
+		userAccountData?.userAccount?.selectedAccountBrief;
+
+	const {
+		data: koroneikiAccountsData,
+		loading: koroneikiAccountsLoading,
+	} = useGetKoroneikiAccounts({
+		filter: `accountKey eq '${selectAccountBrief?.externalReferenceCode}'`,
+		skip: userAccountLoading,
+	});
+	const {
+		data: accountSubscriptionGroupsData,
+		loading: accountSubscriptionGroupsLoading,
+	} = useGetAccountSubscriptionGroups({
+		filter: `(accountKey eq '${selectAccountBrief?.externalReferenceCode}') and (name eq '${PRODUCT_TYPES.dxpCloud}') and (hasActivation eq true)`,
+		skip: userAccountLoading,
+	});
+
+	const koroneikiAccount =
+		koroneikiAccountsData?.c?.koroneikiAccounts?.items[0];
+	const accountSubscriptionGroupDXPCloud =
+		accountSubscriptionGroupsData?.c?.accountSubscriptionGroups?.items[0];
+
+	const stepsComponent = getStepsComponent(
+		accountSubscriptionGroupDXPCloud,
 		dispatch,
-	] = useOnboardingContext();
+		koroneikiAccount,
+		setRedirectURL
+	);
 
-	const invitesPageHandle = () => {
-		const hasSubscriptionsDXPCloud = !!subscriptionGroups?.length;
-
-		if (hasSubscriptionsDXPCloud) {
-			dispatch({
-				payload: ONBOARDING_STEP_TYPES.dxpCloud,
-				type: actionTypes.CHANGE_STEP,
-			});
-		} else {
-			window.location.href = PAGE_ROUTER_TYPES.project(
-				project.accountKey
-			);
-		}
-	};
-
-	const StepsLayout = {
-		[ONBOARDING_STEP_TYPES.invites]: {
-			Component: (
-				<InviteTeamMembersForm
-					handlePage={invitesPageHandle}
-					leftButton="Skip for now"
-					project={project}
-					sessionId={sessionId}
-				/>
-			),
-		},
-		[ONBOARDING_STEP_TYPES.dxpCloud]: {
-			Component: (
-				<SetupDXPCloud
-					handlePage={(isSuccess) => {
-						if (isSuccess) {
-							dispatch({
-								payload: ONBOARDING_STEP_TYPES.successDxpCloud,
-								type: actionTypes.CHANGE_STEP,
-							});
-						} else {
-							window.location.href = PAGE_ROUTER_TYPES.project(
-								project.accountKey
-							);
-						}
-					}}
-					leftButton="Skip for now"
-					project={project}
-					subscriptionGroupId={
-						!!subscriptionGroups?.length &&
-						subscriptionGroups[0].accountSubscriptionGroupId
-					}
-				/>
-			),
-		},
-		[ONBOARDING_STEP_TYPES.successDxpCloud]: {
-			Component: <SuccessDXPCloud project={project} />,
-		},
-		[ONBOARDING_STEP_TYPES.welcome]: {
-			Component: <Welcome />,
-			Skeleton: <Welcome.Skeleton />,
-		},
-	};
-
-	if (project && subscriptionGroups) {
-		return StepsLayout[step].Component;
+	if (!koroneikiAccountsLoading && !accountSubscriptionGroupsLoading) {
+		return stepsComponent[step].Component;
 	}
 
-	return StepsLayout[ONBOARDING_STEP_TYPES.welcome].Skeleton;
+	return stepsComponent[ONBOARDING_STEP_TYPES.welcome].Skeleton;
 };
 
 export default Pages;

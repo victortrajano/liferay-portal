@@ -9,12 +9,15 @@
  * distribution rights of the Software.
  */
 
+import Guard from '../../common/containers/Guard';
 import OnboardingProvider from './context';
 import Pages from './pages';
 
 const Onboarding = () => (
 	<OnboardingProvider>
-		<Pages />
+		<Guard onboarding>
+			<Pages />
+		</Guard>
 	</OnboardingProvider>
 );
 

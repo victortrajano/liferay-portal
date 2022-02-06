@@ -1,8 +1,8 @@
 {
 	"label": {
-		"en-US": "Team Members Invitation"
+		"en-US": "Team Member Invitation"
 	},
-	"name": "TeamMembersInvitation",
+	"name": "TeamMemberInvitation",
 	"objectFields": [
 		{
 			"DBType": "String",
@@ -12,7 +12,7 @@
 				"en-US": "Email"
 			},
 			"name": "email",
-			"required": false
+			"required": true
 		},
 		{
 			"DBType": "String",
@@ -22,11 +22,21 @@
 				"en-US": "Role"
 			},
 			"name": "role",
-			"required": false
+			"required": true
+		},
+		{
+			"DBType": "String",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en-US": "Account Key"
+			},
+			"name": "accountKey",
+			"required": true
 		}
 	],
 	"pluralLabel": {
-		"en_US": "Team Members Invitation"
+		"en_US": "Team Member Invitations"
 	},
 	"scope": "site",
 	"system": false

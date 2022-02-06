@@ -12,8 +12,7 @@
 import {useMutation} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {Formik} from 'formik';
-import {useEffect, useState} from 'react';
-import client from '../../../../apolloClient';
+import {useCallback, useEffect, useState} from 'react';
 import {Badge, Button} from '../../../components';
 import {useApplicationProvider} from '../../../context/AppPropertiesProvider';
 import {Liferay} from '../../../services/liferay';

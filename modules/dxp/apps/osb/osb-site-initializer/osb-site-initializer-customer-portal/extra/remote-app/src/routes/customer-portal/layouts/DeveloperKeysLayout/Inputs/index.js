@@ -39,8 +39,10 @@ const DeveloperKeysInputs = ({
 	projectName,
 	sessionId,
 }) => {
-	const {articleDeployingActivationKeysURL, provisioningServerAPI} =
-		useApplicationProvider();
+	const {
+		articleDeployingActivationKeysURL,
+		provisioningServerAPI,
+	} = useApplicationProvider();
 	const [dxpVersions, setDxpVersions] = useState([]);
 	const [selectedVersion, setSelectedVersion] = useState(dxpVersion);
 	const [

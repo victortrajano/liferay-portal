@@ -14,13 +14,18 @@ import {BatchHttpLink} from '@apollo/client/link/batch-http';
 import {LocalStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {useEffect, useState} from 'react';
 import {Liferay} from '../services/liferay';
+import {liferayTypePolicies} from '../services/liferay/graphql/typePolicies';
 
 export default function useApollo() {
 	const [client, setClient] = useState();
 
 	useEffect(() => {
 		const init = async () => {
-			const cache = new InMemoryCache();
+			const cache = new InMemoryCache({
+				typePolicies: {
+					...liferayTypePolicies,
+				},
+			});
 			const batchLink = new BatchHttpLink({
 				headers: {
 					'x-csrf-token': Liferay.authToken,
@@ -30,7 +35,7 @@ export default function useApollo() {
 
 			await persistCache({
 				cache,
-				storage: new LocalStorageWrapper(window.localStorage),
+				storage: new LocalStorageWrapper(window.sessionStorage),
 			});
 
 			const apolloClient = new ApolloClient({

@@ -9,20 +9,17 @@
  * distribution rights of the Software.
  */
 
-import {useQuery} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {Formik} from 'formik';
-import {useEffect, useMemo, useState} from 'react';
-import client from '../../../../apolloClient';
-import {
-	addAdminDXPCloud,
-	addDXPCloudEnvironment,
-	getDXPCloudPageInfo,
-	updateAccountSubscriptionGroups,
-} from '../../../../common/services/liferay/graphql/queries';
+import {useCallback, useEffect, useState} from 'react';
 import {isLowercaseAndNumbers} from '../../../../common/utils/validations.form';
 import {STATUS_TAG_TYPE_NAMES} from '../../../../routes/customer-portal/utils/constants';
 import {Button, Input, Select} from '../../../components';
+import {useUpdateAccountSubscriptionGroup} from '../../../services/liferay/graphql/account-subscription-groups';
+import {useGetAccountSubscriptions} from '../../../services/liferay/graphql/account-subscriptions';
+import {useCreateAdminDXPCloud} from '../../../services/liferay/graphql/admin-dxp-cloud';
+import {useCreateDXPCloudEnvironment} from '../../../services/liferay/graphql/dxp-cloud-environments';
+import {useGetDXPCDataCenterRegions} from '../../../services/liferay/graphql/dxpc-data-center-regions';
 import getInitialDXPAdmin from '../../../utils/getInitialDXPAdmin';
 import Layout from '../Layout';
 import AdminInputs from './AdminInputs';
@@ -39,39 +36,46 @@ const SetupDXPCloudPage = ({
 }) => {
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState(true);
 
-	const {data} = useQuery(getDXPCloudPageInfo, {
-		variables: {
-			accountSubscriptionsFilter: `(accountKey eq '${project.accountKey}') and (hasDisasterDataCenterRegion eq true)`,
-		},
-	});
+	const [createDXPCloudEnvironment] = useCreateDXPCloudEnvironment();
+	const [createAdminDXPCloud] = useCreateAdminDXPCloud();
+	const [
+		updateAccountSubscriptionGroups,
+	] = useUpdateAccountSubscriptionGroup();
 
-	const dXPCDataCenterRegions = useMemo(
-		() =>
-			data?.c?.dXPCDataCenterRegions?.items.map(({name}) => ({
-				label: name,
-				value: name,
-			})) || [],
-		[data]
+	const {data: accountSubscriptionsData} = useGetAccountSubscriptions({
+		filter: `(accountKey eq '${project.accountKey}') and (hasDisasterDataCenterRegion eq true)`,
+	});
+	const {data: dxpcDataCenterRegionData} = useGetDXPCDataCenterRegions();
+
+	const hasDisasterRecovery = !!accountSubscriptionsData?.c
+		?.accountSubscriptions?.items;
+	const dxpcDataCenterRegions = dxpcDataCenterRegionData?.c?.dXPCDataCenterRegions?.items?.map(
+		({name, value}) => ({
+			label: name,
+			value,
+		})
 	);
 
-	const hasDisasterRecovery = !!data?.c?.accountSubscriptions?.items?.length;
+	const callbackSetFieldValue = useCallback(
+		(field, value) => setFieldValue(field, value),
+		[setFieldValue]
+	);
 
 	useEffect(() => {
-		if (dXPCDataCenterRegions.length) {
-			setFieldValue(
+		if (dxpcDataCenterRegions?.length) {
+			callbackSetFieldValue(
 				'dxp.dataCenterRegion',
-				dXPCDataCenterRegions[0].value
+				dxpcDataCenterRegions[0].value
 			);
 
 			if (hasDisasterRecovery) {
-				setFieldValue(
+				callbackSetFieldValue(
 					'dxp.disasterDataCenterRegion',
-					dXPCDataCenterRegions[0].value
+					dxpcDataCenterRegions[0].value
 				);
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dXPCDataCenterRegions, hasDisasterRecovery]);
+	}, [dxpcDataCenterRegions, hasDisasterRecovery, callbackSetFieldValue]);
 
 	useEffect(() => {
 		const hasTouched = !Object.keys(touched).length;
@@ -84,10 +88,9 @@ const SetupDXPCloudPage = ({
 		const dxp = values?.dxp;
 
 		if (dxp) {
-			const {data} = await client.mutate({
-				mutation: addDXPCloudEnvironment,
+			const {data} = createDXPCloudEnvironment({
 				variables: {
-					DXPCloudEnvironment: {
+					dxpCloudEnvironment: {
 						accountKey: project.accountKey,
 						dataCenterRegion: dxp.dataCenterRegion,
 						disasterDataCenterRegion: dxp.disasterDataCenterRegion,
@@ -102,8 +105,7 @@ const SetupDXPCloudPage = ({
 					data.c?.createDXPCloudEnvironment?.dxpCloudEnvironmentId;
 				await Promise.all(
 					dxp.admins.map(({email, firstName, github, lastName}) =>
-						client.mutate({
-							mutation: addAdminDXPCloud,
+						createAdminDXPCloud({
 							variables: {
 								AdminDXPCloud: {
 									dxpCloudEnvironmentId,
@@ -118,13 +120,12 @@ const SetupDXPCloudPage = ({
 					)
 				);
 
-				await client.mutate({
-					mutation: updateAccountSubscriptionGroups,
+				await updateAccountSubscriptionGroups({
 					variables: {
 						accountSubscriptionGroup: {
 							activationStatus: STATUS_TAG_TYPE_NAMES.inProgress,
 						},
-						id: subscriptionGroupId,
+						accountSubscriptionGroupId: subscriptionGroupId,
 					},
 				});
 
@@ -196,16 +197,16 @@ const SetupDXPCloudPage = ({
 						groupStyle="mb-0"
 						label="Primary Data Center Region"
 						name="dxp.dataCenterRegion"
-						options={dXPCDataCenterRegions}
+						options={dxpcDataCenterRegions}
 						required
 					/>
 
-					{!!hasDisasterRecovery && (
+					{hasDisasterRecovery && (
 						<Select
 							groupStyle="mb-0 pt-2"
 							label="Disaster Recovery Data Center Region"
 							name="dxp.disasterDataCenterRegion"
-							options={dXPCDataCenterRegions}
+							options={dxpcDataCenterRegions}
 							required
 						/>
 					)}

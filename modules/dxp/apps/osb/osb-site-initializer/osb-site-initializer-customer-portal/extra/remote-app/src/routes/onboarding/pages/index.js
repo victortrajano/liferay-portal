@@ -11,9 +11,11 @@
 
 import useRedirectURL from '../../../common/hooks/useRedirectURL';
 import {Liferay} from '../../../common/services/liferay';
+import {useCreateAccountFlag} from '../../../common/services/liferay/graphql/account-flags/mutations/useCreateAccountFlag';
 import {useGetAccountSubscriptionGroups} from '../../../common/services/liferay/graphql/account-subscription-groups';
 import {useGetKoroneikiAccounts} from '../../../common/services/liferay/graphql/koroneiki-accounts/queries/useGetKoroneikiAccounts';
 import {useGetUserAccount} from '../../../common/services/liferay/graphql/user-accounts';
+import {ROUTE_TYPES} from '../../../common/utils/constants';
 import {PRODUCT_TYPES} from '../../customer-portal/utils/constants/productTypes';
 import {useOnboardingContext} from '../context';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
@@ -46,6 +48,11 @@ const Pages = () => {
 		skip: userAccountLoading,
 	});
 
+	const [
+		createAccountFlag,
+		{called: createAccountFlagCalled},
+	] = useCreateAccountFlag();
+
 	const koroneikiAccount =
 		koroneikiAccountsData?.c?.koroneikiAccounts?.items[0];
 	const accountSubscriptionGroupDXPCloud =
@@ -59,6 +66,18 @@ const Pages = () => {
 	);
 
 	if (!koroneikiAccountsLoading && !accountSubscriptionGroupsLoading) {
+		if (!createAccountFlagCalled) {
+			createAccountFlag({
+				variables: {
+					accountFlag: {
+						accountKey: koroneikiAccount.accountKey,
+						finished: true,
+						name: ROUTE_TYPES.onboarding,
+					},
+				},
+			});
+		}
+
 		return stepsComponent[step].Component;
 	}
 

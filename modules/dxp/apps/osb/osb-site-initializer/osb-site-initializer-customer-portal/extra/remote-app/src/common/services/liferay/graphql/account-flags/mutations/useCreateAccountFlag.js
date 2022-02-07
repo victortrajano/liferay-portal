@@ -9,5 +9,16 @@
  * distribution rights of the Software.
  */
 
-export * from './queries/useGetAccountFlags';
-export * from './mutations/useCreateAccountFlag';
+import {gql, useMutation} from '@apollo/client';
+
+const CREATE_ACCOUNT_FLAG = gql`
+	mutation createAccountFlag($accountFlag: InputC_AccountFlag!) {
+		c {
+			createAccountFlag(AccountFlag: $accountFlag)
+		}
+	}
+`;
+
+export function useCreateAccountFlag() {
+	return useMutation(CREATE_ACCOUNT_FLAG);
+}

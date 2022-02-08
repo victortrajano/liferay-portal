@@ -9,8 +9,9 @@
  * distribution rights of the Software.
  */
 
-import {ApolloClient, InMemoryCache} from '@apollo/client';
+import {ApolloClient, InMemoryCache, from} from '@apollo/client';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
+import {RestLink} from 'apollo-link-rest';
 import {LocalStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {useEffect, useState} from 'react';
 import {Liferay} from '../services/liferay';
@@ -33,6 +34,18 @@ export default function useApollo() {
 				uri: `${Liferay.ThemeDisplay.getPortalURL()}/o/graphql`,
 			});
 
+			const LiferayURI = `${Liferay.ThemeDisplay.getPortalURL()}/o`;
+
+			const liferayRESTLink = new RestLink({
+				endpoints: {
+					'headless-delivery': `${LiferayURI}/headless-delivery/v1.0`,
+				},
+				headers: {
+					'x-csrf-token': Liferay.authToken,
+				},
+				uri: LiferayURI,
+			});
+
 			await persistCache({
 				cache,
 				storage: new LocalStorageWrapper(window.sessionStorage),
@@ -40,7 +53,7 @@ export default function useApollo() {
 
 			const apolloClient = new ApolloClient({
 				cache,
-				link: batchLink,
+				link: from([liferayRESTLink, batchLink]),
 			});
 
 			setClient(apolloClient);

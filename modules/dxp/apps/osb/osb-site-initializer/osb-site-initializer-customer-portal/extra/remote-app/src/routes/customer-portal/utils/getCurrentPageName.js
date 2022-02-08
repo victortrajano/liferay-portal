@@ -9,18 +9,13 @@
  * distribution rights of the Software.
  */
 
-import Guard from '../../common/containers/Guard';
-import '../../routes/customer-portal/styles/app.scss';
+export default function getCurrentPageName() {
+	const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
+	const pathSplit = pathname.split('/').filter(Boolean);
 
-import {AppContextProvider} from './context';
-import Pages from './pages';
+	if (pathSplit.length > 2) {
+		return pathSplit[2];
+	}
 
-const CustomerPortal = () => (
-	<AppContextProvider>
-		<Guard portal>
-			<Pages />
-		</Guard>
-	</AppContextProvider>
-);
-
-export default CustomerPortal;
+	return;
+}

@@ -13,8 +13,9 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {Liferay} from '../../services/liferay';
 import {useGetUserAccount} from '../../services/liferay/graphql/user-accounts';
 import OnboardingGuardRoute from './routes/Onboarding';
+import PortalGuardRoute from './routes/Portal';
 
-const Guard = ({children, onboarding}) => {
+const Guard = ({children, onboarding, portal}) => {
 	const {data, loading} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
 
 	if (!loading) {
@@ -25,6 +26,14 @@ const Guard = ({children, onboarding}) => {
 				<OnboardingGuardRoute userAccount={userAccount}>
 					{children}
 				</OnboardingGuardRoute>
+			);
+		}
+
+		if (portal) {
+			return (
+				<PortalGuardRoute userAccount={userAccount}>
+					{children}
+				</PortalGuardRoute>
 			);
 		}
 	}

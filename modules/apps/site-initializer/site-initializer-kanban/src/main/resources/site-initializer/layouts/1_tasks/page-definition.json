@@ -38,6 +38,11 @@
 											},
 											"value_i18n": {
 											}
+										},
+										"text": {
+											"value_i18n": {
+												"en_US": "Add Task"
+											}
 										}
 									}
 								}

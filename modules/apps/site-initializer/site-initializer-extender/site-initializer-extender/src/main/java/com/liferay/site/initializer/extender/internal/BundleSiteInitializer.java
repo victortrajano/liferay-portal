@@ -15,7 +15,6 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
@@ -161,15 +160,15 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
 
+import javax.servlet.ServletContext;
 import java.io.InputStream;
 import java.io.Serializable;
-
 import java.math.BigDecimal;
-
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -182,11 +181,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.servlet.ServletContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
 
 /**
  * @author Brian Wing Shun Chan
@@ -368,7 +362,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> documentsStringUtilReplaceValues = _invoke(
 				() -> _addDocuments(
 					serviceContext, siteNavigationMenuItemSettingsBuilder));
-			_invoke(() -> _addForms(serviceContext));
 			_invoke(
 				() -> _addFragmentEntries(
 					assetListEntryIdsStringUtilReplaceValues,
@@ -3329,9 +3322,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final JournalArticleLocalService _journalArticleLocalService;
 	private final JSONFactory _jsonFactory;
 	private final LayoutCopyHelper _layoutCopyHelper;
-	private final LayoutLocalService _layoutLocalService;
 	private final LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
+	private final LayoutLocalService _layoutLocalService;
 	private final LayoutPageTemplatesImporter _layoutPageTemplatesImporter;
 	private final LayoutPageTemplateStructureLocalService
 		_layoutPageTemplateStructureLocalService;

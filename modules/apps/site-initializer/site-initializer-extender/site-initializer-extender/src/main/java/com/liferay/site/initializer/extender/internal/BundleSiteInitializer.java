@@ -15,12 +15,12 @@
 package com.liferay.site.initializer.extender.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.commerce.account.constants.CommerceAccountConstants;
+import com.liferay.commerce.initializer.util.DDMFormImporter;
 import com.liferay.commerce.inventory.model.CommerceInventoryWarehouse;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.model.CPInstance;
@@ -31,7 +31,9 @@ import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.util.DefaultDDMStructureHelper;
@@ -158,15 +160,15 @@ import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemType;
 import com.liferay.site.navigation.type.SiteNavigationMenuItemTypeRegistry;
 import com.liferay.style.book.zip.processor.StyleBookEntryZipProcessor;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.wiring.BundleWiring;
 
+import javax.servlet.ServletContext;
 import java.io.InputStream;
 import java.io.Serializable;
-
 import java.math.BigDecimal;
-
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -180,11 +182,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.ServletContext;
-
-import org.osgi.framework.Bundle;
-import org.osgi.framework.wiring.BundleWiring;
-
 /**
  * @author Brian Wing Shun Chan
  */
@@ -194,6 +191,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		AccountResource.Factory accountResourceFactory,
 		AssetCategoryLocalService assetCategoryLocalService,
 		AssetListEntryLocalService assetListEntryLocalService, Bundle bundle,
+		DDMFormImporter ddmFormImporter,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
@@ -239,6 +237,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_assetCategoryLocalService = assetCategoryLocalService;
 		_assetListEntryLocalService = assetListEntryLocalService;
 		_bundle = bundle;
+		_ddmFormImporter = ddmFormImporter;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
@@ -363,7 +362,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 			Map<String, String> documentsStringUtilReplaceValues = _invoke(
 				() -> _addDocuments(
 					serviceContext, siteNavigationMenuItemSettingsBuilder));
-
 			_invoke(
 				() -> _addFragmentEntries(
 					assetListEntryIdsStringUtilReplaceValues,
@@ -381,6 +379,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(
 				() -> _addDDMTemplates(
 					_ddmStructureLocalService, serviceContext));
+
 			_invoke(
 				() -> _addJournalArticles(
 					_ddmStructureLocalService, _ddmTemplateLocalService,
@@ -423,10 +422,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 					() -> _addRemoteAppEntries(
 						documentsStringUtilReplaceValues, serviceContext));
 
+			Map<String, String> ddmFormStringUtilReplaceValues = _invoke(
+				() -> _addForms(
+					objectDefinitionIdsStringUtilReplaceValues,
+					serviceContext));
+
 			_invoke(
 				() -> _addLayoutsContent(
 					assetListEntryIdsStringUtilReplaceValues,
-					documentsStringUtilReplaceValues, layouts,
+					documentsStringUtilReplaceValues,
+					ddmFormStringUtilReplaceValues, layouts,
 					remoteAppEntryIdsStringUtilReplaceValues, serviceContext,
 					siteNavigationMenuItemSettingsBuilder.build()));
 		}
@@ -1337,6 +1342,52 @@ public class BundleSiteInitializer implements SiteInitializer {
 		).build();
 	}
 
+	private Map<String, String> _addForms(
+			Map<String, String> objectDefinitionsIdsStringUtilReplaceValues,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/forms");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, String> ddmFormStringUtilReplaceValues = new HashMap<>();
+
+		for (String resourcePath : resourcePaths) {
+			String json = _read(resourcePath);
+
+			json = StringUtil.replace(
+				json, "[$", "$]", objectDefinitionsIdsStringUtilReplaceValues);
+
+			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
+
+			_ddmFormImporter.importDDMForms(
+				jsonArray, serviceContext.getScopeGroupId(),
+				serviceContext.getUserId());
+		}
+
+		List<DDMFormInstance> ddmFormInstances =
+			DDMFormInstanceLocalServiceUtil.getFormInstances(
+				serviceContext.getScopeGroupId());
+
+		if (ddmFormInstances != null) {
+			for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
+				String name = ddmFormInstance.getName(
+					LocaleUtil.getSiteDefault());
+
+				ddmFormStringUtilReplaceValues.put(
+					"DDM_FORM_INSTANCE_ID:" + name,
+					String.valueOf(ddmFormInstance.getFormInstanceId()));
+			}
+		}
+
+		return ddmFormStringUtilReplaceValues;
+	}
+
+
 	private void _addFragmentEntries(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
@@ -1567,7 +1618,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 	private void _addLayoutContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
-			Map<String, String> documentsStringUtilReplaceValues, Layout layout,
+			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String> ddmFormStringUtilReplaceValues, Layout layout,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			String resourcePath, ServiceContext serviceContext)
 		throws Exception {
@@ -1587,6 +1639,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 				assetListEntryIdsStringUtilReplaceValues
 			).putAll(
 				documentsStringUtilReplaceValues
+			).putAll(
+				ddmFormStringUtilReplaceValues
 			).putAll(
 				remoteAppEntryIdsStringUtilReplaceValues
 			).build());
@@ -1806,6 +1860,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private void _addLayoutsContent(
 			Map<String, String> assetListEntryIdsStringUtilReplaceValues,
 			Map<String, String> documentsStringUtilReplaceValues,
+			Map<String, String> ddmFormStringUtilReplaceValues,
 			Map<String, Layout> layouts,
 			Map<String, String> remoteAppEntryIdsStringUtilReplaceValues,
 			ServiceContext serviceContext,
@@ -1816,7 +1871,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 		for (Map.Entry<String, Layout> entry : layouts.entrySet()) {
 			_addLayoutContent(
 				assetListEntryIdsStringUtilReplaceValues,
-				documentsStringUtilReplaceValues, entry.getValue(),
+				documentsStringUtilReplaceValues,
+				ddmFormStringUtilReplaceValues, entry.getValue(),
 				remoteAppEntryIdsStringUtilReplaceValues, entry.getKey(),
 				serviceContext);
 		}
@@ -3254,6 +3310,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final Bundle _bundle;
 	private final ClassLoader _classLoader;
 	private CommerceReferencesHolder _commerceReferencesHolder;
+	private final DDMFormImporter _ddmFormImporter;
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMTemplateLocalService _ddmTemplateLocalService;
 	private final DefaultDDMStructureHelper _defaultDDMStructureHelper;
@@ -3265,9 +3322,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 	private final JournalArticleLocalService _journalArticleLocalService;
 	private final JSONFactory _jsonFactory;
 	private final LayoutCopyHelper _layoutCopyHelper;
-	private final LayoutLocalService _layoutLocalService;
 	private final LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
+	private final LayoutLocalService _layoutLocalService;
 	private final LayoutPageTemplatesImporter _layoutPageTemplatesImporter;
 	private final LayoutPageTemplateStructureLocalService
 		_layoutPageTemplateStructureLocalService;

@@ -16,6 +16,7 @@ package com.liferay.site.initializer.extender.internal;
 
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.commerce.initializer.util.DDMFormImporter;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
@@ -95,7 +96,7 @@ public class SiteInitializerExtender
 			new SiteInitializerExtension(
 				_accountResourceFactory, _assetCategoryLocalService,
 				_assetListEntryLocalService, bundle, _bundleContext,
-				_ddmStructureLocalService, _ddmTemplateLocalService,
+				_ddmFormImporter,_ddmStructureLocalService, _ddmTemplateLocalService,
 				_defaultDDMStructureHelper, _dlURLHelper,
 				_documentFolderResourceFactory, _documentResourceFactory,
 				_fragmentsImporter, _groupLocalService,
@@ -164,6 +165,9 @@ public class SiteInitializerExtender
 
 	private BundleContext _bundleContext;
 	private BundleTracker<?> _bundleTracker;
+
+	@Reference
+	private DDMFormImporter _ddmFormImporter;
 
 	@Reference
 	private DDMStructureLocalService _ddmStructureLocalService;

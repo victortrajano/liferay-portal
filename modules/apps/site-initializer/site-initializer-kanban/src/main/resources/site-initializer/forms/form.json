@@ -1,0 +1,255 @@
+[
+	{
+		"ddmFormSettings": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fieldValues": [
+				{
+					"fieldReference": "requireAuthentication",
+					"instanceId": "",
+					"name": "requireAuthentication",
+					"value": "false"
+				},
+				{
+					"fieldReference": "requireCaptcha",
+					"instanceId": "",
+					"name": "requireCaptcha",
+					"value": "false"
+				},
+				{
+					"fieldReference": "autosaveEnabled",
+					"instanceId": "",
+					"name": "autosaveEnabled",
+					"value": "true"
+				},
+				{
+					"fieldReference": "redirectURL",
+					"instanceId": "",
+					"name": "redirectURL",
+					"value": ""
+				},
+				{
+					"fieldReference": "storageType",
+					"instanceId": "",
+					"name": "storageType",
+					"value": "[\"object\"]"
+				},
+				{
+					"instanceId": "",
+					"name": "objectDefinitionId",
+					"fieldReference": "objectDefinitionId",
+					"value": "[\"[$OBJECT_DEFINITION_ID:Task$]\"]"
+				},
+				{
+					"fieldReference": "workflowDefinition",
+					"instanceId": "",
+					"name": "workflowDefinition",
+					"value": "[\"no-workflow\"]"
+				},
+				{
+					"fieldReference": "sendEmailNotification",
+					"instanceId": "",
+					"name": "sendEmailNotification",
+					"value": "false"
+				},
+				{
+					"fieldReference": "emailFromName",
+					"instanceId": "",
+					"name": "emailFromName",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailFromAddress",
+					"instanceId": "",
+					"name": "emailFromAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailToAddress",
+					"instanceId": "",
+					"name": "emailToAddress",
+					"value": ""
+				},
+				{
+					"fieldReference": "emailSubject",
+					"instanceId": "",
+					"name": "emailSubject",
+					"value": ""
+				},
+				{
+					"fieldReference": "published",
+					"instanceId": "",
+					"name": "published",
+					"value": "true"
+				}
+			]
+		},
+		"ddmStructure": {
+			"availableLanguageIds": [
+				"[$LOCALE$]"
+			],
+			"defaultLanguageId": "[$LOCALE$]",
+			"fields": [
+				{
+					"autocomplete": false,
+					"dataType": "string",
+					"displayStyle": "singleline",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Title"
+					},
+					"localizable": true,
+					"name": "taskTitle",
+					"objectFieldName": "[\"taskTitle\"]",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "Option"
+							},
+							"value": "Option"
+						}
+					],
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"type": "text"
+				},
+				{
+					"dataSourceType": "manual",
+					"dataType": "string",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Status"
+					},
+					"localizable": true,
+					"multiple": false,
+					"name": "taskStatus",
+					"options": [
+						{
+							"reference": "done",
+							"label": {
+								"[$LOCALE$]": "Done"
+							},
+							"value": "done"
+						},
+						{
+							"reference": "inprogress",
+							"label": {
+								"[$LOCALE$]": "In Progress"
+							},
+							"value": "inprogress"
+						},
+						{
+							"reference": "todo",
+							"label": {
+								"[$LOCALE$]": "To Do"
+							},
+							"value": "todo"
+						}
+					],
+					"objectFieldName": "[\"taskStatus\"]",
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"type": "select"
+				},
+				{
+					"dataType": "integer",
+					"fieldNamespace": "",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Progress"
+					},
+					"localizable": true,
+					"name": "progress",
+					"objectFieldName": "[\"progress\"]",
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"type": "numeric"
+				},
+				{
+					"autocomplete": false,
+					"dataSourceType": "",
+					"dataType": "string",
+					"displayStyle": "singleline",
+					"indexType": "keyword",
+					"label": {
+						"[$LOCALE$]": "Task Description"
+					},
+					"localizable": true,
+					"name": "taskDescription",
+					"objectFieldName": "[\"taskDescription\"]",
+					"options": [
+						{
+							"label": {
+								"[$LOCALE$]": "Option"
+							},
+							"value": "Option"
+						}
+					],
+					"readOnly": false,
+					"repeatable": false,
+					"required": false,
+					"showLabel": true,
+					"type": "text"
+				}
+			]
+		},
+		"ddmStructureLayout": {
+			"defaultLanguageId": "[$LOCALE$]",
+			"pages": [
+				{
+					"description": {
+						"[$LOCALE$]": ""
+					},
+					"rows": [
+						{
+							"columns": [
+								{
+									"fieldNames": [
+										"taskTitle"
+									],
+									"size": 4
+								},
+								{
+									"fieldNames": [
+										"taskStatus"
+									],
+									"size": 4
+								},
+								{
+									"fieldNames": [
+										"progress"
+									],
+									"size": 4
+								}
+							]
+						},
+						{
+							"columns": [
+								{
+									"fieldNames": [
+										"taskDescription"
+									],
+									"size": 12
+								}
+							]
+						}
+					],
+					"title": {
+						"[$LOCALE$]": "Add Detail"
+					}
+				}
+			],
+			"paginationMode": "multi-pages"
+		},
+		"description": "",
+		"name": "Add Task"
+	}
+]

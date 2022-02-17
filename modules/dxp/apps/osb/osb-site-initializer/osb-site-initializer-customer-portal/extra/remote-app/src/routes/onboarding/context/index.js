@@ -15,10 +15,12 @@ import reducer from './reducer';
 
 const OnboardingContext = createContext();
 
+const defaultState = {
+	step: ONBOARDING_STEP_TYPES.welcome,
+};
+
 const OnboardingProvider = ({children}) => {
-	const [state, dispatch] = useReducer(reducer, {
-		step: ONBOARDING_STEP_TYPES.welcome,
-	});
+	const [state, dispatch] = useReducer(reducer, defaultState);
 
 	return (
 		<OnboardingContext.Provider value={[state, dispatch]}>

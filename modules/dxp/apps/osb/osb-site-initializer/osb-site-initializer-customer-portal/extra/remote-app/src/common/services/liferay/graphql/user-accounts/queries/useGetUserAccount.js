@@ -27,6 +27,11 @@ const GET_USER_ACCOUNT = gql`
 			id
 			image
 			name
+			roleBriefs {
+				id
+				name
+			}
+			isLiferayStaff @client
 			selectedAccountBrief @client {
 				externalReferenceCode
 				hasAccountAdministratorRole

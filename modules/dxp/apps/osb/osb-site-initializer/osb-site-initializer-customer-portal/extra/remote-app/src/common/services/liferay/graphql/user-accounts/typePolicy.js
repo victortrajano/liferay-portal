@@ -22,6 +22,14 @@ export const userAccountsTypePolicy = {
 	},
 	UserAccount: {
 		fields: {
+			isLiferayStaff: {
+				read(_, {readField}) {
+					return !!readField('roleBriefs')?.find(
+						(roleBrief) =>
+							readField('name', roleBrief) === 'Administrator'
+					);
+				},
+			},
 			selectedAccountBrief: {
 				read(_, {readField}) {
 					const accountKey = searchParams.get(

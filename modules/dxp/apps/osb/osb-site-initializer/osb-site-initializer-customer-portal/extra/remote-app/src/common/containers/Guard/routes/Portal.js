@@ -19,12 +19,16 @@ const PortalGuardRoute = ({children, userAccount}) => {
 	const setRedirectURL = useRedirectURL();
 
 	const currentPageName = getCurrentPageName();
-	const notCurrentPageNameHome =
-		currentPageName && currentPageName !== PAGE_TYPES.home;
+	const isCurrentPageNameHome =
+		!currentPageName || currentPageName === PAGE_TYPES.home;
 
 	const hasSelectedAccountBrief = !!userAccount.selectedAccountBrief;
 
-	if (!hasSelectedAccountBrief && notCurrentPageNameHome) {
+	if (
+		!hasSelectedAccountBrief &&
+		!userAccount.isLiferayStaff &&
+		!isCurrentPageNameHome
+	) {
 		const hasOneAccountBrief = userAccount.accountBriefs?.length === 1;
 
 		setRedirectURL(

@@ -11,21 +11,20 @@
 
 import {LOCATIONS} from '../../../common/utils/constants';
 import {actionTypes} from '../context/reducer';
-import {ONBOARDING_STEP_TYPES} from './constants';
 
-export default function setupDXPCloudFormHandle(
+export default function pageFormHandle(
 	dispatch,
-	isSuccess,
+	isDispatch,
+	nextStep,
 	koroneikiAccount,
 	setRedirectURL
 ) {
-	if (isSuccess) {
+	if (isDispatch) {
 		dispatch({
-			payload: ONBOARDING_STEP_TYPES.successDxpCloud,
+			payload: nextStep,
 			type: actionTypes.CHANGE_STEP,
 		});
-	}
-	else {
+	} else {
 		setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey));
 	}
 }

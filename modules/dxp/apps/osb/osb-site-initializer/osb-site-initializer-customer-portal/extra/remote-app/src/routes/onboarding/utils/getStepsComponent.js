@@ -14,8 +14,7 @@ import SetupDXPCloudForm from '../../../common/containers/setup-forms/SetupDXPCl
 import SuccessDXPCloud from '../pages/SuccessDXPCloud';
 import Welcome from '../pages/Welcome';
 import {ONBOARDING_STEP_TYPES} from './constants';
-import inviteTeamMembersFormHandle from './inviteTeamMembersFormHandle';
-import setupDXPCloudFormHandle from './setupDXPCloudFormHandle';
+import pageFormHandle from './pageFormHandle';
 
 export default function getStepsComponent(
 	accountSubscriptionGroup,
@@ -28,9 +27,10 @@ export default function getStepsComponent(
 			Component: (
 				<InviteTeamMembersForm
 					handlePage={() =>
-						inviteTeamMembersFormHandle(
+						pageFormHandle(
 							dispatch,
 							!!accountSubscriptionGroup,
+							ONBOARDING_STEP_TYPES.dxpCloud,
 							koroneikiAccount,
 							setRedirectURL
 						)
@@ -44,9 +44,10 @@ export default function getStepsComponent(
 			Component: (
 				<SetupDXPCloudForm
 					handlePage={(isSuccess) =>
-						setupDXPCloudFormHandle(
+						pageFormHandle(
 							dispatch,
 							isSuccess,
+							ONBOARDING_STEP_TYPES.successDxpCloud,
 							koroneikiAccount,
 							setRedirectURL
 						)

@@ -65,7 +65,11 @@ const Pages = () => {
 		setRedirectURL
 	);
 
-	if (!koroneikiAccountsLoading && !accountSubscriptionGroupsLoading) {
+	if (
+		!userAccountLoading &&
+		!koroneikiAccountsLoading &&
+		!accountSubscriptionGroupsLoading
+	) {
 		if (!createAccountFlagCalled) {
 			createAccountFlag({
 				variables: {

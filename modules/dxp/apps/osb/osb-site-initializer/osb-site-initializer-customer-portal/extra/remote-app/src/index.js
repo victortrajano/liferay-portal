@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom';
 
 import './common/styles/global.scss';
 import {ClayIconSpriteContext} from '@clayui/icon';
-import AppContextProvider from './common/context/AppPropertiesProvider';
+import AppPropertiesProvider from './common/context/AppPropertiesProvider';
 import useApollo from './common/hooks/useApollo';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import CustomerPortal from './routes/customer-portal';
@@ -37,9 +37,9 @@ const CustomerPortalApp = ({route, ...properties}) => {
 
 	return (
 		<ApolloProvider client={apolloClient}>
-			<AppContextProvider properties={properties}>
+			<AppPropertiesProvider properties={properties}>
 				{RouteApps[route]}
-			</AppContextProvider>
+			</AppPropertiesProvider>
 		</ApolloProvider>
 	);
 };

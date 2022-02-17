@@ -14,7 +14,7 @@ import ClayIcon from '@clayui/icon';
 import {useEffect, useState} from 'react';
 import client from '../../../../../apolloClient';
 import {Button} from '../../../../../common/components';
-import {useApplicationProvider} from '../../../../../common/context/AppPropertiesProvider';
+import {useAppPropertiesContext} from '../../../../../common/context/AppPropertiesProvider';
 import {
 	getAccountSubscriptions,
 	getAccountSubscriptionsTerms,
@@ -34,7 +34,7 @@ const ActivationKeysInputs = ({
 	const {
 		provisioningServerAPI,
 		submitSupportTicketURL,
-	} = useApplicationProvider();
+	} = useAppPropertiesContext();
 
 	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
 

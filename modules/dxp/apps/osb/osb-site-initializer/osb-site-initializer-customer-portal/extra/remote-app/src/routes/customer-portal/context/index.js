@@ -11,7 +11,7 @@
 
 import {createContext, useContext, useEffect, useReducer} from 'react';
 import client from '../../../apolloClient';
-import {useApplicationProvider} from '../../../common/context/AppPropertiesProvider';
+import {useAppPropertiesContext} from '../../../common/context/AppPropertiesProvider';
 import {Liferay} from '../../../common/services/liferay';
 import {
 	getAccountByExternalReferenceCode,
@@ -42,7 +42,7 @@ const EVENT_OPTION = {
 };
 
 const AppContextProvider = ({children}) => {
-	const {liferayWebDAV, oktaAPI, page} = useApplicationProvider();
+	const {liferayWebDAV, oktaAPI, page} = useAppPropertiesContext();
 	const eventUserAccount = Liferay.publish(
 		CUSTOM_EVENT_TYPES.userAccount,
 		EVENT_OPTION
@@ -217,8 +217,7 @@ const AppContextProvider = ({children}) => {
 							accountBrief =
 								dataAccount?.accountByExternalReferenceCode;
 						}
-					}
-					else {
+					} else {
 						accountBrief = user.accountBriefs?.find(
 							(accountBrief) =>
 								accountBrief.externalReferenceCode ===

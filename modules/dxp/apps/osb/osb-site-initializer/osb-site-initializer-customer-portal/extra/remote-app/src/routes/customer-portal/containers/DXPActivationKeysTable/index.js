@@ -15,7 +15,7 @@ import {ClayTooltipProvider} from '@clayui/tooltip';
 import {useEffect, useState} from 'react';
 import RoundedGroupButtons from '../../../../common/components/RoundedGroupButtons';
 import Table from '../../../../common/components/Table';
-import {useApplicationProvider} from '../../../../common/context/AppPropertiesProvider';
+import {useAppPropertiesContext} from '../../../../common/context/AppPropertiesProvider';
 import {getActivationLicenseKey} from '../../../../common/services/liferay/rest/raysource/LicenseKeys';
 import {useCustomerPortal} from '../../context';
 import {ALERT_DOWNLOAD_TYPE} from '../../utils/constants/alertDownloadType';
@@ -44,7 +44,7 @@ const PAGE = 1;
 
 const DXPActivationKeysTable = ({project, sessionId}) => {
 	const [{liferayWebDAV}] = useCustomerPortal();
-	const {provisioningServerAPI} = useApplicationProvider();
+	const {provisioningServerAPI} = useAppPropertiesContext();
 
 	const [activationKeys, setActivationKeys] = useState([]);
 	const [statusBar, setStatusBar] = useState({});

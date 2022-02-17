@@ -11,7 +11,7 @@
 
 import {createContext, useContext} from 'react';
 
-const defaultProperties = {
+const stateProperties = {
 	articleAccountSupportURL: '',
 	articleDeployingActivationKeysURL: '',
 	liferayWebDAV: '',
@@ -22,14 +22,16 @@ const defaultProperties = {
 	submitSupportTicketURL: '',
 };
 
-export const AppContext = createContext(defaultProperties);
+export const AppPropertiesContext = createContext(stateProperties);
 
-const AppContextProvider = ({children, properties}) => (
-	<AppContext.Provider value={properties}>{children}</AppContext.Provider>
+const AppPropertiesProvider = ({children, properties}) => (
+	<AppPropertiesContext.Provider value={properties}>
+		{children}
+	</AppPropertiesContext.Provider>
 );
 
-export default AppContextProvider;
+export default AppPropertiesProvider;
 
-const useApplicationProvider = () => useContext(AppContext);
+const useAppPropertiesContext = () => useContext(AppPropertiesContext);
 
-export {useApplicationProvider};
+export {useAppPropertiesContext};

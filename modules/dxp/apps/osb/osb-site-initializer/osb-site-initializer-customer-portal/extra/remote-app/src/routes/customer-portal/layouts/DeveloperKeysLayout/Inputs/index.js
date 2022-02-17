@@ -15,7 +15,7 @@ import ClayIcon from '@clayui/icon';
 import {useEffect, useState} from 'react';
 import client from '../../../../../apolloClient';
 import {Button} from '../../../../../common/components';
-import {useApplicationProvider} from '../../../../../common/context/AppPropertiesProvider';
+import {useAppPropertiesContext} from '../../../../../common/context/AppPropertiesProvider';
 import {getListTypeDefinitions} from '../../../../../common/services/liferay/graphql/queries';
 import {getDevelopmentLicenseKey} from '../../../../../common/services/liferay/rest/raysource/LicenseKeys';
 import downloadFromBlob from '../../../../../common/utils/downloadFromBlob';
@@ -42,7 +42,7 @@ const DeveloperKeysInputs = ({
 	const {
 		articleDeployingActivationKeysURL,
 		provisioningServerAPI,
-	} = useApplicationProvider();
+	} = useAppPropertiesContext();
 	const [dxpVersions, setDxpVersions] = useState([]);
 	const [selectedVersion, setSelectedVersion] = useState(dxpVersion);
 	const [

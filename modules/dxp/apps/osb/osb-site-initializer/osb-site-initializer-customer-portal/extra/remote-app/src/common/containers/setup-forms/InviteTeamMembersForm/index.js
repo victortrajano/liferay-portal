@@ -12,9 +12,10 @@
 import {useMutation} from '@apollo/client';
 import ClayForm from '@clayui/form';
 import {Formik} from 'formik';
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
+import client from '../../../../apolloClient';
 import {Badge, Button} from '../../../components';
-import {useApplicationProvider} from '../../../context/AppPropertiesProvider';
+import {useAppPropertiesContext} from '../../../context/AppPropertiesProvider';
 import {Liferay} from '../../../services/liferay';
 import {
 	addTeamMembersInvitation,
@@ -54,7 +55,7 @@ const InviteTeamMembersPage = ({
 	const {
 		articleAccountSupportURL,
 		provisioningServerAPI,
-	} = useApplicationProvider();
+	} = useAppPropertiesContext();
 
 	const [addTeamMemberInvitation, {error: addTeamMemberError}] = useMutation(
 		addTeamMembersInvitation

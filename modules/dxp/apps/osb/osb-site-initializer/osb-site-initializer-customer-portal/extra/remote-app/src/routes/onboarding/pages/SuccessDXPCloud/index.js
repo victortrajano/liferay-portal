@@ -11,12 +11,13 @@
 
 import {Button} from '../../../../common/components';
 import Layout from '../../../../common/containers/setup-forms/Layout';
-import {PAGE_ROUTER_TYPES} from '../../../../common/utils/constants';
+import useRedirectURL from '../../../../common/hooks/useRedirectURL';
+import {LOCATIONS} from '../../../../common/utils/constants';
 
-const SuccessDXPCloud = ({project}) => {
-	const onClickDone = () => {
-		window.location.href = PAGE_ROUTER_TYPES.project(project.accountKey);
-	};
+const SuccessDXPCloud = ({koroneikiAccount}) => {
+	const setRedirectURL = useRedirectURL();
+	const onClickDone = () =>
+		setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey));
 
 	return (
 		<Layout

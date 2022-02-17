@@ -59,7 +59,7 @@ export default function getStepsComponent(
 			),
 		},
 		[ONBOARDING_STEP_TYPES.successDxpCloud]: {
-			Component: <SuccessDXPCloud project={koroneikiAccount} />,
+			Component: <SuccessDXPCloud koroneikiAccount={koroneikiAccount} />,
 		},
 		[ONBOARDING_STEP_TYPES.welcome]: {
 			Component: <Welcome />,

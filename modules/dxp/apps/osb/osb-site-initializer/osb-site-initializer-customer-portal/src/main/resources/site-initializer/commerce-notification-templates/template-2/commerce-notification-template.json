@@ -12,5 +12,5 @@
 		"en-US": "Customer Portal email"
 	},
 	"to": "[%EMAIL%]",
-	"type": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TeamMembersInvitation$]#create"
+	"type": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TeamMemberInvitation$]#create"
 }

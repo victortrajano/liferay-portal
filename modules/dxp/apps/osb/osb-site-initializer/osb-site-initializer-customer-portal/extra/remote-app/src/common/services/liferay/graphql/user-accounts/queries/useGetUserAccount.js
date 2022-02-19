@@ -10,6 +10,7 @@
  */
 
 import {gql, useQuery} from '@apollo/client';
+import {CUSTOM_EVENT_TYPES} from '../../../../../../routes/customer-portal/utils/constants';
 
 const GET_USER_ACCOUNT = gql`
 	query getUserAccount($userAccountId: Long!) {
@@ -42,8 +43,17 @@ const GET_USER_ACCOUNT = gql`
 	}
 `;
 
+const eventUserAccount = Liferay.publish(CUSTOM_EVENT_TYPES.userAccount, {
+	async: true,
+	fireOnce: true,
+});
+
 export function useGetUserAccount(userAccountId, options = {skip: false}) {
 	return useQuery(GET_USER_ACCOUNT, {
+		onCompleted: (data) =>
+			eventUserAccount.fire({
+				detail: data.userAccount,
+			}),
 		skip: options.skip,
 		variables: {
 			userAccountId,

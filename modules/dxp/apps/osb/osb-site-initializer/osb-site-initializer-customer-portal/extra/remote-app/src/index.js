@@ -29,7 +29,7 @@ const RouteApps = {
 };
 
 const CustomerPortalApp = ({route, ...properties}) => {
-	const apolloClient = useApollo();
+	const apolloClient = useApollo(properties.oktaAPI);
 
 	if (!apolloClient) {
 		return <ClayLoadingIndicator />;

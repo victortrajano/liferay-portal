@@ -9,15 +9,18 @@
  * distribution rights of the Software.
  */
 
-import {ApolloClient, InMemoryCache, from} from '@apollo/client';
+import {ApolloClient, InMemoryCache, from, split} from '@apollo/client';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
 import {RestLink} from 'apollo-link-rest';
 import {LocalStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {useEffect, useState} from 'react';
 import {Liferay} from '../services/liferay';
 import {liferayTypePolicies} from '../services/liferay/graphql/typePolicies';
+import {OKTA_OPERATIONS} from '../utils/constants/oktaOperations';
 
-export default function useApollo() {
+const LiferayURI = `${Liferay.ThemeDisplay.getPortalURL()}/o`;
+
+export default function useApollo(oktaAPI) {
 	const [client, setClient] = useState();
 
 	useEffect(() => {
@@ -31,10 +34,8 @@ export default function useApollo() {
 				headers: {
 					'x-csrf-token': Liferay.authToken,
 				},
-				uri: `${Liferay.ThemeDisplay.getPortalURL()}/o/graphql`,
+				uri: `${LiferayURI}/graphql`,
 			});
-
-			const LiferayURI = `${Liferay.ThemeDisplay.getPortalURL()}/o`;
 
 			const liferayRESTLink = new RestLink({
 				endpoints: {
@@ -46,6 +47,18 @@ export default function useApollo() {
 				uri: LiferayURI,
 			});
 
+			const oktaRESTLink = new RestLink({
+				credentials: 'include',
+				uri: oktaAPI,
+			});
+
+			const restLink = split(
+				(operation) =>
+					OKTA_OPERATIONS.includes(operation.operationName),
+				oktaRESTLink,
+				liferayRESTLink
+			);
+
 			await persistCache({
 				cache,
 				storage: new LocalStorageWrapper(window.sessionStorage),
@@ -53,14 +66,14 @@ export default function useApollo() {
 
 			const apolloClient = new ApolloClient({
 				cache,
-				link: from([liferayRESTLink, batchLink]),
+				link: from([restLink, batchLink]),
 			});
 
 			setClient(apolloClient);
 		};
 
 		init();
-	}, []);
+	}, [oktaAPI]);
 
 	return client;
 }

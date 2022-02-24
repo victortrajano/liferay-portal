@@ -9,7 +9,4 @@
  * distribution rights of the Software.
  */
 
-export const QUERY_OPERATIONS = {
-	okta: ['getCurrentSession'],
-	provisioning: ['createOrUpdateAccountProvisioning'],
-};
+export * from './mutations/useCreateOrUpdateAccount';

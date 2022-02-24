@@ -62,7 +62,9 @@ export default function useApollo(oktaAPI, provisioningServerAPI) {
 			});
 
 			const ProvisioningAuthLink = setContext((_, {headers}) => {
-				const authToken = localStorage.getItem(STORAGE_KEYS.authToken);
+				const authToken = sessionStorage.getItem(
+					STORAGE_KEYS.authToken
+				);
 
 				return {
 					headers: {

@@ -14,19 +14,29 @@ export const koroneikiAccountsTypePolicy = {
 		fields: {
 			accountBrief: {
 				read(_, {readField, toReference}) {
-					const accountBriefRef = toReference({
-						__typename: 'AccountBrief',
-						externalReferenceCode: readField('accountKey'),
-					});
+					const accountRef =
+						toReference({
+							__typename: 'AccountBrief',
+							externalReferenceCode: readField('accountKey'),
+						}) ||
+						toReference({
+							__typename: 'Account',
+							externalReferenceCode: readField('accountKey'),
+						});
 
-					if (accountBriefRef) {
+					if (accountRef) {
 						return {
-							id: readField('id', accountBriefRef),
-							name: readField('name', accountBriefRef),
+							id: readField('id', accountRef),
+							name: readField('name', accountRef),
 						};
 					}
 
-					return;
+					return null;
+				},
+			},
+			maxRequestors: {
+				read(maxRequestors) {
+					return maxRequestors < 1 ? 1 : maxRequestors;
 				},
 			},
 		},

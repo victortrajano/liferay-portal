@@ -14,13 +14,18 @@ import {gql, useMutation} from '@apollo/client';
 const CREATE_TEAM_MEMBER_INVITATION = gql`
 	mutation createTeamMemberInvitation(
 		$scopeKey: String!
-		$teamMemberInvitation: InputC_TeamMembersInvitation!
+		$teamMemberInvitation: InputC_TeamMemberInvitation!
 	) {
 		c {
 			createTeamMemberInvitation(
 				scopeKey: $scopeKey
 				TeamMemberInvitation: $teamMemberInvitation
-			)
+			) {
+				teamMemberInvitationId
+				accountKey
+				email
+				role
+			}
 		}
 	}
 `;

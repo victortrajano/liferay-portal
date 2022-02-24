@@ -16,6 +16,7 @@ import {dxpCloudEnvironmentsTypePolicy} from './dxp-cloud-environments/typePolic
 import {dxpcDataCenterRegionsTypePolicy} from './dxpc-data-center-regions/typePolicy';
 import {koroneikiAccountsTypePolicy} from './koroneiki-accounts/typePolicy';
 import {structuredContentsTypePolicy} from './structured-contents/typePolicy';
+import {teamMemberInvitationsTypePolicy} from './team-member-invitations/typePolicy';
 import {userAccountsTypePolicy} from './user-accounts/typePolicy';
 
 export const liferayTypePolicies = {
@@ -27,7 +28,11 @@ export const liferayTypePolicies = {
 	...dxpCloudEnvironmentsTypePolicy,
 	...koroneikiAccountsTypePolicy,
 	...structuredContentsTypePolicy,
+	...teamMemberInvitationsTypePolicy,
 	...userAccountsTypePolicy,
+	Mutationc: {
+		merge: true,
+	},
 	c: {
 		merge: true,
 	},

@@ -10,10 +10,12 @@
  */
 
 import {gql, useQuery} from '@apollo/client';
+import {STORAGE_KEYS} from '../../../../../utils/constants/storageKeys';
+import {storage} from '../../../../liferay/storage';
 
 const GET_CURRENT_SESSION = gql`
-	query getCurrentSession() {
-		session @rest(type: "Session" path: "/sessions/me") {
+	query getCurrentSession {
+		session @rest(type: "Session", path: "/sessions/me") {
 			id
 			login
 			userId
@@ -27,6 +29,9 @@ const GET_CURRENT_SESSION = gql`
 
 export function useGetCurrentSession(options = {skip: false}) {
 	return useQuery(GET_CURRENT_SESSION, {
+		fetchPolicy: 'cache-and-network',
+		onCompleted: (data) =>
+			storage.setItem(STORAGE_KEYS.authToken, data?.session?.id),
 		skip: options.skip,
 	});
 }

@@ -12,13 +12,15 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {Liferay} from '../../services/liferay';
 import {useGetUserAccount} from '../../services/liferay/graphql/user-accounts';
+import {useGetCurrentSession} from '../../services/okta/graphql/sessions';
 import OnboardingGuardRoute from './routes/Onboarding';
 import PortalGuardRoute from './routes/Portal';
 
 const Guard = ({children, onboarding, portal}) => {
 	const {data, loading} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
+	const {loading: currentSessionLoading} = useGetCurrentSession();
 
-	if (!loading) {
+	if (!loading && !currentSessionLoading) {
 		const {userAccount} = data;
 
 		if (onboarding) {

@@ -9,9 +9,7 @@
  * distribution rights of the Software.
  */
 
-const APP_PREFFIX = 'liferay-customer-portal';
-
-export const STORAGE_KEYS = {
-	authToken: `${APP_PREFFIX}-auth-token`,
-	quickLinksExpanded: `${APP_PREFFIX}-quick-links-expanded`,
+export const QUERY_OPERATIONS = {
+	okta: ['getCurrentSession'],
+	provisioning: ['createOrUpdateAccount'],
 };

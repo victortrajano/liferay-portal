@@ -9,4 +9,8 @@
  * distribution rights of the Software.
  */
 
-export const OKTA_OPERATIONS = ['getCurrentSession'];
+import {sessionsTypePolicy} from './sessions/typePolicy';
+
+export const oktaTypePolicies = {
+	...sessionsTypePolicy,
+};

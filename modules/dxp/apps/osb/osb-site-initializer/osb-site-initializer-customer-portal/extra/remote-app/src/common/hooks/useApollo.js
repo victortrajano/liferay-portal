@@ -11,16 +11,19 @@
 
 import {ApolloClient, InMemoryCache, from, split} from '@apollo/client';
 import {BatchHttpLink} from '@apollo/client/link/batch-http';
+import {setContext} from '@apollo/client/link/context';
 import {RestLink} from 'apollo-link-rest';
 import {LocalStorageWrapper, persistCache} from 'apollo3-cache-persist';
 import {useEffect, useState} from 'react';
 import {Liferay} from '../services/liferay';
 import {liferayTypePolicies} from '../services/liferay/graphql/typePolicies';
-import {OKTA_OPERATIONS} from '../utils/constants/oktaOperations';
+import {oktaTypePolicies} from '../services/okta/graphql/typePolicies';
+import {QUERY_OPERATIONS} from '../utils/constants/queryOperations';
+import {STORAGE_KEYS} from '../utils/constants/storageKeys';
 
 const LiferayURI = `${Liferay.ThemeDisplay.getPortalURL()}/o`;
 
-export default function useApollo(oktaAPI) {
+export default function useApollo(oktaAPI, provisioningServerAPI) {
 	const [client, setClient] = useState();
 
 	useEffect(() => {
@@ -28,8 +31,10 @@ export default function useApollo(oktaAPI) {
 			const cache = new InMemoryCache({
 				typePolicies: {
 					...liferayTypePolicies,
+					...oktaTypePolicies,
 				},
 			});
+
 			const batchLink = new BatchHttpLink({
 				headers: {
 					'x-csrf-token': Liferay.authToken,
@@ -52,11 +57,33 @@ export default function useApollo(oktaAPI) {
 				uri: oktaAPI,
 			});
 
+			const provisioningRESTLink = new RestLink({
+				uri: provisioningServerAPI,
+			});
+
+			const ProvisioningAuthLink = setContext((_, {headers}) => {
+				const authToken = localStorage.getItem(STORAGE_KEYS.authToken);
+
+				return {
+					headers: {
+						...headers,
+						'Okta-Session-ID': authToken || '',
+					},
+				};
+			});
+
 			const restLink = split(
 				(operation) =>
-					OKTA_OPERATIONS.includes(operation.operationName),
+					QUERY_OPERATIONS.okta.includes(operation.operationName),
 				oktaRESTLink,
-				liferayRESTLink
+				split(
+					(operation) =>
+						QUERY_OPERATIONS.provisioning.includes(
+							operation.operationName
+						),
+					ProvisioningAuthLink.concat(provisioningRESTLink),
+					liferayRESTLink
+				)
 			);
 
 			await persistCache({
@@ -73,7 +100,7 @@ export default function useApollo(oktaAPI) {
 		};
 
 		init();
-	}, [oktaAPI]);
+	}, [oktaAPI, provisioningServerAPI]);
 
 	return client;
 }

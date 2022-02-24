@@ -16,7 +16,7 @@
 	{
 		"actionId": "ADD_OBJECT_ENTRY",
 		"primKey": "0",
-		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:TeamMembersInvitation$]",
+		"resourceName": "com.liferay.object#[$OBJECT_DEFINITION_ID:TeamMemberInvitation$]",
 		"roleName": "Customer Portal Member",
 		"scope": "2"
 	},
@@ -72,7 +72,7 @@
 	{
 		"actionId": "VIEW",
 		"primKey": "0",
-		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TeamMembersInvitation$]",
+		"resourceName": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TeamMemberInvitation$]",
 		"roleName": "Customer Portal Member",
 		"scope": "2"
 	}

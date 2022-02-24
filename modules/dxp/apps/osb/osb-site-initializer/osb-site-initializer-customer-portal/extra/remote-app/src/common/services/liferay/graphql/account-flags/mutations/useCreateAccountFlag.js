@@ -14,7 +14,12 @@ import {gql, useMutation} from '@apollo/client';
 const CREATE_ACCOUNT_FLAG = gql`
 	mutation createAccountFlag($accountFlag: InputC_AccountFlag!) {
 		c {
-			createAccountFlag(AccountFlag: $accountFlag)
+			createAccountFlag(AccountFlag: $accountFlag) {
+				accountFlagId
+				name
+				accountKey
+				finished
+			}
 		}
 	}
 `;

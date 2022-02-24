@@ -9,26 +9,16 @@
  * distribution rights of the Software.
  */
 
-import {useMutation} from '@apollo/client';
-import ClayForm from '@clayui/form';
-import {Formik} from 'formik';
+import {Formik, useFormikContext} from 'formik';
 import {useEffect, useState} from 'react';
-import client from '../../../../apolloClient';
 import {Badge, Button} from '../../../components';
-import {useAppPropertiesContext} from '../../../context/AppPropertiesProvider';
-import {Liferay} from '../../../services/liferay';
-import {
-	addTeamMembersInvitation,
-	associateUserAccountWithAccountAndAccountRole,
-	getAccountRoles,
-} from '../../../services/liferay/graphql/queries';
-import {associateContactRoleNameByEmailByProject} from '../../../services/liferay/rest/raysource/LicenseKeys';
 import {ROLE_TYPES} from '../../../utils/constants';
 import getInitialInvite from '../../../utils/getInitialInvite';
 import Layout from '../Layout';
-import TeamMemberInputs from './TeamMemberInputs';
+import Helper from './components/Helper';
+import FormInvites from './containers/FormInvites';
+import useGraphQL from './hooks/useGraphQL';
 
-const MAXIMUM_INVITES_COUNT = 10;
 const INITIAL_INVITES_COUNT = 3;
 
 const SLA = {
@@ -41,30 +31,20 @@ const ROLE_NAME_KEY = {
 	[ROLE_TYPES.member.key]: ROLE_TYPES.member.name,
 };
 
-const InviteTeamMembersPage = ({
-	errors,
-	handlePage,
-	leftButton,
-	project,
-	sessionId,
-	setFieldValue,
-	setTouched,
-	touched,
-	values,
-}) => {
+const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 	const {
-		articleAccountSupportURL,
-		provisioningServerAPI,
-	} = useAppPropertiesContext();
+		errors,
+		setFieldValue,
+		setTouched,
+		touched,
+		values,
+	} = useFormikContext();
 
-	const [addTeamMemberInvitation, {error: addTeamMemberError}] = useMutation(
-		addTeamMembersInvitation
-	);
-
-	const [
-		associateUserAccount,
-		{error: associateUserAccountError},
-	] = useMutation(associateUserAccountWithAccountAndAccountRole);
+	const {
+		accountAccountRoles,
+		koroneikiAccount,
+		promiseMutations,
+	} = useGraphQL();
 
 	const [baseButtonDisabled, setBaseButtonDisabled] = useState();
 	const [hasInitialError, setInitialError] = useState();
@@ -73,87 +53,79 @@ const InviteTeamMembersPage = ({
 	const [accountRoles, setAccountRoles] = useState([]);
 	const [availableAdminsRoles, setAvailableAdminsRoles] = useState(1);
 
-	const maxRequestors = project.maxRequestors < 1 ? 1 : project.maxRequestors;
 	const projectHasSLAGoldPlatinum =
-		project?.slaCurrent?.includes(SLA.gold) ||
-		project?.slaCurrent?.includes(SLA.platinum);
+		koroneikiAccount?.slaCurrent?.includes(SLA.gold) ||
+		koroneikiAccount?.slaCurrent?.includes(SLA.platinum);
 
 	useEffect(() => {
-		const isProjectPartner = project.partner;
+		const isProjectPartner = koroneikiAccount?.partner;
 
-		const getRoles = async () => {
-			const {data} = await client.query({
-				query: getAccountRoles,
-				variables: {
-					accountId: project.id,
+		if (accountAccountRoles.items) {
+			const roles = accountAccountRoles.items?.reduce(
+				(rolesAccumulator, role) => {
+					let isValidRole = true;
+
+					if (!projectHasSLAGoldPlatinum) {
+						isValidRole = role.name !== ROLE_TYPES.requestor.key;
+					}
+
+					if (!isProjectPartner) {
+						isValidRole =
+							role.name !== ROLE_TYPES.partnerManager.key &&
+							role.name !== ROLE_TYPES.partnerMember.key;
+					}
+
+					if (isValidRole) {
+						const roleName = ROLE_NAME_KEY[role.name] || role.name;
+
+						rolesAccumulator.push({
+							...role,
+							name: roleName,
+						});
+					}
+
+					return rolesAccumulator;
 				},
-			});
+				[]
+			);
 
-			if (data) {
-				const roles = data.accountAccountRoles?.items?.reduce(
-					(rolesAccumulator, role) => {
-						let isValidRole = true;
+			const accountMember = roles?.find(
+				({name}) => name === ROLE_TYPES.member.name
+			);
 
-						if (!projectHasSLAGoldPlatinum) {
-							isValidRole =
-								role.name !== ROLE_TYPES.requestor.key;
-						}
+			setAccountMemberRole(accountMember);
 
-						if (!isProjectPartner) {
-							isValidRole =
-								role.name !== ROLE_TYPES.partnerManager.key &&
-								role.name !== ROLE_TYPES.partnerMember.key;
-						}
+			setFieldValue(
+				'invites[0].role',
+				koroneikiAccount?.maxRequestors < 2
+					? accountMember
+					: roles?.find(
+							({name}) =>
+								name === ROLE_TYPES.requestor.name ||
+								name === ROLE_TYPES.admin.name
+					  )
+			);
 
-						if (isValidRole) {
-							const roleName =
-								ROLE_NAME_KEY[role.name] || role.name;
-
-							rolesAccumulator.push({
-								...role,
-								name: roleName,
-							});
-						}
-
-						return rolesAccumulator;
-					},
-					[]
-				);
-
-				const accountMember = roles?.find(
-					({name}) => name === ROLE_TYPES.member.name
-				);
-
-				setAccountMemberRole(accountMember);
-
-				setFieldValue(
-					'invites[0].role',
-					maxRequestors < 2
-						? accountMember
-						: roles?.find(
-								({name}) =>
-									name === ROLE_TYPES.requestor.name ||
-									name === ROLE_TYPES.admin.name
-						  )
-				);
-
-				for (let i = 1; i < INITIAL_INVITES_COUNT; i++) {
-					setFieldValue(`invites[${i}].role`, accountMember);
-				}
-
-				setAccountRoles(roles);
-				setAccountRolesOptions(
-					roles?.map((role) => ({
-						disabled: false,
-						label: role.name,
-						value: role.id,
-					}))
-				);
+			for (let i = 1; i < INITIAL_INVITES_COUNT; i++) {
+				setFieldValue(`invites[${i}].role`, accountMember);
 			}
-		};
 
-		getRoles();
-	}, [maxRequestors, project, projectHasSLAGoldPlatinum, setFieldValue]);
+			setAccountRoles(roles);
+			setAccountRolesOptions(
+				roles?.map((role) => ({
+					disabled: false,
+					label: role.name,
+					value: role.id,
+				}))
+			);
+		}
+	}, [
+		accountAccountRoles.items,
+		koroneikiAccount.maxRequestors,
+		koroneikiAccount.partner,
+		projectHasSLAGoldPlatinum,
+		setFieldValue,
+	]);
 
 	useEffect(() => {
 		if (values && accountRoles?.length) {
@@ -171,7 +143,8 @@ const InviteTeamMembersPage = ({
 				1
 			);
 
-			const remainingAdmins = maxRequestors - totalAdmins;
+			const remainingAdmins =
+				koroneikiAccount?.maxRequestors - totalAdmins;
 
 			if (remainingAdmins < 1) {
 				setAccountRolesOptions((previousAccountRoles) =>
@@ -187,7 +160,7 @@ const InviteTeamMembersPage = ({
 
 			setAvailableAdminsRoles(remainingAdmins);
 		}
-	}, [values, project, maxRequestors, accountRoles]);
+	}, [values, koroneikiAccount.maxRequestors, accountRoles]);
 
 	useEffect(() => {
 		const filledEmails =
@@ -212,38 +185,12 @@ const InviteTeamMembersPage = ({
 
 		if (filledEmails.length) {
 			await Promise.all(
-				filledEmails.map(async ({email, role}) => {
-					addTeamMemberInvitation({
-						variables: {
-							TeamMembersInvitation: {
-								email,
-								role: role.name,
-							},
-							scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-						},
-					});
-
-					associateUserAccount({
-						variables: {
-							accountKey: project.accountKey,
-							accountRoleId: role.id,
-							emailAddress: email,
-						},
-					});
-
-					associateContactRoleNameByEmailByProject(
-						project.accountKey,
-						provisioningServerAPI,
-						sessionId,
-						encodeURI(email),
-						role.name
-					);
-				})
+				filledEmails.map(({email, role}) =>
+					promiseMutations(role, email)
+				)
 			);
 
-			if (!addTeamMemberError && !associateUserAccountError) {
-				handlePage();
-			}
+			handlePage();
 		} else {
 			setInitialError(true);
 			setBaseButtonDisabled(true);
@@ -252,6 +199,24 @@ const InviteTeamMembersPage = ({
 			});
 		}
 	};
+
+	const handleSelectOnChange = (roleId, index) =>
+		setFieldValue(
+			`invites[${index}].role`,
+			accountRoles?.find(({id}) => id === +roleId)
+		);
+
+	const handleAddMoreMembers = () => {
+		setBaseButtonDisabled(false);
+		setFieldValue('invites', [
+			...values?.invites,
+			getInitialInvite(accountMemberRole),
+		]);
+	};
+
+	if (koroneikiAccount.loading || accountAccountRoles.loading) {
+		return <>oi</>;
+	}
 
 	return (
 		<Layout
@@ -286,83 +251,19 @@ const InviteTeamMembersPage = ({
 				</Badge>
 			)}
 
-			<div className="invites-form overflow-auto px-3">
-				<div className="px-3">
-					<label>Project Name</label>
+			<FormInvites
+				accountRolesOptions={accountRolesOptions}
+				handleAddMoreMembers={handleAddMoreMembers}
+				handleSelectOnChange={handleSelectOnChange}
+				hasInitialError={hasInitialError}
+				invites={values?.invites}
+				koroneikiAccount={koroneikiAccount}
+			></FormInvites>
 
-					<p className="invites-project-name text-neutral-6 text-paragraph-lg">
-						<strong>{project.name}</strong>
-					</p>
-				</div>
-
-				<ClayForm.Group className="m-0">
-					{values?.invites?.map((invite, index) => (
-						<TeamMemberInputs
-							disableError={hasInitialError}
-							id={index}
-							invite={invite}
-							key={index}
-							options={accountRolesOptions}
-							placeholderEmail={`username@${
-								project?.code?.toLowerCase() || 'example'
-							}.com`}
-							selectOnChange={(roleId) =>
-								setFieldValue(
-									`invites[${index}].role`,
-									accountRoles?.find(({id}) => id === +roleId)
-								)
-							}
-						/>
-					))}
-				</ClayForm.Group>
-
-				{values?.invites?.length < MAXIMUM_INVITES_COUNT && (
-					<Button
-						borderless
-						className="mb-3 ml-3 mt-2 text-brand-primary"
-						onClick={() => {
-							setBaseButtonDisabled(false);
-							setFieldValue('invites', [
-								...values?.invites,
-								getInitialInvite(accountMemberRole),
-							]);
-						}}
-						prependIcon="plus"
-						small
-					>
-						Add More Members
-					</Button>
-				)}
-			</div>
-
-			<div className="invites-helper px-3">
-				<div className="mx-3 pt-3">
-					<h5 className="text-neutral-7">
-						{`${
-							projectHasSLAGoldPlatinum
-								? ROLE_TYPES.requestor.name
-								: ROLE_TYPES.admin.name
-						}	roles available: ${availableAdminsRoles} of ${maxRequestors}`}
-					</h5>
-
-					<p className="mb-0 text-neutral-7 text-paragraph-sm">
-						{`Only ${maxRequestors} member${
-							maxRequestors > 1 ? 's' : ''
-						} per project (including yourself) have
-						 role permissions (Admins & Requestors) to open Support
-						 tickets. `}
-
-						<a
-							className="font-weight-bold text-neutral-9"
-							href={articleAccountSupportURL}
-							rel="noreferrer"
-							target="_blank"
-						>
-							Learn more about Customer Portal roles
-						</a>
-					</p>
-				</div>
-			</div>
+			<Helper
+				availableAdminsRoles={availableAdminsRoles}
+				koroneikiAccount={koroneikiAccount}
+			></Helper>
 		</Layout>
 	);
 };
@@ -377,9 +278,7 @@ const InviteTeamMembersForm = (props) => {
 			}}
 			validateOnChange
 		>
-			{(formikProps) => (
-				<InviteTeamMembersPage {...props} {...formikProps} />
-			)}
+			<InviteTeamMembersPage {...props} />
 		</Formik>
 	);
 };

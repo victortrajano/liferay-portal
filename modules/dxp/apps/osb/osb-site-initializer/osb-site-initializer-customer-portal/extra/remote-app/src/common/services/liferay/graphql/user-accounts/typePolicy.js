@@ -22,7 +22,7 @@ export const userAccountsTypePolicy = {
 	},
 	UserAccount: {
 		fields: {
-			isLiferayStaff: {
+			hasAdministratorRole: {
 				read(_, {readField}) {
 					return !!readField('roleBriefs')?.find(
 						(roleBrief) =>
@@ -31,10 +31,15 @@ export const userAccountsTypePolicy = {
 				},
 			},
 			selectedAccountBrief: {
-				read(_, {readField}) {
+				read(_, {readField, toReference}) {
 					const accountKey = searchParams.get(
 						SEARCH_PARAMS_KEYS.accountKey
 					);
+
+					if (!accountKey) {
+						return null;
+					}
+
 					const accountBriefRef = readField('accountBriefs')?.find(
 						(accountBrief) =>
 							readField('externalReferenceCode', accountBrief) ===
@@ -52,15 +57,29 @@ export const userAccountsTypePolicy = {
 						);
 
 						return {
-							__typename: 'AccountBrief',
 							externalReferenceCode: accountKey,
 							hasAccountAdministratorRole,
 							id: readField('id', accountBriefRef),
 							name: readField('name', accountBriefRef),
 						};
+					} else if (readField('hasAdministratorRole')) {
+						const accountRef = toReference({
+							__typename:
+								'com_liferay_headless_admin_user_dto_v1_0_Account',
+							externalReferenceCode: accountKey,
+						});
+
+						if (accountRef) {
+							return {
+								externalReferenceCode: accountKey,
+								hasAccountAdministratorRole: false,
+								id: readField('id', accountRef),
+								name: readField('name', accountRef),
+							};
+						}
 					}
 
-					return;
+					return null;
 				},
 			},
 		},

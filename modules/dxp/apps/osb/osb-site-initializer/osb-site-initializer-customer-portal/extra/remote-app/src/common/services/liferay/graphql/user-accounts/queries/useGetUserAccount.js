@@ -10,6 +10,7 @@
  */
 
 import {gql, useQuery} from '@apollo/client';
+import {Liferay} from '../../..';
 import {CUSTOM_EVENT_TYPES} from '../../../../../../routes/customer-portal/utils/constants';
 
 const GET_USER_ACCOUNT = gql`
@@ -32,7 +33,7 @@ const GET_USER_ACCOUNT = gql`
 				id
 				name
 			}
-			isLiferayStaff @client
+			hasAdministratorRole @client
 			selectedAccountBrief @client {
 				externalReferenceCode
 				hasAccountAdministratorRole
@@ -52,7 +53,7 @@ export function useGetUserAccount(userAccountId, options = {skip: false}) {
 	return useQuery(GET_USER_ACCOUNT, {
 		onCompleted: (data) =>
 			eventUserAccount.fire({
-				detail: data.userAccount,
+				detail: data?.userAccount,
 			}),
 		skip: options.skip,
 		variables: {

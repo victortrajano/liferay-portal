@@ -11,12 +11,9 @@
 
 import {Liferay} from '../../../../services/liferay';
 import {useGetAccountAccountRoles} from '../../../../services/liferay/graphql/account-account-roles';
-import {useGetKoroneikiAccounts} from '../../../../services/liferay/graphql/koroneiki-accounts';
+import {useGetKoroneikiAccountByAccountKey} from '../../../../services/liferay/graphql/koroneiki-accounts';
 import {useCreateTeamMemberInvitation} from '../../../../services/liferay/graphql/team-member-invitations';
-import {
-	useCreateOrUpdateUserAccount,
-	useGetUserAccount,
-} from '../../../../services/liferay/graphql/user-accounts';
+import {useCreateOrUpdateUserAccount} from '../../../../services/liferay/graphql/user-accounts';
 import {useCreateOrUpdateAccountProvisioning} from '../../../../services/provisioning/graphql/accounts';
 
 export default function useGraphQL() {
@@ -26,30 +23,13 @@ export default function useGraphQL() {
 		createOrUpdateAccountProvisioning,
 	] = useCreateOrUpdateAccountProvisioning();
 
-	const {
-		data: userAccountData,
-		loading: userAccountLoading,
-	} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
-
-	const selectAccountBrief =
-		userAccountData?.userAccount?.selectedAccountBrief;
-
-	const {
-		data: koroneikiAccountsData,
-		loading: koroneikiAccountsLoading,
-	} = useGetKoroneikiAccounts({
-		filter: `accountKey eq '${selectAccountBrief?.externalReferenceCode}'`,
-		skip: userAccountLoading,
-	});
-
-	const koroneikiAccountItem =
-		koroneikiAccountsData?.c?.koroneikiAccounts?.items[0];
+	const {data, loading} = useGetKoroneikiAccountByAccountKey();
 
 	const {
 		data: accountAccountRolesData,
 		loading: accountAccountRolesLoading,
-	} = useGetAccountAccountRoles(selectAccountBrief?.id, {
-		skip: userAccountLoading,
+	} = useGetAccountAccountRoles(data?.accountBrief.id, {
+		skip: loading,
 	});
 
 	return {
@@ -58,8 +38,8 @@ export default function useGraphQL() {
 			loading: accountAccountRolesLoading,
 		},
 		koroneikiAccount: {
-			...koroneikiAccountItem,
-			loading: koroneikiAccountsLoading,
+			...data,
+			loading,
 		},
 		promiseMutations: (role, emailAddress) =>
 			Promise.all([
@@ -67,7 +47,7 @@ export default function useGraphQL() {
 					variables: {
 						scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
 						teamMemberInvitation: {
-							accountKey: koroneikiAccountItem?.accountKey,
+							accountKey: data?.accountKey,
 							email: emailAddress,
 							role: role.name,
 						},
@@ -75,14 +55,14 @@ export default function useGraphQL() {
 				}),
 				createOrUpdateUserAccount({
 					variables: {
-						accountKey: koroneikiAccountItem?.accountKey,
+						accountKey: data?.accountKey,
 						accountRoleId: role.id,
 						emailAddress,
 					},
 				}),
 				createOrUpdateAccountProvisioning({
 					variables: {
-						accountKey: koroneikiAccountItem?.accountKey,
+						accountKey: data?.accountKey,
 						emailAddress,
 						role: role.name,
 					},

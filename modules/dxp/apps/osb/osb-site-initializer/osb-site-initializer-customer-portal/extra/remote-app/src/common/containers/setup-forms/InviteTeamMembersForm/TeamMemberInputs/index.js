@@ -18,8 +18,7 @@ import {getBannedEmailDomains} from '../../../../services/liferay/graphql/querie
 import {isValidEmail} from '../../../../utils/validations.form';
 
 const TeamMemberInputs = ({
-	disableError,
-	id,
+	index,
 	invite,
 	options,
 	placeholderEmail,
@@ -52,10 +51,9 @@ const TeamMemberInputs = ({
 		<ClayInput.Group className="m-0">
 			<ClayInput.GroupItem className="m-0">
 				<Input
-					disableError={id === 0 && disableError}
 					groupStyle="m-0"
 					label="Email"
-					name={`invites[${id}].email`}
+					name={`invites[${index}].email`}
 					placeholder={placeholderEmail}
 					type="email"
 					validations={[(value) => isValidEmail(value, bannedDomain)]}
@@ -66,7 +64,7 @@ const TeamMemberInputs = ({
 				<Select
 					groupStyle="m-0"
 					label="Role"
-					name={`invites[${id}].role.id`}
+					name={`invites[${index}].role.id`}
 					onChange={(event) => selectOnChange(event.target.value)}
 					options={options}
 				/>

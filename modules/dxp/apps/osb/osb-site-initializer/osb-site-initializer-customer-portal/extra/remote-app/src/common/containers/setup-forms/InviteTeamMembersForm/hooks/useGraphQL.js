@@ -17,12 +17,14 @@ import {
 	useCreateOrUpdateUserAccount,
 	useGetUserAccount,
 } from '../../../../services/liferay/graphql/user-accounts';
-import {useCreateOrUpdateAccount} from '../../../../services/provisioning/graphql/accounts';
+import {useCreateOrUpdateAccountProvisioning} from '../../../../services/provisioning/graphql/accounts';
 
 export default function useGraphQL() {
 	const [createTeamMemberInvitation] = useCreateTeamMemberInvitation();
 	const [createOrUpdateUserAccount] = useCreateOrUpdateUserAccount();
-	const [createOrUpdateAccount] = useCreateOrUpdateAccount();
+	const [
+		createOrUpdateAccountProvisioning,
+	] = useCreateOrUpdateAccountProvisioning();
 
 	const {
 		data: userAccountData,
@@ -78,7 +80,7 @@ export default function useGraphQL() {
 						emailAddress,
 					},
 				}),
-				createOrUpdateAccount({
+				createOrUpdateAccountProvisioning({
 					variables: {
 						accountKey: koroneikiAccountItem?.accountKey,
 						emailAddress,

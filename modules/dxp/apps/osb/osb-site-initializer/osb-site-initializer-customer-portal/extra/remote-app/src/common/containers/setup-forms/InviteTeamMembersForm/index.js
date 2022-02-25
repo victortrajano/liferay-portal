@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -10,33 +11,26 @@
  */
 
 import {Formik, useFormikContext} from 'formik';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Badge, Button} from '../../../components';
 import {ROLE_TYPES} from '../../../utils/constants';
 import getInitialInvite from '../../../utils/getInitialInvite';
 import Layout from '../Layout';
 import Helper from './components/Helper';
 import FormInvites from './containers/FormInvites';
+import useAccountRolesOptions from './hooks/useAccountRolesOptions';
 import useGraphQL from './hooks/useGraphQL';
+import getTotalAdmins from './utils/getTotalAdmins';
+import getValidAccountRoles from './utils/getValidAccountRoles';
 
 const INITIAL_INVITES_COUNT = 3;
 
-const SLA = {
-	gold: 'Gold',
-	platinum: 'Platinum',
-};
-
-const ROLE_NAME_KEY = {
-	[ROLE_TYPES.admin.key]: ROLE_TYPES.admin.name,
-	[ROLE_TYPES.member.key]: ROLE_TYPES.member.name,
-};
-
 const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 	const {
-		errors,
+		isValid,
+		setErrors,
 		setFieldValue,
 		setTouched,
-		touched,
 		values,
 	} = useFormikContext();
 
@@ -46,143 +40,79 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 		promiseMutations,
 	} = useGraphQL();
 
-	const [baseButtonDisabled, setBaseButtonDisabled] = useState();
-	const [hasInitialError, setInitialError] = useState();
-	const [accountMemberRole, setAccountMemberRole] = useState();
-	const [accountRolesOptions, setAccountRolesOptions] = useState([]);
-	const [accountRoles, setAccountRoles] = useState([]);
-	const [availableAdminsRoles, setAvailableAdminsRoles] = useState(1);
+	const accountRoles = useMemo(
+		() =>
+			getValidAccountRoles(
+				accountAccountRoles.items,
+				koroneikiAccount?.slaCurrent,
+				koroneikiAccount?.partner
+			),
+		[
+			accountAccountRoles.items,
+			koroneikiAccount.partner,
+			koroneikiAccount.slaCurrent,
+		]
+	);
 
-	const projectHasSLAGoldPlatinum =
-		koroneikiAccount?.slaCurrent?.includes(SLA.gold) ||
-		koroneikiAccount?.slaCurrent?.includes(SLA.platinum);
+	const availableAdminsRoles = useMemo(() => {
+		const totalAdmins = getTotalAdmins(values.invites);
+
+		return koroneikiAccount?.maxRequestors - totalAdmins;
+	}, [koroneikiAccount?.maxRequestors, values.invites]);
+
+	const accountRolesOptions = useAccountRolesOptions(
+		accountRoles,
+		availableAdminsRoles
+	);
+	const accountMember = accountRoles?.find(
+		({name}) => name === ROLE_TYPES.member.name
+	);
+
+	const filledEmails = useMemo(
+		() => values.invites?.filter(({email}) => !!email) || [],
+		[values.invites]
+	);
+	const showFormError = !filledEmails?.length && !isValid;
 
 	useEffect(() => {
-		const isProjectPartner = koroneikiAccount?.partner;
-
-		if (accountAccountRoles.items) {
-			const roles = accountAccountRoles.items?.reduce(
-				(rolesAccumulator, role) => {
-					let isValidRole = true;
-
-					if (!projectHasSLAGoldPlatinum) {
-						isValidRole = role.name !== ROLE_TYPES.requestor.key;
-					}
-
-					if (!isProjectPartner) {
-						isValidRole =
-							role.name !== ROLE_TYPES.partnerManager.key &&
-							role.name !== ROLE_TYPES.partnerMember.key;
-					}
-
-					if (isValidRole) {
-						const roleName = ROLE_NAME_KEY[role.name] || role.name;
-
-						rolesAccumulator.push({
-							...role,
-							name: roleName,
-						});
-					}
-
-					return rolesAccumulator;
-				},
-				[]
+		if (accountRoles) {
+			const accountRequestorOrAdmin = accountRoles?.find(
+				({name}) =>
+					name === ROLE_TYPES.requestor.name ||
+					name === ROLE_TYPES.admin.name
 			);
-
-			const accountMember = roles?.find(
-				({name}) => name === ROLE_TYPES.member.name
-			);
-
-			setAccountMemberRole(accountMember);
 
 			setFieldValue(
 				'invites[0].role',
 				koroneikiAccount?.maxRequestors < 2
 					? accountMember
-					: roles?.find(
-							({name}) =>
-								name === ROLE_TYPES.requestor.name ||
-								name === ROLE_TYPES.admin.name
-					  )
+					: accountRequestorOrAdmin
 			);
 
 			for (let i = 1; i < INITIAL_INVITES_COUNT; i++) {
 				setFieldValue(`invites[${i}].role`, accountMember);
 			}
-
-			setAccountRoles(roles);
-			setAccountRolesOptions(
-				roles?.map((role) => ({
-					disabled: false,
-					label: role.name,
-					value: role.id,
-				}))
-			);
 		}
 	}, [
-		accountAccountRoles.items,
+		accountMember,
 		koroneikiAccount.maxRequestors,
-		koroneikiAccount.partner,
-		projectHasSLAGoldPlatinum,
+		accountRoles,
 		setFieldValue,
 	]);
 
-	useEffect(() => {
-		if (values && accountRoles?.length) {
-			const totalAdmins = values.invites?.reduce(
-				(totalInvites, currentInvite) => {
-					if (
-						currentInvite.role.name === ROLE_TYPES.requestor.name ||
-						currentInvite.role.name === ROLE_TYPES.admin.name
-					) {
-						return ++totalInvites;
-					}
-
-					return totalInvites;
-				},
-				1
-			);
-
-			const remainingAdmins =
-				koroneikiAccount?.maxRequestors - totalAdmins;
-
-			if (remainingAdmins < 1) {
-				setAccountRolesOptions((previousAccountRoles) =>
-					previousAccountRoles.map((previousAccountRole) => ({
-						...previousAccountRole,
-						disabled:
-							previousAccountRole.label ===
-								ROLE_TYPES.requestor.name ||
-							previousAccountRole.label === ROLE_TYPES.admin.name,
-					}))
-				);
-			}
-
-			setAvailableAdminsRoles(remainingAdmins);
-		}
-	}, [values, koroneikiAccount.maxRequestors, accountRoles]);
-
-	useEffect(() => {
-		const filledEmails =
-			values?.invites?.filter(({email}) => email)?.length || 0;
-		const totalEmails = values?.invites?.length || 0;
-		const failedEmails =
-			errors?.invites?.filter((email) => email)?.length || 0;
-
-		if (filledEmails) {
-			const sucessfullyEmails = totalEmails - failedEmails;
-
-			setInitialError(false);
-			setBaseButtonDisabled(sucessfullyEmails !== totalEmails);
-		} else if (touched['invites']?.some((field) => field?.email)) {
-			setInitialError(true);
-			setBaseButtonDisabled(true);
-		}
-	}, [touched, values, errors]);
+	const invalidateFirstInput = () => {
+		setTouched(
+			{
+				invites: [{email: true}],
+			},
+			false
+		);
+		setErrors({
+			invites: [{email: true}],
+		});
+	};
 
 	const handleSubmit = async () => {
-		const filledEmails = values?.invites?.filter(({email}) => email) || [];
-
 		if (filledEmails.length) {
 			await Promise.all(
 				filledEmails.map(({email, role}) =>
@@ -192,11 +122,7 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 
 			handlePage();
 		} else {
-			setInitialError(true);
-			setBaseButtonDisabled(true);
-			setTouched({
-				invites: [{email: true}],
-			});
+			invalidateFirstInput();
 		}
 	};
 
@@ -207,15 +133,14 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 		);
 
 	const handleAddMoreMembers = () => {
-		setBaseButtonDisabled(false);
 		setFieldValue('invites', [
-			...values?.invites,
-			getInitialInvite(accountMemberRole),
+			...values.invites,
+			getInitialInvite(accountMember),
 		]);
 	};
 
 	if (koroneikiAccount.loading || accountAccountRoles.loading) {
-		return <>oi</>;
+		return <>Loading...</>;
 	}
 
 	return (
@@ -228,7 +153,7 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 				),
 				middleButton: (
 					<Button
-						disabled={baseButtonDisabled}
+						disabled={!isValid}
 						displayType="primary"
 						onClick={handleSubmit}
 					>
@@ -242,7 +167,7 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 				title: 'Invite Your Team Members',
 			}}
 		>
-			{hasInitialError && (
+			{showFormError && (
 				<Badge>
 					<span className="pl-1">
 						Add at least one user&apos;s email to send an
@@ -255,7 +180,6 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 				accountRolesOptions={accountRolesOptions}
 				handleAddMoreMembers={handleAddMoreMembers}
 				handleSelectOnChange={handleSelectOnChange}
-				hasInitialError={hasInitialError}
 				invites={values?.invites}
 				koroneikiAccount={koroneikiAccount}
 			></FormInvites>
@@ -276,7 +200,6 @@ const InviteTeamMembersForm = (props) => {
 					getInitialInvite()
 				),
 			}}
-			validateOnChange
 		>
 			<InviteTeamMembersPage {...props} />
 		</Formik>

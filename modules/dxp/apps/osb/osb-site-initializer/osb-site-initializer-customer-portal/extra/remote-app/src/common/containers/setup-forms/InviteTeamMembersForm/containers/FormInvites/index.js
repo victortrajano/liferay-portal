@@ -19,7 +19,6 @@ const FormInvites = ({
 	accountRolesOptions,
 	handleAddMoreMembers,
 	handleSelectOnChange,
-	hasInitialError,
 	invites,
 	koroneikiAccount,
 }) => {
@@ -36,14 +35,11 @@ const FormInvites = ({
 			<ClayForm.Group className="m-0">
 				{invites?.map((invite, index) => (
 					<TeamMemberInputs
-						disableError={hasInitialError}
-						id={index}
+						index={index}
 						invite={invite}
 						key={index}
 						options={accountRolesOptions}
-						placeholderEmail={`username@${
-							koroneikiAccount?.code?.toLowerCase() || 'example'
-						}.com`}
+						placeholderEmail="username@example.com"
 						selectOnChange={(roleId) =>
 							handleSelectOnChange(roleId, index)
 						}

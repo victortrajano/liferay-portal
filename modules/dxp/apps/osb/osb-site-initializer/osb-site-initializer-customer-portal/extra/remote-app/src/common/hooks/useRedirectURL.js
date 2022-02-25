@@ -9,16 +9,8 @@
  * distribution rights of the Software.
  */
 
-import {useEffect, useState} from 'react';
+import {useCallback} from 'react';
 
 export default function useRedirectURL() {
-	const [redirectURL, setRedirectURL] = useState();
-
-	useEffect(() => {
-		if (redirectURL) {
-			window.location.replace(redirectURL);
-		}
-	}, [redirectURL]);
-
-	return setRedirectURL;
+	return useCallback((url) => window.location.replace(url), []);
 }

@@ -16,14 +16,7 @@ import {useField} from 'formik';
 import {Badge} from '../..';
 import {required, validate} from '../../../utils/validations.form';
 
-const Input = ({
-	disableError,
-	groupStyle,
-	helper,
-	label,
-	validations,
-	...props
-}) => {
+const Input = ({groupStyle, helper, label, validations, ...props}) => {
 	if (props.required) {
 		validations = validations
 			? [...validations, (value) => required(value)]
@@ -35,6 +28,27 @@ const Input = ({
 		validate: (value) => validate(validations, value),
 	});
 
+	const getBottomInfo = () => {
+		if (meta.touched) {
+			return (
+				meta.error &&
+				typeof meta.error === 'string' && (
+					<Badge>
+						<span className="pl-1">{meta.error}</span>
+					</Badge>
+				)
+			);
+		}
+
+		return (
+			helper && (
+				<div className="ml-3 pl-3 text-neutral-6 text-paragraph-sm">
+					{helper}
+				</div>
+			)
+		);
+	};
+
 	return (
 		<ClayForm.Group
 			className={classNames('w-100', {
@@ -44,7 +58,7 @@ const Input = ({
 			})}
 		>
 			<label>
-				{`${label} `}
+				{label}
 
 				{props.required && (
 					<span className="inline-item-after reference-mark text-warning">
@@ -55,17 +69,7 @@ const Input = ({
 				<ClayInput {...field} {...props} />
 			</label>
 
-			{meta.error && meta.touched && !disableError ? (
-				<Badge>
-					<span className="pl-1">{meta.error}</span>
-				</Badge>
-			) : (
-				helper && (
-					<div className="ml-3 pl-3 text-neutral-6 text-paragraph-sm">
-						{helper}
-					</div>
-				)
-			)}
+			{getBottomInfo()}
 		</ClayForm.Group>
 	);
 };

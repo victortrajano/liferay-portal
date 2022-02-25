@@ -12,12 +12,12 @@
 import {useLazyQuery} from '@apollo/client';
 import ClayForm, {ClayInput} from '@clayui/form';
 import {useEffect, useState} from 'react';
-import {Input} from '../../../../components';
-import useDebounce from '../../../../hooks/useDebounce';
-import {getBannedEmailDomains} from '../../../../services/liferay/graphql/queries';
-import {isValidEmail} from '../../../../utils/validations.form';
+import {Input} from '../../../../../components';
+import useDebounce from '../../../../../hooks/useDebounce';
+import {getBannedEmailDomains} from '../../../../../services/liferay/graphql/queries';
+import {isValidEmail} from '../../../../../utils/validations.form';
 
-const AdminInputs = ({admin, id}) => {
+const AdminInputs = ({admin, index}) => {
 	const debouncedEmail = useDebounce(admin?.email, 500);
 	const [bannedDomain, setBannedDomain] = useState(debouncedEmail);
 
@@ -48,7 +48,7 @@ const AdminInputs = ({admin, id}) => {
 			<Input
 				groupStyle="pt-1"
 				label="DXP Cloud System Admin's Email Address"
-				name={`dxp.admins[${id}].email`}
+				name={`admins[${index}].email`}
 				placeholder="email@example.com"
 				required
 				type="email"
@@ -59,7 +59,7 @@ const AdminInputs = ({admin, id}) => {
 				<ClayInput.GroupItem className="m-0">
 					<Input
 						label="System Admin’s First Name"
-						name={`dxp.admins[${id}].firstName`}
+						name={`admins[${index}].firstName`}
 						required
 						type="text"
 					/>
@@ -68,7 +68,7 @@ const AdminInputs = ({admin, id}) => {
 				<ClayInput.GroupItem className="m-0">
 					<Input
 						label="System Admin’s Last Name"
-						name={`dxp.admins[${id}].lastName`}
+						name={`admins[${index}].lastName`}
 						required
 						type="text"
 					/>
@@ -78,7 +78,7 @@ const AdminInputs = ({admin, id}) => {
 			<Input
 				groupStyle="mb-0"
 				label="System Admin’s Github Username"
-				name={`dxp.admins[${id}].github`}
+				name={`admins[${index}].github`}
 				required
 				type="text"
 			/>

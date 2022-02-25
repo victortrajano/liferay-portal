@@ -9,29 +9,17 @@
  * distribution rights of the Software.
  */
 
-import {gql, useQuery} from '@apollo/client';
-
-const GET_DXPC_DATA_CENTER_REGIONS = gql`
-	query getDXPCDataCenterRegions($filter: String) {
-		c {
-			dXPCDataCenterRegions(filter: $filter) {
-				items {
-					dxpcDataCenterRegionId
-					name
-					value
-				}
-			}
-		}
-	}
-`;
-
-export function useGetDXPCDataCenterRegions(
-	options = {filter: '', skip: false}
+export default function setFirstDataCenterRegionSelected(
+	setFieldValue,
+	dxpcDataCenterRegionsOption,
+	hasAccountSubscriptionsWithDisasterRecovery
 ) {
-	return useQuery(GET_DXPC_DATA_CENTER_REGIONS, {
-		skip: options.skip,
-		variables: {
-			filter: options.filter,
-		},
-	});
+	setFieldValue('dataCenterRegion', dxpcDataCenterRegionsOption.value);
+
+	if (hasAccountSubscriptionsWithDisasterRecovery) {
+		setFieldValue(
+			'disasterDataCenterRegion',
+			dxpcDataCenterRegionsOption.value
+		);
+	}
 }

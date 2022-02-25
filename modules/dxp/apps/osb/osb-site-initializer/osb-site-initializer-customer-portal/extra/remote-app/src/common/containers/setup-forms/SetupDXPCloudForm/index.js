@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -9,128 +10,74 @@
  * distribution rights of the Software.
  */
 
-import ClayForm from '@clayui/form';
-import {Formik} from 'formik';
-import {useCallback, useEffect, useState} from 'react';
-import {isLowercaseAndNumbers} from '../../../../common/utils/validations.form';
-import {STATUS_TAG_TYPE_NAMES} from '../../../../routes/customer-portal/utils/constants';
-import {Button, Input, Select} from '../../../components';
-import {useUpdateAccountSubscriptionGroup} from '../../../services/liferay/graphql/account-subscription-groups';
-import {useGetAccountSubscriptions} from '../../../services/liferay/graphql/account-subscriptions';
-import {useCreateAdminDXPCloud} from '../../../services/liferay/graphql/admin-dxp-cloud';
-import {useCreateDXPCloudEnvironment} from '../../../services/liferay/graphql/dxp-cloud-environments';
-import {useGetDXPCDataCenterRegions} from '../../../services/liferay/graphql/dxpc-data-center-regions';
+import {FieldArray, Formik, useFormikContext} from 'formik';
+import {useEffect, useMemo} from 'react';
+import Button from '../../../components/Button';
+import {Liferay} from '../../../services/liferay';
 import getInitialDXPAdmin from '../../../utils/getInitialDXPAdmin';
 import Layout from '../Layout';
-import AdminInputs from './AdminInputs';
+import FormDXPEnvironment from './containers/FormDXPEnvironment';
+import HeaderDetails from './containers/HeaderDetails';
+import useGraphQL from './hooks/useGraphQL';
+import setFirstDataCenterRegionSelected from './utils/setFirstDataCenterRegionSelected';
 
-const SetupDXPCloudPage = ({
-	errors,
-	handlePage,
-	leftButton,
-	project,
-	setFieldValue,
-	subscriptionGroupId,
-	touched,
-	values,
-}) => {
-	const [baseButtonDisabled, setBaseButtonDisabled] = useState(true);
+const SetupDXPCloudPage = ({handlePage, leftButton}) => {
+	const {
+		accountSubscriptions,
+		dxpCloudEnvironment,
+		dxpcDataCenterRegions,
+		getPromiseMutations,
+		koroneikiAccount,
+	} = useGraphQL();
 
-	const [createDXPCloudEnvironment] = useCreateDXPCloudEnvironment();
-	const [createAdminDXPCloud] = useCreateAdminDXPCloud();
-	const [
-		updateAccountSubscriptionGroups,
-	] = useUpdateAccountSubscriptionGroup();
+	const hasAccountSubscriptionsWithDisasterRecovery = !!accountSubscriptions.items;
+	const {errors, isValid, setFieldValue, values} = useFormikContext();
 
-	const {data: accountSubscriptionsData} = useGetAccountSubscriptions({
-		filter: `(accountKey eq '${project.accountKey}') and (hasDisasterDataCenterRegion eq true)`,
-	});
-	const {data: dxpcDataCenterRegionData} = useGetDXPCDataCenterRegions();
-
-	const hasDisasterRecovery = !!accountSubscriptionsData?.c
-		?.accountSubscriptions?.items;
-	const dxpcDataCenterRegions = dxpcDataCenterRegionData?.c?.dXPCDataCenterRegions?.items?.map(
-		({name, value}) => ({
-			label: name,
-			value,
-		})
-	);
-
-	const callbackSetFieldValue = useCallback(
-		(field, value) => setFieldValue(field, value),
-		[setFieldValue]
+	const dxpcDataCenterRegionsOptions = useMemo(
+		() =>
+			dxpcDataCenterRegions.items?.map(
+				({name, value}) =>
+					({
+						label: name,
+						value,
+					} || [])
+			),
+		[dxpcDataCenterRegions.items]
 	);
 
 	useEffect(() => {
-		if (dxpcDataCenterRegions?.length) {
-			callbackSetFieldValue(
-				'dxp.dataCenterRegion',
-				dxpcDataCenterRegions[0].value
+		if (dxpcDataCenterRegionsOptions?.length) {
+			setFirstDataCenterRegionSelected(
+				setFieldValue,
+				dxpcDataCenterRegionsOptions[0],
+				hasAccountSubscriptionsWithDisasterRecovery
 			);
-
-			if (hasDisasterRecovery) {
-				callbackSetFieldValue(
-					'dxp.disasterDataCenterRegion',
-					dxpcDataCenterRegions[0].value
-				);
-			}
 		}
-	}, [dxpcDataCenterRegions, hasDisasterRecovery, callbackSetFieldValue]);
+	}, [
+		hasAccountSubscriptionsWithDisasterRecovery,
+		dxpcDataCenterRegionsOptions,
+		setFieldValue,
+	]);
 
-	useEffect(() => {
-		const hasTouched = !Object.keys(touched).length;
-		const hasError = Object.keys(errors).length;
+	const handleSubmitButton = async () => {
+		const {loading, mutation} = dxpCloudEnvironment.create;
 
-		setBaseButtonDisabled(hasTouched || hasError);
-	}, [touched, errors]);
-
-	const sendEmail = async () => {
-		const dxp = values?.dxp;
-
-		if (dxp) {
-			const {data} = createDXPCloudEnvironment({
-				variables: {
-					dxpCloudEnvironment: {
-						accountKey: project.accountKey,
-						dataCenterRegion: dxp.dataCenterRegion,
-						disasterDataCenterRegion: dxp.disasterDataCenterRegion,
-						projectId: dxp.projectId,
-					},
-					scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
+		await mutation({
+			variables: {
+				dxpCloudEnvironment: {
+					accountKey: koroneikiAccount.data?.accountKey,
+					dataCenterRegion: values.dataCenterRegion,
+					disasterDataCenterRegion: values.disasterDataCenterRegion,
+					projectId: values.projectId,
 				},
-			});
+				scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
+			},
+		});
 
-			if (data) {
-				const dxpCloudEnvironmentId =
-					data.c?.createDXPCloudEnvironment?.dxpCloudEnvironmentId;
-				await Promise.all(
-					dxp.admins.map(({email, firstName, github, lastName}) =>
-						createAdminDXPCloud({
-							variables: {
-								AdminDXPCloud: {
-									dxpCloudEnvironmentId,
-									emailAddress: email,
-									firstName,
-									githubUsername: github,
-									lastName,
-								},
-								scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
-							},
-						})
-					)
-				);
+		if (!loading) {
+			await Promise.all(getPromiseMutations(values.admins));
 
-				await updateAccountSubscriptionGroups({
-					variables: {
-						accountSubscriptionGroup: {
-							activationStatus: STATUS_TAG_TYPE_NAMES.inProgress,
-						},
-						accountSubscriptionGroupId: subscriptionGroupId,
-					},
-				});
-
-				handlePage(true);
-			}
+			handlePage(true, koroneikiAccount.data);
 		}
 	};
 
@@ -139,15 +86,18 @@ const SetupDXPCloudPage = ({
 			className="pt-1 px-3"
 			footerProps={{
 				leftButton: (
-					<Button borderless onClick={() => handlePage()}>
+					<Button
+						borderless
+						onClick={() => handlePage(koroneikiAccount.data)}
+					>
 						{leftButton}
 					</Button>
 				),
 				middleButton: (
 					<Button
-						disabled={baseButtonDisabled}
+						disabled={!isValid}
 						displayType="primary"
-						onClick={() => sendEmail()}
+						onClick={handleSubmitButton}
 					>
 						Submit
 					</Button>
@@ -159,79 +109,36 @@ const SetupDXPCloudPage = ({
 				title: 'Set up DXP Cloud',
 			}}
 		>
-			<div className="d-flex justify-content-between mb-2 pb-1 pl-3">
-				<div className="mr-4 pr-2">
-					<label>Project Name</label>
-
-					<p className="dxp-cloud-project-name text-neutral-6 text-paragraph-lg">
-						<strong>
-							{project.name.length > 71
-								? project.name.substring(0, 71) + '...'
-								: project.name}
-						</strong>
-					</p>
-				</div>
-
-				<div className="flex-fill">
-					<label>Liferay DXP Version</label>
-
-					<p className="text-neutral-6 text-paragraph-lg">
-						<strong>{project.dxpVersion}</strong>
-					</p>
-				</div>
-			</div>
-
-			<ClayForm.Group className="mb-0">
-				<ClayForm.Group className="mb-0 pb-1">
-					<Input
-						groupStyle="pb-1"
-						helper="Lowercase letters and numbers only. The Project ID cannot be changed."
-						label="Project ID"
-						name="dxp.projectId"
-						required
-						type="text"
-						validations={[(value) => isLowercaseAndNumbers(value)]}
-					/>
-
-					<Select
-						groupStyle="mb-0"
-						label="Primary Data Center Region"
-						name="dxp.dataCenterRegion"
-						options={dxpcDataCenterRegions}
-						required
-					/>
-
-					{hasDisasterRecovery && (
-						<Select
-							groupStyle="mb-0 pt-2"
-							label="Disaster Recovery Data Center Region"
-							name="dxp.disasterDataCenterRegion"
-							options={dxpcDataCenterRegions}
-							required
+			<FieldArray
+				name="admins"
+				render={({push}) => (
+					<>
+						<HeaderDetails
+							koroneikiAccount={koroneikiAccount.data}
 						/>
-					)}
-				</ClayForm.Group>
 
-				{values.dxp.admins.map((admin, index) => (
-					<AdminInputs admin={admin} id={index} key={index} />
-				))}
-			</ClayForm.Group>
+						<FormDXPEnvironment
+							admins={values.admins}
+							dxpcDataCenterRegionsOptions={
+								dxpcDataCenterRegionsOptions
+							}
+							hasAccountSubscriptionsWithDisasterRecovery={
+								hasAccountSubscriptionsWithDisasterRecovery
+							}
+						/>
 
-			<Button
-				borderless
-				className="ml-3 my-2 text-brand-primary"
-				onClick={() => {
-					setFieldValue('dxp.admins', [
-						...values.dxp.admins,
-						getInitialDXPAdmin(),
-					]);
-					setBaseButtonDisabled(true);
-				}}
-				prependIcon="plus"
-				small
-			>
-				Add Another Admin
-			</Button>
+						<Button
+							borderless
+							className="ml-3 my-2 text-brand-primary"
+							onClick={() => push(getInitialDXPAdmin())}
+							prependIcon="plus"
+							small
+						>
+							Add Another Admin
+						</Button>
+					</>
+				)}
+			/>
 		</Layout>
 	);
 };
@@ -240,16 +147,13 @@ const SetupDXPCloudForm = (props) => {
 	return (
 		<Formik
 			initialValues={{
-				dxp: {
-					admins: [getInitialDXPAdmin()],
-					dataCenterRegion: '',
-					disasterDataCenterRegion: '',
-					projectId: '',
-				},
+				admins: [getInitialDXPAdmin()],
+				dataCenterRegion: '',
+				disasterDataCenterRegion: '',
+				projectId: '',
 			}}
-			validateOnChange
 		>
-			{(formikProps) => <SetupDXPCloudPage {...props} {...formikProps} />}
+			<SetupDXPCloudPage {...props} />
 		</Formik>
 	);
 };

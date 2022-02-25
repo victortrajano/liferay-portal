@@ -11,7 +11,7 @@
 
 import ClayForm from '@clayui/form';
 import {Button} from '../../../../../components';
-import TeamMemberInputs from '../../TeamMemberInputs';
+import TeamMemberInputs from '../TeamMemberInputs';
 
 const MAXIMUM_INVITES_COUNT = 10;
 

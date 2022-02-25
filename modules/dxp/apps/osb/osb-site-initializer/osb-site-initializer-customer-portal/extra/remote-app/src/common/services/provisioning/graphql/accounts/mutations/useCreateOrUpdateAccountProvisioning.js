@@ -31,6 +31,6 @@ const CREATE_OR_UPDATE_ACCOUNT_PROVISIONING = gql`
 	}
 `;
 
-export function useCreateOrUpdateAccount() {
+export function useCreateOrUpdateAccountProvisioning() {
 	return useMutation(CREATE_OR_UPDATE_ACCOUNT_PROVISIONING);
 }

@@ -9,4 +9,4 @@
  * distribution rights of the Software.
  */
 
-export * from './mutations/useCreateOrUpdateAccount';
+export * from './mutations/useCreateOrUpdateAccountProvisioning';

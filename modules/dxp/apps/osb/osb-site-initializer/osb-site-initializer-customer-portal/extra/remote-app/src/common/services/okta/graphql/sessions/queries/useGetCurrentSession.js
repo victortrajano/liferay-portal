@@ -29,7 +29,7 @@ const GET_CURRENT_SESSION = gql`
 
 export function useGetCurrentSession(options = {skip: false}) {
 	return useQuery(GET_CURRENT_SESSION, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: 'network-only',
 		onCompleted: (data) =>
 			storage.setItem(STORAGE_KEYS.authToken, data?.session?.id),
 		skip: options.skip,

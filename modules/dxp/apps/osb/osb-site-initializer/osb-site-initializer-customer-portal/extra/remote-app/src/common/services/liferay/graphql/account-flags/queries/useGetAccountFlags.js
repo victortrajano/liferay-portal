@@ -28,7 +28,7 @@ const GET_ACCOUNT_FLAGS = gql`
 
 export function useGetAccountFlags(options = {filter: '', skip: false}) {
 	return useQuery(GET_ACCOUNT_FLAGS, {
-		fetchPolicy: 'cache-and-network',
+		fetchPolicy: 'network-only',
 		skip: options.skip,
 		variables: {
 			filter: options.filter,

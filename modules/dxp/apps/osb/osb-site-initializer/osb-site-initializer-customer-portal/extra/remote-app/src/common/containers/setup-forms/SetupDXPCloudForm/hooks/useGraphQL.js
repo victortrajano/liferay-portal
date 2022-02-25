@@ -13,6 +13,7 @@ import {
 	PRODUCT_TYPES,
 	STATUS_TAG_TYPE_NAMES,
 } from '../../../../../routes/customer-portal/utils/constants';
+import {Liferay} from '../../../../services/liferay';
 import {
 	useGetAccountSubscriptionGroups,
 	useUpdateAccountSubscriptionGroup,
@@ -24,10 +25,7 @@ import {useGetDXPCDataCenterRegions} from '../../../../services/liferay/graphql/
 import {useGetKoroneikiAccountByAccountKey} from '../../../../services/liferay/graphql/koroneiki-accounts';
 
 export default function useGraphQL() {
-	const [
-		createDXPCloudEnvironment,
-		{data, loading},
-	] = useCreateDXPCloudEnvironment();
+	const [createDXPCloudEnvironment] = useCreateDXPCloudEnvironment();
 	const [createAdminDXPCloud] = useCreateAdminDXPCloud();
 	const [
 		updateAccountSubscriptionGroup,
@@ -59,44 +57,39 @@ export default function useGraphQL() {
 		},
 		dxpCloudEnvironment: {
 			create: {
-				loading,
 				mutation: createDXPCloudEnvironment,
 			},
 		},
 		dxpcDataCenterRegions: {
 			items: dxpcDataCenterRegionData?.c?.dXPCDataCenterRegions?.items,
 		},
-		getPromiseMutations: (admins) => {
-			const dxpCloudEnvironmentId = data?.dxpCloudEnvironmentId;
-
-			return [
-				Promise.all(
-					admins?.map(({email, firstName, github, lastName}) =>
-						createAdminDXPCloud({
-							variables: {
-								AdminDXPCloud: {
-									dxpCloudEnvironmentId,
-									emailAddress: email,
-									firstName,
-									githubUsername: github,
-									lastName,
-								},
-								scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
+		getPromiseMutations: (admins, dxpCloudEnvironmentId) => [
+			Promise.all(
+				admins?.map(({email, firstName, github, lastName}) =>
+					createAdminDXPCloud({
+						variables: {
+							adminDXPCloud: {
+								dxpCloudEnvironmentId,
+								emailAddress: email,
+								firstName,
+								githubUsername: github,
+								lastName,
 							},
-						})
-					)
-				),
-				updateAccountSubscriptionGroup({
-					variables: {
-						accountSubscriptionGroup: {
-							activationStatus: STATUS_TAG_TYPE_NAMES.inProgress,
+							scopeKey: Liferay.ThemeDisplay.getScopeGroupId(),
 						},
-						accountSubscriptionGroupId:
-							accountSubscriptionGroupsItem?.accountSubscriptionGroupId,
+					})
+				)
+			),
+			updateAccountSubscriptionGroup({
+				variables: {
+					accountSubscriptionGroup: {
+						activationStatus: STATUS_TAG_TYPE_NAMES.inProgress,
 					},
-				}),
-			];
-		},
+					accountSubscriptionGroupId:
+						accountSubscriptionGroupsItem?.accountSubscriptionGroupId,
+				},
+			}),
+		],
 		koroneikiAccount: {
 			data: koroneikiAccountData,
 		},

@@ -60,9 +60,7 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 	]);
 
 	const handleSubmitButton = async () => {
-		const {loading, mutation} = dxpCloudEnvironment.create;
-
-		await mutation({
+		const {data} = await dxpCloudEnvironment.create.mutation({
 			variables: {
 				dxpCloudEnvironment: {
 					accountKey: koroneikiAccount.data?.accountKey,
@@ -74,8 +72,13 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 			},
 		});
 
-		if (!loading) {
-			await Promise.all(getPromiseMutations(values.admins));
+		if (data) {
+			const dxpCloudEnvironmentId =
+				data.c?.createDXPCloudEnvironment?.dxpCloudEnvironmentId;
+
+			await Promise.all(
+				getPromiseMutations(values.admins, dxpCloudEnvironmentId)
+			);
 
 			handlePage(true, koroneikiAccount.data);
 		}

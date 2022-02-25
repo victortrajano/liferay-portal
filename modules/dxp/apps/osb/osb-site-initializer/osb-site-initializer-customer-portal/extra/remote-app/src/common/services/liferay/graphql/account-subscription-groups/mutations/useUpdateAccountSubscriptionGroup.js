@@ -20,7 +20,18 @@ const UPDATE_ACCOUNT_SUBSCRIPTION_GROUP = gql`
 			updateAccountSubscriptionGroup(
 				accountSubscriptionGroupId: $accountSubscriptionGroupId
 				AccountSubscriptionGroup: $accountSubscriptionGroup
-			)
+			) {
+				accountKey
+				accountSubscriptionGroupId
+				activationStatus
+				dateCreated
+				dateModified
+				externalReferenceCode
+				hasActivation
+				manageContactsURL
+				name
+				status
+			}
 		}
 	}
 `;

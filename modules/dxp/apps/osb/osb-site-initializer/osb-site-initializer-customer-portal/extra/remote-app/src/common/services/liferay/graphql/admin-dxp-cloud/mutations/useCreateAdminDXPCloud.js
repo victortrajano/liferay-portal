@@ -14,13 +14,24 @@ import {gql, useMutation} from '@apollo/client';
 const CREATE_ADMIN_DXP_CLOUD = gql`
 	mutation createAdminDXPCloud(
 		$scopeKey: String!
-		$AdminDXPCloud: InputC_AdminDXPCloud!
+		$adminDXPCloud: InputC_AdminDXPCloud!
 	) {
 		c {
 			createAdminDXPCloud(
 				scopeKey: $scopeKey
-				AdminDXPCloud: $AdminDXPCloud
-			)
+				AdminDXPCloud: $adminDXPCloud
+			) {
+				adminDXPCloudId
+				dateCreated
+				dateModified
+				dxpCloudEnvironmentId
+				emailAddress
+				externalReferenceCode
+				firstName
+				githubUsername
+				lastName
+				status
+			}
 		}
 	}
 `;

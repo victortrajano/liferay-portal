@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -10,8 +9,8 @@
  * distribution rights of the Software.
  */
 
-import {Formik, useFormikContext} from 'formik';
-import {useEffect, useMemo, useState} from 'react';
+import {FieldArray, Formik, useFormikContext} from 'formik';
+import {useEffect, useMemo} from 'react';
 import {Badge, Button} from '../../../components';
 import {ROLE_TYPES} from '../../../utils/constants';
 import getInitialInvite from '../../../utils/getInitialInvite';
@@ -25,7 +24,7 @@ import getValidAccountRoles from './utils/getValidAccountRoles';
 
 const INITIAL_INVITES_COUNT = 3;
 
-const InviteTeamMembersPage = ({handlePage, leftButton}) => {
+const InviteTeamMembers = ({handlePage, leftButton}) => {
 	const {
 		isValid,
 		setErrors,
@@ -120,7 +119,7 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 				)
 			);
 
-			handlePage();
+			handlePage(koroneikiAccount);
 		} else {
 			invalidateFirstInput();
 		}
@@ -132,13 +131,6 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 			accountRoles?.find(({id}) => id === +roleId)
 		);
 
-	const handleAddMoreMembers = () => {
-		setFieldValue('invites', [
-			...values.invites,
-			getInitialInvite(accountMember),
-		]);
-	};
-
 	if (koroneikiAccount.loading || accountAccountRoles.loading) {
 		return <>Loading...</>;
 	}
@@ -147,7 +139,10 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 		<Layout
 			footerProps={{
 				leftButton: (
-					<Button borderless onClick={handlePage}>
+					<Button
+						borderless
+						onClick={() => handlePage(koroneikiAccount)}
+					>
 						{leftButton}
 					</Button>
 				),
@@ -167,27 +162,36 @@ const InviteTeamMembersPage = ({handlePage, leftButton}) => {
 				title: 'Invite Your Team Members',
 			}}
 		>
-			{showFormError && (
-				<Badge>
-					<span className="pl-1">
-						Add at least one user&apos;s email to send an
-						invitation.
-					</span>
-				</Badge>
-			)}
+			<FieldArray
+				name="admins"
+				render={({push}) => (
+					<>
+						{showFormError && (
+							<Badge>
+								<span className="pl-1">
+									Add at least one user&apos;s email to send
+									an invitation.
+								</span>
+							</Badge>
+						)}
 
-			<FormInvites
-				accountRolesOptions={accountRolesOptions}
-				handleAddMoreMembers={handleAddMoreMembers}
-				handleSelectOnChange={handleSelectOnChange}
-				invites={values?.invites}
-				koroneikiAccount={koroneikiAccount}
-			></FormInvites>
+						<FormInvites
+							accountRolesOptions={accountRolesOptions}
+							handleAddMoreMembers={() =>
+								push(getInitialInvite(accountMember))
+							}
+							handleSelectOnChange={handleSelectOnChange}
+							invites={values?.invites}
+							koroneikiAccount={koroneikiAccount}
+						></FormInvites>
 
-			<Helper
-				availableAdminsRoles={availableAdminsRoles}
-				koroneikiAccount={koroneikiAccount}
-			></Helper>
+						<Helper
+							availableAdminsRoles={availableAdminsRoles}
+							koroneikiAccount={koroneikiAccount}
+						></Helper>
+					</>
+				)}
+			/>
 		</Layout>
 	);
 };
@@ -201,7 +205,7 @@ const InviteTeamMembersForm = (props) => {
 				),
 			}}
 		>
-			<InviteTeamMembersPage {...props} />
+			<InviteTeamMembers {...props} />
 		</Formik>
 	);
 };

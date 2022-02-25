@@ -31,7 +31,7 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 	} = useGraphQL();
 
 	const hasAccountSubscriptionsWithDisasterRecovery = !!accountSubscriptions.items;
-	const {errors, isValid, setFieldValue, values} = useFormikContext();
+	const {isValid, setFieldValue, touched, values} = useFormikContext();
 
 	const dxpcDataCenterRegionsOptions = useMemo(
 		() =>
@@ -95,7 +95,10 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 				),
 				middleButton: (
 					<Button
-						disabled={!isValid}
+						disabled={
+							!isValid ||
+							touched.admins?.length !== values.admins?.length
+						}
 						displayType="primary"
 						onClick={handleSubmitButton}
 					>

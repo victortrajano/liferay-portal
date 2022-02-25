@@ -163,7 +163,7 @@ const InviteTeamMembers = ({handlePage, leftButton}) => {
 			}}
 		>
 			<FieldArray
-				name="admins"
+				name="invites"
 				render={({push}) => (
 					<>
 						{showFormError && (

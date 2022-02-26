@@ -11,12 +11,12 @@
 
 import Guard from '../../common/containers/Guard';
 import OnboardingProvider from './context';
-import Pages from './pages';
+import Steps from './steps';
 
 const Onboarding = () => (
 	<OnboardingProvider>
 		<Guard onboarding>
-			<Pages />
+			<Steps />
 		</Guard>
 	</OnboardingProvider>
 );

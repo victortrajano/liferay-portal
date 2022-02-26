@@ -11,8 +11,8 @@
 
 import InviteTeamMembersForm from '../../../common/containers/setup-forms/InviteTeamMembersForm';
 import SetupDXPCloudForm from '../../../common/containers/setup-forms/SetupDXPCloudForm';
-import SuccessDXPCloud from '../pages/SuccessDXPCloud';
-import Welcome from '../pages/Welcome';
+import SuccessDXPCloud from '../steps/SuccessDXPCloud';
+import Welcome from '../steps/Welcome';
 import {ONBOARDING_STEP_TYPES} from './constants';
 import pageFormHandle from './pageFormHandle';
 

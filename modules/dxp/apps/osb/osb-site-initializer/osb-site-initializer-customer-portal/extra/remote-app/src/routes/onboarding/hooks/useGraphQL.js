@@ -12,11 +12,11 @@
 import {Liferay} from '../../../common/services/liferay';
 import {useCreateAccountFlag} from '../../../common/services/liferay/graphql/account-flags/mutations/useCreateAccountFlag';
 import {useGetAccountSubscriptionGroups} from '../../../common/services/liferay/graphql/account-subscription-groups';
-import {useGetKoroneikiAccounts} from '../../../common/services/liferay/graphql/koroneiki-accounts/queries/useGetKoroneikiAccounts';
+import {useGetKoroneikiAccounts} from '../../../common/services/liferay/graphql/koroneiki-accounts';
 import {useGetUserAccount} from '../../../common/services/liferay/graphql/user-accounts';
 import {PRODUCT_TYPES} from '../../customer-portal/utils/constants/productTypes';
 
-export default function useOnboardingData() {
+export default function useGraphQL() {
 	const {
 		data: userAccountData,
 		loading: userAccountLoading,
@@ -32,6 +32,10 @@ export default function useOnboardingData() {
 		filter: `accountKey eq '${selectAccountBrief?.externalReferenceCode}'`,
 		skip: userAccountLoading,
 	});
+
+	const koroneikiAccount =
+		koroneikiAccountsData?.c?.koroneikiAccounts?.items[0];
+
 	const {
 		data: accountSubscriptionGroupsData,
 		loading: accountSubscriptionGroupsLoading,
@@ -45,8 +49,6 @@ export default function useOnboardingData() {
 		{called: createAccountFlagCalled},
 	] = useCreateAccountFlag();
 
-	const koroneikiAccount =
-		koroneikiAccountsData?.c?.koroneikiAccounts?.items[0];
 	const accountSubscriptionGroupDXPCloud =
 		accountSubscriptionGroupsData?.c?.accountSubscriptionGroups?.items[0];
 
@@ -57,16 +59,13 @@ export default function useOnboardingData() {
 				mutation: createAccountFlag,
 			},
 		},
-		accountSubscriptionGroups: {
-			first: accountSubscriptionGroupDXPCloud,
-			loading: accountSubscriptionGroupsLoading,
+		accountSubscriptionGroup: {
+			data: accountSubscriptionGroupDXPCloud,
+			loading: accountSubscriptionGroupsLoading || userAccountLoading,
 		},
-		koroneikiAccounts: {
-			first: koroneikiAccount,
+		koroneikiAccount: {
+			data: koroneikiAccount,
 			loading: koroneikiAccountsLoading,
-		},
-		userAccount: {
-			loading: userAccountLoading,
 		},
 	};
 }

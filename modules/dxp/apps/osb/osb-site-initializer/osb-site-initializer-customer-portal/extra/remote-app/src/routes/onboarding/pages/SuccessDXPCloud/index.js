@@ -12,12 +12,15 @@
 import {Button} from '../../../../common/components';
 import Layout from '../../../../common/containers/setup-forms/Layout';
 import useRedirectURL from '../../../../common/hooks/useRedirectURL';
+import {useGetKoroneikiAccountByAccountKey} from '../../../../common/services/liferay/graphql/koroneiki-accounts';
 import {LOCATIONS} from '../../../../common/utils/constants';
 
-const SuccessDXPCloud = ({koroneikiAccount}) => {
+const SuccessDXPCloud = () => {
+	const {data} = useGetKoroneikiAccountByAccountKey();
+
 	const setRedirectURL = useRedirectURL();
 	const onClickDone = () =>
-		setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey));
+		setRedirectURL(LOCATIONS.overview(data?.accountKey));
 
 	return (
 		<Layout

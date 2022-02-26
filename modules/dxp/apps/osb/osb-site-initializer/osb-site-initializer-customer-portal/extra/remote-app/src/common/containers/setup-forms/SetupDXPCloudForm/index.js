@@ -80,7 +80,7 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 				getPromiseMutations(values.admins, dxpCloudEnvironmentId)
 			);
 
-			handlePage(true, koroneikiAccount.data);
+			handlePage(koroneikiAccount.data, true);
 		}
 	};
 

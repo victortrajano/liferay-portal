@@ -12,37 +12,34 @@
 import useRedirectURL from '../../../common/hooks/useRedirectURL';
 import {ROUTE_TYPES} from '../../../common/utils/constants';
 import {useOnboardingContext} from '../context';
-import useOnboardingData from '../hooks/useOnboardingData';
+import useGraphQL from '../hooks/useGraphQL';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
 import getStepsComponent from '../utils/getStepsComponent';
 
 const Pages = () => {
 	const setRedirectURL = useRedirectURL();
 	const [{step}, dispatch] = useOnboardingContext();
+
 	const {
 		accountFlag,
-		accountSubscriptionGroups,
-		koroneikiAccounts,
-		userAccount,
-	} = useOnboardingData();
-
+		accountSubscriptionGroup: accountSubscriptionGroupDXPCloud,
+		koroneikiAccount,
+	} = useGraphQL();
 	const stepsComponent = getStepsComponent(
-		accountSubscriptionGroups.first,
+		accountSubscriptionGroupDXPCloud.data,
 		dispatch,
-		koroneikiAccounts.first,
 		setRedirectURL
 	);
 
 	if (
-		!userAccount.loading &&
-		!koroneikiAccounts.loading &&
-		!accountSubscriptionGroups.loading
+		!accountSubscriptionGroupDXPCloud.loading &&
+		!koroneikiAccount.loading
 	) {
 		if (!accountFlag.create.called) {
 			accountFlag.create.mutation({
 				variables: {
 					accountFlag: {
-						accountKey: koroneikiAccounts.first.accountKey,
+						accountKey: koroneikiAccount.data?.accountKey,
 						finished: true,
 						name: ROUTE_TYPES.onboarding,
 					},

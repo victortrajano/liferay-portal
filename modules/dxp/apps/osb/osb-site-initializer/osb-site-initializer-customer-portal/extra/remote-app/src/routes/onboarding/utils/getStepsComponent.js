@@ -19,14 +19,13 @@ import pageFormHandle from './pageFormHandle';
 export default function getStepsComponent(
 	accountSubscriptionGroup,
 	dispatch,
-	koroneikiAccount,
 	setRedirectURL
 ) {
 	return {
 		[ONBOARDING_STEP_TYPES.invites]: {
 			Component: (
 				<InviteTeamMembersForm
-					handlePage={() =>
+					handlePage={(koroneikiAccount) =>
 						pageFormHandle(
 							dispatch,
 							!!accountSubscriptionGroup,
@@ -36,14 +35,13 @@ export default function getStepsComponent(
 						)
 					}
 					leftButton="Skip for now"
-					project={koroneikiAccount}
 				/>
 			),
 		},
 		[ONBOARDING_STEP_TYPES.dxpCloud]: {
 			Component: (
 				<SetupDXPCloudForm
-					handlePage={(isSuccess) =>
+					handlePage={(koroneikiAccount, isSuccess) =>
 						pageFormHandle(
 							dispatch,
 							isSuccess,
@@ -53,13 +51,11 @@ export default function getStepsComponent(
 						)
 					}
 					leftButton="Skip for now"
-					project={koroneikiAccount}
-					subscriptionGroupId={accountSubscriptionGroup?.id}
 				/>
 			),
 		},
 		[ONBOARDING_STEP_TYPES.successDxpCloud]: {
-			Component: <SuccessDXPCloud koroneikiAccount={koroneikiAccount} />,
+			Component: <SuccessDXPCloud />,
 		},
 		[ONBOARDING_STEP_TYPES.welcome]: {
 			Component: <Welcome />,

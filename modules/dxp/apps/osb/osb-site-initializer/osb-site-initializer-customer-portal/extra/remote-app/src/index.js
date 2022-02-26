@@ -28,11 +28,8 @@ const RouteApps = {
 	portal: <CustomerPortal />,
 };
 
-const CustomerPortalApp = ({route, ...properties}) => {
-	const apolloClient = useApollo(
-		properties.oktaAPI,
-		properties.provisioningServerAPI
-	);
+const CustomerPortalApp = ({apis, route, ...properties}) => {
+	const apolloClient = useApollo(apis.oktaAPI, apis.provisioningServerAPI);
 
 	if (!apolloClient) {
 		return <ClayLoadingIndicator />;
@@ -57,20 +54,22 @@ class CustomerPortalWebComponent extends HTMLElement {
 				'article-deploying-activation-keys-url'
 			),
 			liferayWebDAV: super.getAttribute('liferaywebdavurl'),
-			oktaAPI: super.getAttribute('okta-api'),
 			page: super.getAttribute('page'),
-			provisioningServerAPI: super.getAttribute(
-				'provisioning-server-api'
-			),
 			submitSupportTicketURL: super.getAttribute(
 				'submit-support-ticket-url'
 			),
+		};
+
+		const apis = {
+			okta: super.getAttribute('okta-api'),
+			provisioningServer: super.getAttribute('provisioning-server-api'),
 		};
 
 		ReactDOM.render(
 			<ClayIconSpriteContext.Provider value={getIconSpriteMap()}>
 				<CustomerPortalApp
 					{...properties}
+					apis={apis}
 					route={super.getAttribute('route')}
 				/>
 			</ClayIconSpriteContext.Provider>,

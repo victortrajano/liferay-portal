@@ -23,6 +23,7 @@ import setFirstDataCenterRegionSelected from './utils/setFirstDataCenterRegionSe
 
 const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 	const {
+		accountSubscriptionGroups,
 		accountSubscriptions,
 		dxpCloudEnvironment,
 		dxpcDataCenterRegions,
@@ -83,6 +84,15 @@ const SetupDXPCloudPage = ({handlePage, leftButton}) => {
 			handlePage(koroneikiAccount.data, true);
 		}
 	};
+
+	if (
+		accountSubscriptions.loading ||
+		dxpcDataCenterRegions.loading ||
+		accountSubscriptionGroups.loading ||
+		koroneikiAccount.loading
+	) {
+		return <>Loading...</>;
+	}
 
 	return (
 		<Layout

@@ -31,18 +31,24 @@ export default function useGraphQL() {
 		updateAccountSubscriptionGroup,
 	] = useUpdateAccountSubscriptionGroup();
 
-	const {data: dxpcDataCenterRegionData} = useGetDXPCDataCenterRegions();
+	const {
+		data: dxpcDataCenterRegionData,
+		loading: dxpcDataCenterRegionLoading,
+	} = useGetDXPCDataCenterRegions();
 	const {
 		data: koroneikiAccountData,
 		loading: koroneikiAccountLoading,
 	} = useGetKoroneikiAccountByAccountKey();
-
-	const {data: accountSubscriptionsData} = useGetAccountSubscriptions({
+	const {
+		data: accountSubscriptionsData,
+		loading: accountSubscriptionsLoading,
+	} = useGetAccountSubscriptions({
 		filter: `(accountKey eq '${koroneikiAccountData?.accountKey}') and (hasDisasterDataCenterRegion eq true)`,
 		skip: koroneikiAccountLoading,
 	});
 	const {
 		data: accountSubscriptionGroupsData,
+		loading: accountSubscriptionGroupsLoading,
 	} = useGetAccountSubscriptionGroups({
 		filter: `(accountKey eq '${koroneikiAccountData?.accountKey}') and (name eq '${PRODUCT_TYPES.dxpCloud}') and (hasActivation eq true)`,
 		skip: koroneikiAccountLoading,
@@ -52,8 +58,12 @@ export default function useGraphQL() {
 		accountSubscriptionGroupsData?.c?.accountSubscriptionGroups?.items[0];
 
 	return {
+		accountSubscriptionGroups: {
+			loading: accountSubscriptionGroupsLoading,
+		},
 		accountSubscriptions: {
 			items: accountSubscriptionsData?.c?.accountSubscriptions?.items,
+			loading: accountSubscriptionsLoading,
 		},
 		dxpCloudEnvironment: {
 			create: {
@@ -62,6 +72,7 @@ export default function useGraphQL() {
 		},
 		dxpcDataCenterRegions: {
 			items: dxpcDataCenterRegionData?.c?.dXPCDataCenterRegions?.items,
+			loading: dxpcDataCenterRegionLoading,
 		},
 		getPromiseMutations: (admins, dxpCloudEnvironmentId) => [
 			Promise.all(
@@ -92,6 +103,7 @@ export default function useGraphQL() {
 		],
 		koroneikiAccount: {
 			data: koroneikiAccountData,
+			loading: koroneikiAccountLoading,
 		},
 	};
 }

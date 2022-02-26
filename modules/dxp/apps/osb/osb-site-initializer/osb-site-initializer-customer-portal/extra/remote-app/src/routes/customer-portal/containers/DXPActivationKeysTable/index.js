@@ -17,7 +17,7 @@ import RoundedGroupButtons from '../../../../common/components/RoundedGroupButto
 import Table from '../../../../common/components/Table';
 import {useAppPropertiesContext} from '../../../../common/context/AppPropertiesProvider';
 import {getActivationLicenseKey} from '../../../../common/services/liferay/rest/raysource/LicenseKeys';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import {ALERT_DOWNLOAD_TYPE} from '../../utils/constants/alertDownloadType';
 import {AUTO_CLOSE_ALERT_TIME} from '../../utils/constants/autoCloseAlertTime';
 import {ALERT_ACTIVATION_AGGREGATED_KEYS_DOWNLOAD_TEXT} from '../DXPActivationKeysTable/utils/constants/alertAggregateKeysDownloadText';
@@ -43,7 +43,7 @@ const MAX_ITEMS = 9999;
 const PAGE = 1;
 
 const DXPActivationKeysTable = ({project, sessionId}) => {
-	const [{liferayWebDAV}] = useCustomerPortal();
+	const [{liferayWebDAV}] = usePortalContext();
 	const {provisioningServerAPI} = useAppPropertiesContext();
 
 	const [activationKeys, setActivationKeys] = useState([]);

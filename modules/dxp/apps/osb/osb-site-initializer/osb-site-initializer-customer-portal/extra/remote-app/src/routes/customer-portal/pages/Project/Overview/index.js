@@ -17,7 +17,7 @@ import {getAccountSubscriptions} from '../../../../../common/services/liferay/gr
 import CardSubscription from '../../../components/CardSubscription';
 import SubscriptionsFilterByStatus from '../../../components/SubscriptionsFilterByStatus';
 import SubscriptionsNavbar from '../../../components/SubscriptionsNavbar';
-import {useCustomerPortal} from '../../../context';
+import {usePortalContext} from '../../../context';
 import {actionTypes} from '../../../context/reducer';
 import {SUBSCRIPTIONS_STATUS} from '../../../utils/constants';
 import {getWebContents} from '../../../utils/getWebContents';
@@ -25,7 +25,7 @@ import OverviewSkeleton from './Skeleton';
 
 const Overview = () => {
 	const {project, subscriptionGroups} = useOutletContext();
-	const [, dispatch] = useCustomerPortal();
+	const [, dispatch] = usePortalContext();
 	const [accountSubscriptions, setAccountSubscriptions] = useState([]);
 	const [selectedSubscriptionGroup, setSelectedSubscriptionGroup] = useState(
 		''

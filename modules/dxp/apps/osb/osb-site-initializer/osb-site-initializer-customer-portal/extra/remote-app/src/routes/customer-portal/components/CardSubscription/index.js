@@ -12,7 +12,7 @@
 import {useModal} from '@clayui/modal';
 import {useState} from 'react';
 import ModalCardSubscription from '../../containers/ModalCardSubscription';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import {STATUS_TAG_TYPES} from '../../utils/constants';
 import getDateCustomFormat from '../../utils/getDateCustomFormat';
 import StatusTag from '../StatusTag';
@@ -36,7 +36,7 @@ const CardSubscription = ({
 	cardSubscriptionData,
 	selectedSubscriptionGroup,
 }) => {
-	const [{liferayWebDAV}] = useCustomerPortal();
+	const [{liferayWebDAV}] = usePortalContext();
 	const [visible, setVisible] = useState(false);
 	const {observer, onClose} = useModal({
 		onClose: () => setVisible(false),

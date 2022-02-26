@@ -9,14 +9,14 @@
  * distribution rights of the Software.
  */
 
-import {useCustomerPortal} from '../context';
+import {usePortalContext} from '../context';
 import {PAGE_TYPES} from '../utils/constants';
 import Home from './Home';
 import Overview from './Project/Overview';
 import ProjectRoutes from './Project/routes/project.routes';
 
 const Pages = () => {
-	const [{page, userAccount}] = useCustomerPortal();
+	const [{page, userAccount}] = usePortalContext();
 	const PageLayout = {
 		[PAGE_TYPES.home]: {
 			Component: <Home userAccount={userAccount} />,

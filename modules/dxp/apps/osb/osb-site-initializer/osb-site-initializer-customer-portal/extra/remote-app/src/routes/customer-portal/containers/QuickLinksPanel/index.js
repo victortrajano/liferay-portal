@@ -16,7 +16,7 @@ import {useCallback, useEffect, useState} from 'react';
 import {fetchHeadless} from '../../../../common/services/liferay/api';
 import {storage} from '../../../../common/services/liferay/storage';
 import {STORAGE_KEYS} from '../../../../common/utils/constants';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import QuickLinksSkeleton from './Skeleton';
 
@@ -31,7 +31,7 @@ const QuickLinksPanel = ({accountKey}) => {
 	const [
 		{isQuickLinksExpanded, quickLinks, structuredContents},
 		dispatch,
-	] = useCustomerPortal();
+	] = usePortalContext();
 	const [quickLinksContents, setQuickLinksContents] = useState([]);
 
 	useEffect(() => {

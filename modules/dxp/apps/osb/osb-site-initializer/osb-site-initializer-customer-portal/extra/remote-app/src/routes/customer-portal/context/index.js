@@ -27,7 +27,7 @@ import {isValidPage} from '../../../common/utils/page.validation';
 import {CUSTOM_EVENT_TYPES} from '../utils/constants';
 import reducer, {actionTypes} from './reducer';
 
-const AppContext = createContext();
+const PortalContext = createContext();
 
 const getCurrentPageName = () => {
 	const {pathname} = new URL(Liferay.ThemeDisplay.getCanonicalURL());
@@ -41,7 +41,7 @@ const EVENT_OPTION = {
 	fireOnce: true,
 };
 
-const AppContextProvider = ({children}) => {
+const PortalProvider = ({children}) => {
 	const {liferayWebDAV, oktaAPI, page} = useAppPropertiesContext();
 	const eventUserAccount = Liferay.publish(
 		CUSTOM_EVENT_TYPES.userAccount,
@@ -217,8 +217,7 @@ const AppContextProvider = ({children}) => {
 							accountBrief =
 								dataAccount?.accountByExternalReferenceCode;
 						}
-					}
-					else {
+					} else {
 						accountBrief = user.accountBriefs?.find(
 							(accountBrief) =>
 								accountBrief.externalReferenceCode ===
@@ -239,12 +238,13 @@ const AppContextProvider = ({children}) => {
 	}, [oktaAPI]);
 
 	return (
-		<AppContext.Provider value={[state, dispatch]}>
+		<PortalContext.Provider value={[state, dispatch]}>
 			{children}
-		</AppContext.Provider>
+		</PortalContext.Provider>
 	);
 };
 
-const useCustomerPortal = () => useContext(AppContext);
+const usePortalContext = () => useContext(PortalContext);
 
-export {AppContext, AppContextProvider, useCustomerPortal};
+export default PortalProvider;
+export {usePortalContext};

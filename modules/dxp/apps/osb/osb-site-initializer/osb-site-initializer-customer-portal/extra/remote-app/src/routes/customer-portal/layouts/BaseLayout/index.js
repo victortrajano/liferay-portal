@@ -14,7 +14,7 @@ import {Outlet, useLocation} from 'react-router-dom';
 import ProjectSupport from '../../components/ProjectSupport';
 import QuickLinksPanel from '../../containers/QuickLinksPanel';
 import SideMenu from '../../containers/SideMenu';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import ActivationKeys from '../../pages/Project/ActivationKeys';
 import Overview from '../../pages/Project/Overview';
 import {PAGE_TYPES} from '../../utils/constants';
@@ -34,7 +34,7 @@ const Layout = () => {
 
 	const [
 		{project, sessionId, subscriptionGroups, userAccount},
-	] = useCustomerPortal();
+	] = usePortalContext();
 
 	const getCurrentPage = useCallback(() => {
 		const [, ...currentPath] = location.pathname.split('/').filter(Boolean);

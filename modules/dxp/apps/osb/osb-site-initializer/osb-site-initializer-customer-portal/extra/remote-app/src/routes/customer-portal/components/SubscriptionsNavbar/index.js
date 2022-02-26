@@ -13,7 +13,7 @@ import {Button as ClayButton, DropDown} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import React, {useEffect, useRef, useState} from 'react';
 import RoundedGroupButtons from '../../../../common/components/RoundedGroupButtons';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 
 const SubscriptionDropDownMenu = ({
 	selectedSubscriptionGroup,
@@ -72,7 +72,7 @@ const SubscriptionsNavbar = ({
 	subscriptionGroups,
 }) => {
 	const [showDropDown, setShowDropDown] = useState(false);
-	const [{isQuickLinksExpanded}] = useCustomerPortal();
+	const [{isQuickLinksExpanded}] = usePortalContext();
 
 	const subscriptionNavbarRef = useRef();
 

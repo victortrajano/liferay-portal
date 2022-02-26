@@ -12,15 +12,15 @@
 import Guard from '../../common/containers/Guard';
 import '../../routes/customer-portal/styles/app.scss';
 
-import {AppContextProvider} from './context';
+import PortalProvider from './context';
 import Pages from './pages';
 
 const CustomerPortal = () => (
-	<AppContextProvider>
+	<PortalProvider>
 		<Guard portal>
 			<Pages />
 		</Guard>
-	</AppContextProvider>
+	</PortalProvider>
 );
 
 export default CustomerPortal;

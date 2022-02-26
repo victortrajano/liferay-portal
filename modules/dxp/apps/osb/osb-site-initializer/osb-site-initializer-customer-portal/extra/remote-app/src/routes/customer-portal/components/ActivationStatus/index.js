@@ -22,7 +22,7 @@ import {
 	getAccountSubscriptionsTerms,
 } from '../../../../common/services/liferay/graphql/queries';
 import getCurrentEndDate from '../../../../common/utils/getCurrentEndDate';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import {actionTypes} from '../../context/reducer';
 import {STATUS_TAG_TYPES, STATUS_TAG_TYPE_NAMES} from '../../utils/constants';
 import StatusTag from '../StatusTag';
@@ -51,7 +51,7 @@ const ActivationStatus = ({
 	subscriptionGroupDXPCloud,
 	userAccount,
 }) => {
-	const [{liferayWebDAV}, dispatch] = useCustomerPortal();
+	const [{liferayWebDAV}, dispatch] = usePortalContext();
 	const [activationStatusDate, setActivationStatusDate] = useState('');
 	const [visible, setVisible] = useState(false);
 	const modalProps = useModal({

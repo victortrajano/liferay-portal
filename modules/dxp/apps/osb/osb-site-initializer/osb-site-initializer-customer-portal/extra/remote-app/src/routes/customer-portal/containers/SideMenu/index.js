@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import {useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import Button from '../../../../common/components/Button';
-import {useCustomerPortal} from '../../context';
+import {usePortalContext} from '../../context';
 import {MENU_TYPES, PAGE_TYPES, PRODUCT_TYPES} from '../../utils/constants';
 import {getCamelCase} from '../../utils/getCamelCase';
 import SideMenuSkeleton from './Skeleton';
@@ -55,7 +55,7 @@ const MenuItem = ({activeButton, menuKey, setActiveButton, ...props}) => {
 };
 
 const SideMenu = ({getCurrentPage, subscriptionGroups}) => {
-	const [{assetsPath}] = useCustomerPortal();
+	const [{assetsPath}] = usePortalContext();
 	const [currentMenuSelected, setCurrentMenuSelected] = useState();
 	const [hasOpenedProductsMenu, setHasOpenedProductsMenu] = useState(false);
 	const productActivationButtonRef = useRef();

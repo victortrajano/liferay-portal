@@ -85,7 +85,8 @@ const isValidPage = async (userAccount, externalReferenceCode, pageKey) => {
 				window.location.href = getHomeLocation();
 
 				return false;
-			} else if (!hasAccountFlags && isAccountAdministrator) {
+			}
+			else if (!hasAccountFlags && isAccountAdministrator) {
 				window.location.href = getOnboardingLocation(
 					externalReferenceCode
 				);

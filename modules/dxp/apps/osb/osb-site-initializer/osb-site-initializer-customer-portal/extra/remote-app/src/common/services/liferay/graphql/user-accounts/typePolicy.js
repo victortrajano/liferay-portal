@@ -62,7 +62,8 @@ export const userAccountsTypePolicy = {
 							id: readField('id', accountBriefRef),
 							name: readField('name', accountBriefRef),
 						};
-					} else if (readField('hasAdministratorRole')) {
+					}
+					else if (readField('hasAdministratorRole')) {
 						const accountRef = toReference({
 							__typename:
 								'com_liferay_headless_admin_user_dto_v1_0_Account',

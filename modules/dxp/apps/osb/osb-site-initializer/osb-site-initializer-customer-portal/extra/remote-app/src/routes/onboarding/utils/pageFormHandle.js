@@ -24,7 +24,8 @@ export default function pageFormHandle(
 			payload: nextStep,
 			type: actionTypes.CHANGE_STEP,
 		});
-	} else {
+	}
+	else {
 		setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey));
 	}
 }

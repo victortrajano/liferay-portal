@@ -36,7 +36,8 @@ const PortalGuardRoute = ({children, userAccount}) => {
 				? LOCATIONS.overview(userAccount.accountBriefs[0])
 				: LOCATIONS.home()
 		);
-	} else {
+	}
+	else {
 		return children;
 	}
 

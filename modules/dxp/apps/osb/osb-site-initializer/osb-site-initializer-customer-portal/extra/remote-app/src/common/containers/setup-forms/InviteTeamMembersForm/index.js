@@ -120,7 +120,8 @@ const InviteTeamMembers = ({handlePage, leftButton}) => {
 			);
 
 			handlePage(koroneikiAccount);
-		} else {
+		}
+		else {
 			invalidateFirstInput();
 		}
 	};

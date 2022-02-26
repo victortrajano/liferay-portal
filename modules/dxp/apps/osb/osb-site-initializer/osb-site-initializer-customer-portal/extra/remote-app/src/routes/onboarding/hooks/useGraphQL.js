@@ -15,6 +15,11 @@ import {useGetKoroneikiAccountByAccountKey} from '../../../common/services/lifer
 import {PRODUCT_TYPES} from '../../customer-portal/utils/constants/productTypes';
 
 export default function useGraphQL() {
+	const [
+		createAccountFlag,
+		{called: createAccountFlagCalled},
+	] = useCreateAccountFlag();
+
 	const {
 		data: koroneikiAccount,
 		loading,
@@ -27,12 +32,6 @@ export default function useGraphQL() {
 		filter: `(accountKey eq '${koroneikiAccount?.accountKey}') and (name eq '${PRODUCT_TYPES.dxpCloud}') and (hasActivation eq true)`,
 		skip: loading,
 	});
-
-	const [
-		createAccountFlag,
-		{called: createAccountFlagCalled},
-	] = useCreateAccountFlag();
-
 	const accountSubscriptionGroupDXPCloud =
 		accountSubscriptionGroupsData?.c?.accountSubscriptionGroups?.items[0];
 

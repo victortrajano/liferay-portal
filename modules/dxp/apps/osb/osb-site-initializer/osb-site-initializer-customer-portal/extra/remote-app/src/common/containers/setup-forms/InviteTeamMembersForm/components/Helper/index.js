@@ -47,7 +47,7 @@ const Helper = ({availableAdminsRoles, koroneikiAccount}) => {
 					<a
 						className="font-weight-bold text-neutral-9"
 						href={articleAccountSupportURL}
-						rel="noreferrer"
+						rel="noreferrer noopener"
 						target="_blank"
 					>
 						Learn more about Customer Portal roles

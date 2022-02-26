@@ -63,8 +63,9 @@ const InviteTeamMembers = ({handlePage, leftButton}) => {
 		accountRoles,
 		availableAdminsRoles
 	);
-	const accountMember = accountRoles?.find(
-		({name}) => name === ROLE_TYPES.member.name
+	const accountMember = useMemo(
+		() => accountRoles?.find(({name}) => name === ROLE_TYPES.member.name),
+		[accountRoles]
 	);
 
 	const filledEmails = useMemo(
@@ -120,8 +121,7 @@ const InviteTeamMembers = ({handlePage, leftButton}) => {
 			);
 
 			handlePage(koroneikiAccount);
-		}
-		else {
+		} else {
 			invalidateFirstInput();
 		}
 	};

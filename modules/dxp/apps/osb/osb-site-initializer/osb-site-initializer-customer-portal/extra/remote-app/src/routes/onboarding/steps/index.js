@@ -16,7 +16,7 @@ import useGraphQL from '../hooks/useGraphQL';
 import {ONBOARDING_STEP_TYPES} from '../utils/constants';
 import getStepsComponent from '../utils/getStepsComponent';
 
-const Pages = () => {
+const Steps = () => {
 	const setRedirectURL = useRedirectURL();
 	const [{step}, dispatch] = useOnboardingContext();
 
@@ -53,4 +53,4 @@ const Pages = () => {
 	return stepsComponent[ONBOARDING_STEP_TYPES.welcome].Skeleton;
 };
 
-export default Pages;
+export default Steps;

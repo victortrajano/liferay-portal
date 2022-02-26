@@ -10,8 +10,6 @@
  */
 
 import {ROLE_TYPES} from '../../../../utils/constants/roleTypes';
-import {SEARCH_PARAMS_KEYS} from '../../../../utils/constants/searchParamsKeys';
-import {searchParams} from '../../searchParams';
 
 export const userAccountsTypePolicy = {
 	AccountBrief: {
@@ -31,10 +29,8 @@ export const userAccountsTypePolicy = {
 				},
 			},
 			selectedAccountBrief: {
-				read(_, {readField, toReference}) {
-					const accountKey = searchParams.get(
-						SEARCH_PARAMS_KEYS.accountKey
-					);
+				read(_, {args, readField, toReference}) {
+					const accountKey = args?.accountKey;
 
 					if (!accountKey) {
 						return null;
@@ -62,8 +58,7 @@ export const userAccountsTypePolicy = {
 							id: readField('id', accountBriefRef),
 							name: readField('name', accountBriefRef),
 						};
-					}
-					else if (readField('hasAdministratorRole')) {
+					} else if (readField('hasAdministratorRole')) {
 						const accountRef = toReference({
 							__typename:
 								'com_liferay_headless_admin_user_dto_v1_0_Account',

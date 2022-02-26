@@ -12,9 +12,10 @@
 import {gql, useQuery} from '@apollo/client';
 import {Liferay} from '../../..';
 import {CUSTOM_EVENT_TYPES} from '../../../../../../routes/customer-portal/utils/constants';
+import useHash from '../../../../../hooks/useHash';
 
 const GET_USER_ACCOUNT = gql`
-	query getUserAccount($userAccountId: Long!) {
+	query getUserAccount($userAccountId: Long!, $accountKey: String) {
 		userAccount(userAccountId: $userAccountId) {
 			accountBriefs {
 				externalReferenceCode
@@ -34,7 +35,7 @@ const GET_USER_ACCOUNT = gql`
 				name
 			}
 			hasAdministratorRole @client
-			selectedAccountBrief @client {
+			selectedAccountBrief(accountKey: $accountKey) @client {
 				externalReferenceCode
 				hasAccountAdministratorRole
 				id
@@ -50,6 +51,13 @@ const eventUserAccount = Liferay.publish(CUSTOM_EVENT_TYPES.userAccount, {
 });
 
 export function useGetUserAccount(userAccountId, options = {skip: false}) {
+	const hashLocation = useHash();
+
+	const accountKey = hashLocation
+		.replace('#/', '')
+		.split('/')
+		.filter(Boolean)[0];
+
 	return useQuery(GET_USER_ACCOUNT, {
 		onCompleted: (data) =>
 			eventUserAccount.fire({
@@ -57,6 +65,7 @@ export function useGetUserAccount(userAccountId, options = {skip: false}) {
 			}),
 		skip: options.skip,
 		variables: {
+			accountKey,
 			userAccountId,
 		},
 	});

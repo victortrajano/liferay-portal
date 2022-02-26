@@ -9,15 +9,8 @@
  * distribution rights of the Software.
  */
 
-import {Liferay} from '../../services/liferay';
-import getLiferaySiteName from '../getLiferaySiteName';
-import {ROUTE_TYPES} from './routeTypes';
+import {useMemo} from 'react';
 
-const BASE_API = `${Liferay.ThemeDisplay.getPortalURL()}/${getLiferaySiteName()}`;
-
-export const PAGE_ROUTER_TYPES = {
-	onboarding: (externalReferenceCode) =>
-		`${BASE_API}/${ROUTE_TYPES.onboarding}/#/${externalReferenceCode}`,
-	project: (externalReferenceCode) =>
-		`${BASE_API}/${ROUTE_TYPES.project}/#/${externalReferenceCode}`,
-};
+export default function useHash() {
+	return useMemo(() => window.location.hash, []);
+}

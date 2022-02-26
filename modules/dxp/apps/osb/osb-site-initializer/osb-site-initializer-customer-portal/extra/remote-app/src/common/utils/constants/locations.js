@@ -9,20 +9,16 @@
  * distribution rights of the Software.
  */
 
-import {SEARCH_PARAMS_KEYS} from '.';
 import {Liferay} from '../../services/liferay';
 import getLiferaySiteName from '../getLiferaySiteName';
+import {ROUTE_TYPES} from './routeTypes';
 
 const BASE_URL = `${Liferay.ThemeDisplay.getPortalURL()}/${getLiferaySiteName()}`;
 
 export const LOCATIONS = {
 	home: () => new URL(BASE_URL),
 	onboarding: (accountKey) =>
-		new URL(
-			`${BASE_URL}/onboarding?${SEARCH_PARAMS_KEYS.accountKey}=${accountKey}`
-		),
+		new URL(`${BASE_URL}/${ROUTE_TYPES.onboarding}/#/${accountKey}`),
 	overview: (accountKey) =>
-		new URL(
-			`${BASE_URL}/overview?${SEARCH_PARAMS_KEYS.accountKey}=${accountKey}`
-		),
+		new URL(`${BASE_URL}/${ROUTE_TYPES.project}/#/${accountKey}`),
 };

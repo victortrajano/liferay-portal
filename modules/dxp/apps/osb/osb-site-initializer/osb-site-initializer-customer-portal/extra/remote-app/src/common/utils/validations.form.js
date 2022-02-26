@@ -24,12 +24,12 @@ const maxLength = (value, max) => {
 	}
 };
 
-const isValidEmail = (value, bannedEmailDomains) => {
+const isValidEmail = (value, isValidDomain) => {
 	if (value && !EMAIL_REGEX.test(value)) {
 		return 'Please insert a valid e-mail.';
 	}
 
-	if (bannedEmailDomains.includes(value.split('@')[1])) {
+	if (!isValidDomain) {
 		return 'E-mail domain not allowed.';
 	}
 };

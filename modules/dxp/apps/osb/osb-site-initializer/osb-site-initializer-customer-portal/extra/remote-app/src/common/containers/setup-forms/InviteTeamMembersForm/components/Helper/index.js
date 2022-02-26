@@ -9,7 +9,6 @@
  * distribution rights of the Software.
  */
 
-import {memo} from 'react';
 import {useAppPropertiesContext} from '../../../../../context/AppPropertiesProvider';
 import {ROLE_TYPES} from '../../../../../utils/constants';
 
@@ -59,4 +58,4 @@ const Helper = ({availableAdminsRoles, koroneikiAccount}) => {
 	);
 };
 
-export default memo(Helper);
+export default Helper;

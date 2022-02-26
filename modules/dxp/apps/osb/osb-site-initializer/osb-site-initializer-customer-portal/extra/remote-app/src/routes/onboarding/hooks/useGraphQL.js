@@ -45,7 +45,7 @@ export default function useGraphQL() {
 		},
 		accountSubscriptionGroup: {
 			data: accountSubscriptionGroupDXPCloud,
-			loading: accountSubscriptionGroupsLoading || loading,
+			loading: accountSubscriptionGroupsLoading,
 		},
 		koroneikiAccount: {
 			data: koroneikiAccount,

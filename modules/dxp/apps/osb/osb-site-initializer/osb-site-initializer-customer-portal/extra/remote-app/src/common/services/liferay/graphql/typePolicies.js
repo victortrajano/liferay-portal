@@ -12,6 +12,7 @@
 import {accountAccountRolesTypePolicy} from './account-account-roles/typePolicy';
 import {accountFlagsTypePolicy} from './account-flags/typePolicy';
 import {accountSubscriptionGroupsTypePolicy} from './account-subscription-groups/typePolicy';
+import {bannedEmailDomainsTypePolicy} from './banned-email-domains/typePolicy';
 import {dxpCloudEnvironmentsTypePolicy} from './dxp-cloud-environments/typePolicy';
 import {dxpcDataCenterRegionsTypePolicy} from './dxpc-data-center-regions/typePolicy';
 import {koroneikiAccountsTypePolicy} from './koroneiki-accounts/typePolicy';
@@ -24,6 +25,7 @@ export const liferayTypePolicies = {
 	...accountFlagsTypePolicy,
 	...accountSubscriptionGroupsTypePolicy,
 	...accountSubscriptionGroupsTypePolicy,
+	...bannedEmailDomainsTypePolicy,
 	...dxpcDataCenterRegionsTypePolicy,
 	...dxpCloudEnvironmentsTypePolicy,
 	...koroneikiAccountsTypePolicy,

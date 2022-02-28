@@ -16,7 +16,10 @@ import {accountsTypePolicy} from './accounts/typePolicy';
 import {bannedEmailDomainsTypePolicy} from './banned-email-domains/typePolicy';
 import {dxpCloudEnvironmentsTypePolicy} from './dxp-cloud-environments/typePolicy';
 import {dxpcDataCenterRegionsTypePolicy} from './dxpc-data-center-regions/typePolicy';
-import {koroneikiAccountsTypePolicy} from './koroneiki-accounts/typePolicy';
+import {
+	koroneikiAccountsQueryTypePolicy,
+	koroneikiAccountsTypePolicy,
+} from './koroneiki-accounts/typePolicy';
 import {structuredContentsTypePolicy} from './structured-contents/typePolicy';
 import {teamMemberInvitationsTypePolicy} from './team-member-invitations/typePolicy';
 import {userAccountsTypePolicy} from './user-accounts/typePolicy';
@@ -38,6 +41,9 @@ export const liferayTypePolicies = {
 		merge: true,
 	},
 	c: {
+		fields: {
+			...koroneikiAccountsQueryTypePolicy,
+		},
 		merge: true,
 	},
 };

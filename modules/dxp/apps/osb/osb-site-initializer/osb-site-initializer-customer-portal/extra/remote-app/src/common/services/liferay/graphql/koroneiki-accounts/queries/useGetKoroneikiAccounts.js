@@ -42,6 +42,7 @@ const GET_KORONEIKI_ACCOUNTS = gql`
 					slaExpired
 					slaFuture
 				}
+				totalCount
 			}
 		}
 	}

@@ -14,24 +14,25 @@ export const koroneikiAccountsTypePolicy = {
 		fields: {
 			accountBrief: {
 				read(_, {readField, toReference}) {
-					const accountRef =
-						toReference({
-							__typename: 'AccountBrief',
-							externalReferenceCode: readField('accountKey'),
-						}) ||
-						toReference({
-							__typename: 'Account',
-							externalReferenceCode: readField('accountKey'),
-						});
+					const accountBriefRef = toReference({
+						__typename: 'AccountBrief',
+						externalReferenceCode: readField('accountKey'),
+					});
 
-					if (accountRef) {
-						return {
-							id: readField('id', accountRef),
-							name: readField('name', accountRef),
-						};
-					}
+					const accountRef = toReference({
+						__typename:
+							'com_liferay_headless_admin_user_dto_v1_0_Account',
+						externalReferenceCode: readField('accountKey'),
+					});
 
-					return null;
+					return {
+						id:
+							readField('id', accountBriefRef) ||
+							readField('id', accountRef),
+						name:
+							readField('name', accountBriefRef) ||
+							readField('name', accountRef),
+					};
 				},
 			},
 			maxRequestors: {

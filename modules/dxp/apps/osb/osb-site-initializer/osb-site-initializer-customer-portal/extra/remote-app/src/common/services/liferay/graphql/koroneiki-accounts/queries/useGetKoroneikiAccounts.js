@@ -9,12 +9,20 @@
  * distribution rights of the Software.
  */
 
-import {gql, useQuery} from '@apollo/client';
+import {gql, useLazyQuery, useQuery} from '@apollo/client';
 
 const GET_KORONEIKI_ACCOUNTS = gql`
-	query getKoroneikiAccounts($filter: String) {
+	query getKoroneikiAccounts(
+		$filter: String
+		$pageSize: Int = 20
+		$page: Int = 1
+	) {
 		c {
-			koroneikiAccounts(filter: $filter) {
+			koroneikiAccounts(
+				filter: $filter
+				pageSize: $pageSize
+				page: $page
+			) {
 				items {
 					accountBrief @client {
 						id
@@ -39,11 +47,24 @@ const GET_KORONEIKI_ACCOUNTS = gql`
 	}
 `;
 
-export function useGetKoroneikiAccounts(options = {filter: '', skip: false}) {
+export function useGetKoroneikiAccounts(
+	options = {
+		filter: '',
+		page: 1,
+		pageSize: 20,
+		skip: false,
+	}
+) {
 	return useQuery(GET_KORONEIKI_ACCOUNTS, {
 		skip: options.skip,
 		variables: {
-			filter: options.filter,
+			filter: options.filter || '',
+			page: options.page || 1,
+			pageSize: options.pageSize || 20,
 		},
 	});
+}
+
+export function useLazyGetKoroneikiAccounts() {
+	return useLazyQuery(GET_KORONEIKI_ACCOUNTS);
 }

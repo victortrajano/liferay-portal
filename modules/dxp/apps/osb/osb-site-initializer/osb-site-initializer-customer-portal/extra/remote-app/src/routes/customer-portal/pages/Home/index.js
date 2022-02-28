@@ -11,202 +11,94 @@
 
 import classNames from 'classnames';
 import {useEffect, useState} from 'react';
-import client from '../../../../apolloClient';
-import {
-	getAccounts,
-	getKoroneikiAccounts,
-} from '../../../../common/services/liferay/graphql/queries';
-import {PAGE_ROUTER_TYPES} from '../../../../common/utils/constants';
+import useDebounce from '../../../../common/hooks/useDebounce';
 import ProjectCard from '../../components/ProjectCard';
 import SearchProject from '../../components/SearchProject';
-import {STATUS_TAG_TYPES} from '../../utils/constants';
 import HomeSkeleton from './Skeleton';
+import useGraphQL from './hooks/useGraphQL';
 
-const PROJECT_THRESHOLD_COUNT = 4;
+const THRESHOLD_COUNT = 4;
 
-const MAX_PAGE_SIZE = 10000;
+const Home = () => {
+	const [searchTerm, setSearchTerm] = useState('');
+	const [lastSearchTerm, setLastSearchTerm] = useState('');
+	const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-const getStatus = (slaCurrent, slaFuture) => {
-	if (slaCurrent) {
-		return STATUS_TAG_TYPES.active;
-	}
+	const [
+		koroneikiAccounts,
+		{initialTotalCount, refetch, totalCount},
+	] = useGraphQL();
 
-	if (slaFuture) {
-		return STATUS_TAG_TYPES.future;
-	}
-
-	return STATUS_TAG_TYPES.expired;
-};
-
-const getKoroneikiFilter = (accounts) => {
-	return accounts?.reduce(
-		(
-			koroneikiFilterAccumulator,
-			{externalReferenceCode},
-			index,
-			{length: totalAccounts}
-		) =>
-			`${koroneikiFilterAccumulator}accountKey eq '${externalReferenceCode}'${
-				index + 1 < totalAccounts ? ' or ' : ''
-			}`,
-		''
-	);
-};
-
-const Home = ({userAccount}) => {
-	const [keyword, setKeyword] = useState('');
-	const [projects, setProjects] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const hasManyAccounts = initialTotalCount > THRESHOLD_COUNT;
 
 	useEffect(() => {
-		const getProjects = async (userAccount) => {
-			const hasRoleBriefAdministrator = userAccount?.roleBriefs?.some(
-				(role) => role.name === 'Administrator'
-			);
+		if (debouncedSearchTerm !== lastSearchTerm) {
+			refetch({
+				filter:
+					debouncedSearchTerm &&
+					`contains(name, '${debouncedSearchTerm}')`,
+			});
 
-			let accountKeysFilter;
-			let accounts = [];
-
-			if (hasRoleBriefAdministrator) {
-				const {data: dataAccounts} = await client.query({
-					query: getAccounts,
-					variables: {
-						pageSize: MAX_PAGE_SIZE,
-					},
-				});
-
-				if (dataAccounts) {
-					accounts = dataAccounts?.accounts?.items;
-					accountKeysFilter = getKoroneikiFilter(accounts);
-				}
-			}
-			else if (userAccount?.accountBriefs?.length) {
-				accounts = userAccount?.accountBriefs;
-				accountKeysFilter = getKoroneikiFilter(accounts);
-			}
-
-			if (accounts.length) {
-				const {data} = await client.query({
-					query: getKoroneikiAccounts,
-					variables: {
-						filter: accountKeysFilter,
-						pageSize: MAX_PAGE_SIZE,
-					},
-				});
-
-				if (data) {
-					setProjects(
-						data.c?.koroneikiAccounts?.items.map(
-							({
-								accountKey,
-								code,
-								liferayContactEmailAddress,
-								liferayContactName,
-								liferayContactRole,
-								region,
-								slaCurrent,
-								slaCurrentEndDate,
-								slaFuture,
-							}) => ({
-								accountKey,
-								code,
-								contact: {
-									emailAddress: liferayContactEmailAddress,
-									name: liferayContactName,
-									role: liferayContactRole,
-								},
-								region,
-								sla: {
-									current: slaCurrent,
-									currentEndDate: slaCurrentEndDate,
-									future: slaFuture,
-								},
-								status: getStatus(slaCurrent, slaFuture),
-								title: accounts.find(
-									({externalReferenceCode}) =>
-										externalReferenceCode === accountKey
-								)?.name,
-							})
-						) || []
-					);
-				}
-
-				setIsLoading(false);
-			}
-		};
-
-		getProjects(userAccount);
-	}, [userAccount]);
-
-	const nextPage = (project) => {
-		window.location.href = PAGE_ROUTER_TYPES.project(project.accountKey);
-	};
-
-	const projectsFiltered = projects.filter((project) =>
-		keyword
-			? project.title.toLowerCase().includes(keyword.toLowerCase())
-			: true
-	);
-
-	const withManyProjects = projects.length > PROJECT_THRESHOLD_COUNT;
+			setLastSearchTerm(debouncedSearchTerm);
+		}
+	}, [refetch, debouncedSearchTerm, lastSearchTerm]);
 
 	return (
-		<div
-			className={classNames({
-				'cp-project-cards-container': !withManyProjects,
-				'mx-auto cp-project-cards-container-sm': withManyProjects,
-			})}
-		>
+		<div>
 			<div
 				className={classNames({
-					'd-flex flex-column w-100': withManyProjects,
-					'ml-3': !withManyProjects,
+					'd-flex flex-column align-items-center': hasManyAccounts,
+					'ml-3': !hasManyAccounts,
 				})}
 			>
-				{withManyProjects && (
-					<div className="align-items-center d-flex justify-content-between mb-4">
-						<SearchProject onChange={setKeyword} value={keyword} />
+				{hasManyAccounts && (
+					<div className="align-items-center cp-search-projects d-flex justify-content-between mb-4">
+						<SearchProject
+							onChange={setSearchTerm}
+							value={debouncedSearchTerm}
+						/>
 
 						<h5 className="m-0 text-neutral-7">
-							{keyword
-								? `${projectsFiltered.length} result${
-										projectsFiltered.length === 1 ? '' : 's'
+							{debouncedSearchTerm && !koroneikiAccounts.loading
+								? `${totalCount} result${
+										totalCount === 1 ? '' : 's'
 								  }`
-								: `${projects.length} project${
-										projects.length === 1 ? '' : 's'
+								: `${initialTotalCount} project${
+										initialTotalCount === 1 ? '' : 's'
 								  }`}
 						</h5>
 					</div>
 				)}
 
-				{!isLoading ? (
-					<div
-						className={classNames('d-flex flex-wrap', {
-							'cp-home-projects px-5': !withManyProjects,
-							'cp-home-projects-sm pt-2': withManyProjects,
-						})}
-					>
-						{projectsFiltered.length ? (
-							projectsFiltered.map((project, index) => (
-								<ProjectCard
-									isSmall={withManyProjects}
-									key={index}
-									onClick={() => nextPage(project)}
-									{...project}
-								/>
-							))
-						) : (
-							<p className="mx-auto">
-								No projects match these criteria.
-							</p>
-						)}
+				{!koroneikiAccounts.loading ? (
+					<div className="cp-wrap-projects overflow-auto w-100">
+						<div
+							className={classNames('d-flex flex-wrap', {
+								'cp-home-projects px-5 cp-project-cards-container': !hasManyAccounts,
+								'cp-home-projects-sm pt-2 cp-project-cards-container-sm mx-auto': hasManyAccounts,
+							})}
+						>
+							{totalCount ? (
+								<>
+									{koroneikiAccounts.items?.map(
+										(koroneikiAccount, index) => (
+											<ProjectCard
+												isSmall={hasManyAccounts}
+												key={index}
+												{...koroneikiAccount}
+											/>
+										)
+									)}
+								</>
+							) : (
+								<p className="mx-auto">
+									No projects match these criteria.
+								</p>
+							)}
+						</div>
 					</div>
 				) : (
-					<div className="d-flex flex-wrap home-projects">
-						<ProjectCard.Skeleton />
-
-						<ProjectCard.Skeleton />
-					</div>
+					<>Loading...</>
 				)}
 			</div>
 		</div>

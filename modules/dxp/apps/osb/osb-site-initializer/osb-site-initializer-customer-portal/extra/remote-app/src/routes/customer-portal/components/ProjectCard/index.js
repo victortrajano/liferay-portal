@@ -16,7 +16,19 @@ import getDateCustomFormat from '../../utils/getDateCustomFormat';
 import StatusTag from '../StatusTag';
 import ProjectCardSkeleton from './Skeleton';
 
-const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
+const getStatus = (slaCurrent, slaFuture) => {
+	if (slaCurrent) {
+		return STATUS_TAG_TYPES.active;
+	}
+
+	if (slaFuture) {
+		return STATUS_TAG_TYPES.future;
+	}
+
+	return STATUS_TAG_TYPES.expired;
+};
+
+const ProjectCard = ({isSmall, onClick, ...koroneikiAccount}) => {
 	const getStatusMessage = (currentStatus) => {
 		if (currentStatus === STATUS_TAG_TYPES.active) {
 			return 'Ends on ';
@@ -28,6 +40,11 @@ const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
 
 		return 'Starts on ';
 	};
+
+	const statusTag = getStatus(
+		koroneikiAccount?.slaCurrent,
+		koroneikiAccount?.slaFuture
+	);
 
 	return (
 		<ClayCard
@@ -47,13 +64,13 @@ const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
 					className="text-neutral-7"
 					displayType="title"
 					tag={isSmall ? 'h4' : 'h3'}
-					title={title}
+					title={koroneikiAccount?.accountBrief?.name}
 				>
-					{title}
+					{koroneikiAccount?.accountBrief?.name}
 
 					{isSmall && (
 						<div className="font-weight-lighter subtitle text-neutral-5 text-paragraph text-uppercase">
-							{code}
+							{koroneikiAccount?.code}
 						</div>
 					)}
 				</ClayCard.Description>
@@ -69,7 +86,7 @@ const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
 						title={null}
 						truncate={false}
 					>
-						<StatusTag currentStatus={status} />
+						<StatusTag currentStatus={statusTag} />
 
 						<div
 							className={classNames(
@@ -81,14 +98,17 @@ const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
 								}
 							)}
 						>
-							{getStatusMessage(status)}
+							{getStatusMessage(statusTag)}
 
 							<span className="font-weight-bold text-paragraph">
-								{getDateCustomFormat(sla.currentEndDate, {
-									day: '2-digit',
-									month: 'short',
-									year: 'numeric',
-								})}
+								{getDateCustomFormat(
+									koroneikiAccount?.slaCurrentEndDate,
+									{
+										day: '2-digit',
+										month: 'short',
+										year: 'numeric',
+									}
+								)}
 							</span>
 						</div>
 
@@ -97,7 +117,7 @@ const ProjectCard = ({code, isSmall, onClick, region, sla, status, title}) => {
 								{'Support Region '}
 
 								<span className="font-weight-bold">
-									{region}
+									{koroneikiAccount?.region}
 								</span>
 							</div>
 						)}

@@ -11,13 +11,14 @@
 
 import {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import {memo} from 'react';
 
 const SearchProject = ({onChange, props}) => {
 	return (
 		<div className="position-relative">
 			<ClayInput
 				className="cp-search-project font-weight-semi-bold h5 rounded-pill shadow-lg"
-				onChange={(ex) => onChange(ex.target.value)}
+				onChange={(event) => onChange(event.target.value)}
 				placeholder="Find a project"
 				type="text"
 				{...props}
@@ -31,4 +32,4 @@ const SearchProject = ({onChange, props}) => {
 	);
 };
 
-export default SearchProject;
+export default memo(SearchProject);

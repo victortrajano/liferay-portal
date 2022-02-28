@@ -30,8 +30,13 @@ const GET_CURRENT_SESSION = gql`
 export function useGetCurrentSession(options = {skip: false}) {
 	return useQuery(GET_CURRENT_SESSION, {
 		fetchPolicy: 'network-only',
-		onCompleted: (data) =>
-			storage.setItem(STORAGE_KEYS.authToken, data?.session?.id),
+		onCompleted: (data) => {
+			const session = data?.session;
+
+			if (session) {
+				storage.setItem(STORAGE_KEYS.authToken, session.id);
+			}
+		},
 		skip: options.skip,
 	});
 }

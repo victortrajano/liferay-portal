@@ -7,6 +7,10 @@
 	}
 }
 
+.cp-wrap-projects {
+	max-height: 355px;
+}
+
 .cp-project-cards-container {
 	max-width: 1217px;
 
@@ -18,4 +22,8 @@
 	&-sm {
 		max-width: 700px;
 	}
+}
+
+.cp-search-projects {
+	width: 700px;
 }

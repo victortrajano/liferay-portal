@@ -64,9 +64,9 @@ const ProjectCard = ({isSmall, onClick, ...koroneikiAccount}) => {
 					className="text-neutral-7"
 					displayType="title"
 					tag={isSmall ? 'h4' : 'h3'}
-					title={koroneikiAccount?.accountBrief?.name}
+					title={koroneikiAccount?.code}
 				>
-					{koroneikiAccount?.accountBrief?.name}
+					{koroneikiAccount?.code}
 
 					{isSmall && (
 						<div className="font-weight-lighter subtitle text-neutral-5 text-paragraph text-uppercase">

@@ -9,17 +9,17 @@
  * distribution rights of the Software.
  */
 
-import {usePortalContext} from '../context';
+import {useAppPropertiesContext} from '../../../common/context/AppPropertiesProvider';
 import {PAGE_TYPES} from '../utils/constants';
 import Home from './Home';
 import Overview from './Project/Overview';
 import ProjectRoutes from './Project/routes/project.routes';
 
 const Pages = () => {
-	const [{page, userAccount}] = usePortalContext();
+	const {page} = useAppPropertiesContext();
 	const PageLayout = {
 		[PAGE_TYPES.home]: {
-			Component: <Home userAccount={userAccount} />,
+			Component: <Home />,
 			Skeleton: <Home.Skeleton />,
 		},
 		[PAGE_TYPES.overview]: {
@@ -28,11 +28,7 @@ const Pages = () => {
 		},
 	};
 
-	if (userAccount) {
-		return PageLayout[page].Component;
-	}
-
-	return PageLayout[page].Skeleton;
+	return PageLayout[page].Component;
 };
 
 export default Pages;

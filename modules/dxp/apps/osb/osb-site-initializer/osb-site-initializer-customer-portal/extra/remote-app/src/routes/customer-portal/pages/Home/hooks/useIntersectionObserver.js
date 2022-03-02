@@ -9,25 +9,39 @@
  * distribution rights of the Software.
  */
 
-import {useEffect} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
-export default function useIntersectionObserver(elementRef, callback) {
+const INTERSECTION_OPTIONS = {
+	root: null,
+	threshold: 1.0,
+};
+
+export default function useIntersectionObserver() {
+	const [trackedRefCurrent, setTrackedRefCurrent] = useState();
+	const [isIntersecting, setIsIntersecting] = useState(false);
+
+	const memoizedSetIntersecting = useCallback((entities) => {
+		const target = entities[0];
+
+		setIsIntersecting(target.isIntersecting);
+	}, []);
+
 	useEffect(() => {
-		const options = {
-			root: null,
-			threshold: 0.1,
-		};
+		const observer = new IntersectionObserver(
+			memoizedSetIntersecting,
+			INTERSECTION_OPTIONS
+		);
 
-		const observer = new IntersectionObserver((entities) => {
-			const target = entities[0];
-
-			if (target.isIntersecting) {
-				callback();
-			}
-		}, options);
-
-		if (elementRef.current) {
-			observer.observe(elementRef.current);
+		if (trackedRefCurrent) {
+			observer.observe(trackedRefCurrent);
 		}
-	}, [elementRef, callback]);
+
+		return () => {
+			if (trackedRefCurrent) {
+				observer.unobserve(trackedRefCurrent);
+			}
+		};
+	}, [memoizedSetIntersecting, trackedRefCurrent]);
+
+	return [setTrackedRefCurrent, isIntersecting];
 }

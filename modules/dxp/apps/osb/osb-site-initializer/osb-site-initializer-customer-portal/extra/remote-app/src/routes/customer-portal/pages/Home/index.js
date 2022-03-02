@@ -16,32 +16,30 @@ import ProjectCard from '../../components/ProjectCard';
 import SearchProject from '../../components/SearchProject';
 import HomeSkeleton from './Skeleton';
 import useGraphQL from './hooks/useGraphQL';
+import useIntersectionObserver from './hooks/useIntersectionObserver';
 
 const THRESHOLD_COUNT = 4;
 
 const Home = () => {
 	const [searchTerm, setSearchTerm] = useState('');
-	const [lastSearchTerm, setLastSearchTerm] = useState('');
 	const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+	const [trackedRef, isIntersecting] = useIntersectionObserver();
 	const [
-		koroneikiAccounts,
-		{initialTotalCount, refetch, totalCount},
+		{initialTotalCount, items, loading, totalCount},
+		{fetchMore, search},
 	] = useGraphQL();
 
 	const hasManyAccounts = initialTotalCount > THRESHOLD_COUNT;
 
-	useEffect(() => {
-		if (debouncedSearchTerm !== lastSearchTerm) {
-			refetch({
-				filter:
-					debouncedSearchTerm &&
-					`contains(name, '${debouncedSearchTerm}')`,
-			});
+	useEffect(() => search(debouncedSearchTerm), [debouncedSearchTerm, search]);
 
-			setLastSearchTerm(debouncedSearchTerm);
+	useEffect(() => {
+		if (isIntersecting) {
+			fetchMore();
 		}
-	}, [refetch, debouncedSearchTerm, lastSearchTerm]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isIntersecting]);
 
 	return (
 		<div>
@@ -59,7 +57,7 @@ const Home = () => {
 						/>
 
 						<h5 className="m-0 text-neutral-7">
-							{debouncedSearchTerm && !koroneikiAccounts.loading
+							{debouncedSearchTerm && !loading
 								? `${totalCount} result${
 										totalCount === 1 ? '' : 's'
 								  }`
@@ -70,7 +68,7 @@ const Home = () => {
 					</div>
 				)}
 
-				{!koroneikiAccounts.loading ? (
+				{!loading ? (
 					<div className="cp-wrap-projects overflow-auto w-100">
 						<div
 							className={classNames('d-flex flex-wrap', {
@@ -80,14 +78,15 @@ const Home = () => {
 						>
 							{totalCount ? (
 								<>
-									{koroneikiAccounts.items?.map(
-										(koroneikiAccount, index) => (
-											<ProjectCard
-												isSmall={hasManyAccounts}
-												key={index}
-												{...koroneikiAccount}
-											/>
-										)
+									{items?.map((koroneikiAccount, index) => (
+										<ProjectCard
+											isSmall={hasManyAccounts}
+											key={index}
+											{...koroneikiAccount}
+										/>
+									))}
+									{items.length < totalCount && (
+										<p ref={trackedRef}>Fetching more...</p>
 									)}
 								</>
 							) : (

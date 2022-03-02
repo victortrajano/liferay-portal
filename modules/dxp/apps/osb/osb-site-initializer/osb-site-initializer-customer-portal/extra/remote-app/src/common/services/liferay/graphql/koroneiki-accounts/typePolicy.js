@@ -9,8 +9,6 @@
  * distribution rights of the Software.
  */
 
-import pagePageSizePagination from '../common/utils/pagePageSizePaginations';
-
 export const koroneikiAccountsTypePolicy = {
 	C_KoroneikiAccount: {
 		fields: {
@@ -43,11 +41,7 @@ export const koroneikiAccountsTypePolicy = {
 		keyFields: ['accountKey'],
 	},
 	C_KoroneikiAccountPage: {
-		fields: {
-			items: {
-				...pagePageSizePagination(),
-			},
-		},
+		merge: true,
 	},
 };
 

@@ -9,20 +9,23 @@
  * distribution rights of the Software.
  */
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {Liferay} from '../../../../../common/services/liferay';
 import {useGetKoroneikiAccounts} from '../../../../../common/services/liferay/graphql/koroneiki-accounts';
 import {useGetUserAccount} from '../../../../../common/services/liferay/graphql/user-accounts';
 
 export default function useGraphQL() {
 	const [initialTotalCount, setInitialTotalCount] = useState(0);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [lastSearchTerm, setLastSearchTerm] = useState('');
+	const [accumulatedItems, setAccumulatedItems] = useState([]);
 
 	const {
 		data: userAccountData,
 		loading: userAccountLoading,
 	} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
 
-	const {data, fetchMore, loading, refetch} = useGetKoroneikiAccounts({
+	const {data, loading, refetch} = useGetKoroneikiAccounts({
 		skip:
 			userAccountLoading ||
 			!userAccountData?.userAccount?.hasAdministratorRole,
@@ -33,25 +36,62 @@ export default function useGraphQL() {
 	useEffect(() => {
 		const totalCount = koroneikiAccounts?.totalCount;
 
-		setInitialTotalCount((previousInitialTotalCount) => {
-			if (totalCount > previousInitialTotalCount) {
-				return totalCount;
-			}
+		if (totalCount > initialTotalCount) {
+			setInitialTotalCount(totalCount);
+			setAccumulatedItems(koroneikiAccounts?.items);
+		}
+	}, [
+		koroneikiAccounts?.totalCount,
+		initialTotalCount,
+		koroneikiAccounts?.items,
+	]);
 
-			return previousInitialTotalCount;
+	const fetchMore = useCallback(async () => {
+		const {data} = await refetch({
+			filter: lastSearchTerm && `contains(code, '${lastSearchTerm}')`,
+			page: currentPage + 1,
 		});
-	}, [koroneikiAccounts?.totalCount]);
+
+		const items = data?.c?.koroneikiAccounts?.items;
+		if (items) {
+			setCurrentPage((previousCurrentPage) => ++previousCurrentPage);
+			setAccumulatedItems((previousAccumulatedItems) => [
+				...previousAccumulatedItems,
+				...items,
+			]);
+		}
+	}, [currentPage, lastSearchTerm, refetch]);
+
+	const search = useCallback(
+		async (searchTerm) => {
+			if (searchTerm !== lastSearchTerm) {
+				const {data} = await refetch({
+					filter: searchTerm && `contains(code, '${searchTerm}')`,
+					page: 1,
+				});
+
+				const items = data?.c?.koroneikiAccounts?.items;
+				if (items) {
+					setAccumulatedItems(items);
+					setCurrentPage(1);
+				}
+
+				setLastSearchTerm(searchTerm);
+			}
+		},
+		[lastSearchTerm, refetch]
+	);
 
 	return [
 		{
 			initialTotalCount,
-			items: koroneikiAccounts?.items,
+			items: accumulatedItems,
 			loading: loading || userAccountLoading,
 			totalCount: koroneikiAccounts?.totalCount,
 		},
 		{
 			fetchMore,
-			refetch,
+			search,
 		},
 	];
 }

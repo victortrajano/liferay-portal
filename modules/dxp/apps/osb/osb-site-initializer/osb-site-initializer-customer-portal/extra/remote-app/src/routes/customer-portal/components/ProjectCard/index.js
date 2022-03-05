@@ -11,40 +11,18 @@
 
 import ClayCard from '@clayui/card';
 import classNames from 'classnames';
-import {STATUS_TAG_TYPES} from '../../utils/constants';
+import {memo} from 'react';
+import useRedirectURL from '../../../../common/hooks/useRedirectURL';
+import {LOCATIONS} from '../../../../common/utils/constants/locations';
+import {REDIRECT_URL_TYPES} from '../../../../common/utils/constants/redirectURLTypes';
 import getDateCustomFormat from '../../utils/getDateCustomFormat';
 import StatusTag from '../StatusTag';
-import ProjectCardSkeleton from './Skeleton';
+import getStatus from './utils/getStatus';
+import getStatusMessage from './utils/getStatusMessage';
 
-const getStatus = (slaCurrent, slaFuture) => {
-	if (slaCurrent) {
-		return STATUS_TAG_TYPES.active;
-	}
-
-	if (slaFuture) {
-		return STATUS_TAG_TYPES.future;
-	}
-
-	return STATUS_TAG_TYPES.expired;
-};
-
-const ProjectCard = ({isSmall, onClick, ...koroneikiAccount}) => {
-	const getStatusMessage = (currentStatus) => {
-		if (currentStatus === STATUS_TAG_TYPES.active) {
-			return 'Ends on ';
-		}
-
-		if (currentStatus === STATUS_TAG_TYPES.expired) {
-			return 'Ended on ';
-		}
-
-		return 'Starts on ';
-	};
-
-	const statusTag = getStatus(
-		koroneikiAccount?.slaCurrent,
-		koroneikiAccount?.slaFuture
-	);
+const ProjectCard = ({isSmall, ...koroneikiAccount}) => {
+	const setRedirectURL = useRedirectURL(REDIRECT_URL_TYPES.assign);
+	const statusTag = getStatus(koroneikiAccount);
 
 	return (
 		<ClayCard
@@ -52,7 +30,9 @@ const ProjectCard = ({isSmall, onClick, ...koroneikiAccount}) => {
 				'cp-project-card': !isSmall,
 				'cp-project-card-sm': isSmall,
 			})}
-			onClick={() => onClick()}
+			onClick={() =>
+				setRedirectURL(LOCATIONS.overview(koroneikiAccount?.accountKey))
+			}
 		>
 			<ClayCard.Body
 				className={classNames('d-flex h-100 justify-content-between', {
@@ -128,6 +108,4 @@ const ProjectCard = ({isSmall, onClick, ...koroneikiAccount}) => {
 	);
 };
 
-ProjectCard.Skeleton = ProjectCardSkeleton;
-
-export default ProjectCard;
+export default memo(ProjectCard);

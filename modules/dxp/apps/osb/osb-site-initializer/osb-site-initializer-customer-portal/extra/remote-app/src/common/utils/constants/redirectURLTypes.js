@@ -9,15 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {useCallback} from 'react';
-import {REDIRECT_URL_TYPES} from '../utils/constants/redirectURLTypes';
-
-export default function useRedirectURL(action = REDIRECT_URL_TYPES.replace) {
-	return useCallback(
-		(url) =>
-			action === REDIRECT_URL_TYPES.replace
-				? window.location.replace(url)
-				: window.location.assign(url),
-		[action]
-	);
-}
+export const REDIRECT_URL_TYPES = {
+	assign: 1,
+	replace: 2,
+};

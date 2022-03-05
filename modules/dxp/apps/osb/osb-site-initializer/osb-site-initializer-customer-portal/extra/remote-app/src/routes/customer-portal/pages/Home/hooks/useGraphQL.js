@@ -9,10 +9,11 @@
  * distribution rights of the Software.
  */
 
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Liferay} from '../../../../../common/services/liferay';
 import {useGetKoroneikiAccounts} from '../../../../../common/services/liferay/graphql/koroneiki-accounts';
 import {useGetUserAccount} from '../../../../../common/services/liferay/graphql/user-accounts';
+import getFilterKoroneikiAccounts from '../utils/getFilterKoroneikiAccounts';
 
 export default function useGraphQL() {
 	const [initialTotalCount, setInitialTotalCount] = useState(0);
@@ -25,10 +26,31 @@ export default function useGraphQL() {
 		loading: userAccountLoading,
 	} = useGetUserAccount(Liferay.ThemeDisplay.getUserId());
 
+	const userAccount = userAccountData?.userAccount;
+	const filterKoroneikiAccounts = useMemo(
+		() =>
+			!userAccount?.hasAdministratorRole
+				? getFilterKoroneikiAccounts(userAccount?.accountBriefs)
+				: '',
+		[userAccount?.accountBriefs, userAccount?.hasAdministratorRole]
+	);
+
+	const getFilterKoroneikiAccountsBySearch = useCallback(
+		(searchTerm) => {
+			const filterBySearch = `contains(code, '${searchTerm}')`;
+
+			return searchTerm
+				? filterKoroneikiAccounts
+					? `(${filterKoroneikiAccounts}) and ${filterBySearch}`
+					: filterBySearch
+				: filterKoroneikiAccounts;
+		},
+		[filterKoroneikiAccounts]
+	);
+
 	const {data, loading, refetch} = useGetKoroneikiAccounts({
-		skip:
-			userAccountLoading ||
-			!userAccountData?.userAccount?.hasAdministratorRole,
+		filter: filterKoroneikiAccounts,
+		skip: userAccountLoading,
 	});
 
 	const koroneikiAccounts = data?.c?.koroneikiAccounts;
@@ -48,7 +70,7 @@ export default function useGraphQL() {
 
 	const fetchMore = useCallback(async () => {
 		const {data} = await refetch({
-			filter: lastSearchTerm && `contains(code, '${lastSearchTerm}')`,
+			filter: getFilterKoroneikiAccountsBySearch(lastSearchTerm),
 			page: currentPage + 1,
 		});
 
@@ -60,13 +82,18 @@ export default function useGraphQL() {
 				...items,
 			]);
 		}
-	}, [currentPage, lastSearchTerm, refetch]);
+	}, [
+		currentPage,
+		getFilterKoroneikiAccountsBySearch,
+		lastSearchTerm,
+		refetch,
+	]);
 
 	const search = useCallback(
 		async (searchTerm) => {
 			if (searchTerm !== lastSearchTerm) {
 				const {data} = await refetch({
-					filter: searchTerm && `contains(code, '${searchTerm}')`,
+					filter: getFilterKoroneikiAccountsBySearch(searchTerm),
 					page: 1,
 				});
 
@@ -79,7 +106,7 @@ export default function useGraphQL() {
 				setLastSearchTerm(searchTerm);
 			}
 		},
-		[lastSearchTerm, refetch]
+		[getFilterKoroneikiAccountsBySearch, lastSearchTerm, refetch]
 	);
 
 	return [

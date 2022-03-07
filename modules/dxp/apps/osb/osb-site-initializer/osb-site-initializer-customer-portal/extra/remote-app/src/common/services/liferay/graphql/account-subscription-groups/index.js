@@ -10,4 +10,5 @@
  */
 
 export * from './queries/useGetAccountSubscriptionGroups';
+export * from './custom-queries/useGetAccountSubscriptionGroupsByAccountKey';
 export * from './mutations/useUpdateAccountSubscriptionGroup';

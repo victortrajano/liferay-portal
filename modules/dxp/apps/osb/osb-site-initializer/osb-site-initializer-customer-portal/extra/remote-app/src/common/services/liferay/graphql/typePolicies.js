@@ -20,6 +20,7 @@ import {
 	koroneikiAccountsQueryTypePolicy,
 	koroneikiAccountsTypePolicy,
 } from './koroneiki-accounts/typePolicy';
+import {structuredContentFoldersTypePolicy} from './structured-content-folders/typePolicy';
 import {structuredContentsTypePolicy} from './structured-contents/typePolicy';
 import {teamMemberInvitationsTypePolicy} from './team-member-invitations/typePolicy';
 import {userAccountsTypePolicy} from './user-accounts/typePolicy';
@@ -37,6 +38,7 @@ export const liferayTypePolicies = {
 	...structuredContentsTypePolicy,
 	...teamMemberInvitationsTypePolicy,
 	...userAccountsTypePolicy,
+	...structuredContentFoldersTypePolicy,
 	Mutationc: {
 		merge: true,
 	},

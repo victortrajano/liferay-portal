@@ -39,8 +39,13 @@ const GET_KORONEIKI_ACCOUNTS = gql`
 					region
 					slaCurrent
 					slaCurrentEndDate
+					slaCurrentStartDate
 					slaExpired
+					slaExpiredEndDate
+					slaExpiredStartDate
 					slaFuture
+					slaFutureEndDate
+					slaFutureStartDate
 				}
 				totalCount
 			}

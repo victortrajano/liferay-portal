@@ -12,13 +12,11 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import {useCallback, useEffect, useState} from 'react';
-import {fetchHeadless} from '../../../../common/services/liferay/api';
+import {useEffect, useMemo, useState} from 'react';
 import {storage} from '../../../../common/services/liferay/storage';
 import {STORAGE_KEYS} from '../../../../common/utils/constants';
-import {usePortalContext} from '../../context';
-import {actionTypes} from '../../context/reducer';
 import QuickLinksSkeleton from './Skeleton';
+import useGraphQL from './hooks/useGraphQL';
 
 DOMPurify.addHook('afterSanitizeAttributes', (node) => {
 	if ('target' in node) {
@@ -27,12 +25,14 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
 	}
 });
 
-const QuickLinksPanel = ({accountKey}) => {
-	const [
-		{isQuickLinksExpanded, quickLinks, structuredContents},
-		dispatch,
-	] = usePortalContext();
-	const [quickLinksContents, setQuickLinksContents] = useState([]);
+const QuickLinksPanel = ({contents}) => {
+	const [isQuickLinksExpanded, setIsQuickLinksExpanded] = useState(true);
+	const {
+		getStructuredContentsWithRenderedContent,
+		koroneikiAccount,
+		loading,
+		structuredContents,
+	} = useGraphQL();
 
 	useEffect(() => {
 		const quickLinksExpandedStorage = storage.getItem(
@@ -40,55 +40,56 @@ const QuickLinksPanel = ({accountKey}) => {
 		);
 
 		if (quickLinksExpandedStorage) {
-			dispatch({
-				payload: JSON.parse(quickLinksExpandedStorage),
-				type: actionTypes.UPDATE_QUICK_LINKS_EXPANDED_PANEL,
-			});
+			setIsQuickLinksExpanded(JSON.parse(quickLinksExpandedStorage));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const fetchQuickLinksPanelContent = useCallback(async () => {
-		const renderedQuickLinksContents = await quickLinks.reduce(
-			async (quickLinkAccumulator, quickLink) => {
-				const accumulator = await quickLinkAccumulator;
-
+	const quickLinksContents = useMemo(
+		() =>
+			contents?.reduce(async (contentsAccumulator, content) => {
 				const structuredContentId = structuredContents?.find(
 					({friendlyUrlPath, key}) =>
-						friendlyUrlPath === quickLink ||
-						key === quickLink.toUpperCase()
+						friendlyUrlPath === content ||
+						key === content.toUpperCase()
 				)?.id;
 
 				if (structuredContentId) {
-					const structuredComponent = await fetchHeadless({
-						resolveAsJson: false,
-						url: `/structured-contents/${structuredContentId}/rendered-content/ACTION-CARD`,
+					const {
+						data,
+					} = await getStructuredContentsWithRenderedContent({
+						variables: {
+							structuredContentId,
+						},
 					});
 
-					const htmlBody = await structuredComponent.text();
-
-					accumulator.push(
-						htmlBody.replace('{{accountKey}}', accountKey)
+					const renderedContent = data?.structuredContent?.renderedContents?.find(
+						({contentTemplateId}) =>
+							contentTemplateId === 'ACTION-CARD'
 					);
+
+					if (renderedContent) {
+						contentsAccumulator.push(
+							renderedContent.replace(
+								'{{accountKey}}',
+								koroneikiAccount?.accountKey
+							)
+						);
+					}
 				}
 
-				return accumulator;
-			},
-			Promise.resolve([])
-		);
-
-		setQuickLinksContents(renderedQuickLinksContents);
-	}, [accountKey, quickLinks, structuredContents]);
-
-	useEffect(() => {
-		if (quickLinks) {
-			fetchQuickLinksPanelContent();
-		}
-	}, [quickLinks, fetchQuickLinksPanelContent]);
+				return contentsAccumulator;
+			}, []),
+		[
+			contents,
+			getStructuredContentsWithRenderedContent,
+			koroneikiAccount?.accountKey,
+			structuredContents,
+		]
+	);
 
 	return (
 		<>
-			{quickLinksContents.length ? (
+			{loading || quickLinksContents?.length ? (
 				<div
 					className={classNames(
 						'cp-link-body quick-links-container rounded',
@@ -108,17 +109,20 @@ const QuickLinksPanel = ({accountKey}) => {
 									'pl-3': !isQuickLinksExpanded,
 								}
 							)}
-							onClick={() => {
-								dispatch({
-									payload: !isQuickLinksExpanded,
-									type:
-										actionTypes.UPDATE_QUICK_LINKS_EXPANDED_PANEL,
-								});
-								storage.setItem(
-									STORAGE_KEYS.quickLinksExpanded,
-									JSON.stringify(!isQuickLinksExpanded)
-								);
-							}}
+							onClick={() =>
+								setIsQuickLinksExpanded(
+									(previousIsQuickLinksExpanded) => {
+										storage.setItem(
+											STORAGE_KEYS.quickLinksExpanded,
+											JSON.stringify(
+												!previousIsQuickLinksExpanded
+											)
+										);
+
+										return !previousIsQuickLinksExpanded;
+									}
+								)
+							}
 						>
 							<ClayIcon
 								className="mr-1"

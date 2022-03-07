@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,18 +12,16 @@
 
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import {useEffect, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {FORMAT_DATE} from '../../../../common/utils/constants/slaCardDate';
 import {SLA_CARD_NAMES} from '../../../../common/utils/constants/slaCardNames';
 import getDateCustomFormat from '../../utils/getDateCustomFormat';
 import SlaCardLayout from './Layout';
 
-const SlaCard = ({project}) => {
-	const [slaData, setSlaData] = useState();
-	const [slaSelected, setSlaSelected] = useState();
-	const [slaPosition, setSlaPosition] = useState(0);
+const SlaCard = ({koroneikiAccount}) => {
+	const [currentSlaCardPosition, setCurrentSlaCardPosition] = useState(0);
 
-	useEffect(() => {
+	const memoizedSlaCards = useMemo(() => {
 		const {
 			slaCurrent,
 			slaCurrentEndDate,
@@ -33,98 +32,75 @@ const SlaCard = ({project}) => {
 			slaFuture,
 			slaFutureEndDate,
 			slaFutureStartDate,
-		} = project;
+		} = koroneikiAccount;
 
-		const slaFiltedData = [];
+		const slaCurrentStatus = !!slaCurrent && {
+			endDate: getDateCustomFormat(
+				slaCurrent === slaFuture ? slaFutureEndDate : slaCurrentEndDate,
+				FORMAT_DATE,
+				'en-US'
+			),
+			label: SLA_CARD_NAMES.current,
+			startDate: getDateCustomFormat(
+				slaCurrent === slaExpired
+					? slaExpiredStartDate
+					: slaCurrentStartDate,
+				FORMAT_DATE,
+				'en-US'
+			),
+			title: slaCurrent.split(' ')[0],
+		};
 
-		const slaRawData = {
-			current: {
-				dateEnd: getDateCustomFormat(
-					slaCurrentEndDate,
-					FORMAT_DATE,
-					'en-US'
-				),
-				dateStart: getDateCustomFormat(
-					slaCurrentStartDate,
-					FORMAT_DATE,
-					'en-US'
-				),
-				label: SLA_CARD_NAMES.current,
-				title: slaCurrent?.split(' ')[0],
-			},
-			expired: {
-				dateEnd: getDateCustomFormat(
+		const slaCards = [];
+
+		if (slaCurrentStatus) {
+			slaCards.push(slaCurrentStatus);
+		}
+
+		if (!!slaExpired && slaExpired !== slaCurrent) {
+			slaCards.push({
+				endDate: getDateCustomFormat(
 					slaExpiredEndDate,
 					FORMAT_DATE,
 					'en-US'
 				),
-				dateStart: getDateCustomFormat(
+				label: SLA_CARD_NAMES.expired,
+				startDate: getDateCustomFormat(
 					slaExpiredStartDate,
 					FORMAT_DATE,
 					'en-US'
 				),
-				label: SLA_CARD_NAMES.expired,
-				title: slaExpired?.split(' ')[0],
-			},
-			future: {
-				dateEnd: getDateCustomFormat(
+				title: slaExpired.split(' ')[0],
+			});
+		}
+
+		if (!!slaFuture && slaFuture !== slaCurrent) {
+			slaCards.push({
+				endDate: getDateCustomFormat(
 					slaFutureEndDate,
 					FORMAT_DATE,
 					'en-US'
 				),
-				dateStart: getDateCustomFormat(
+				label: SLA_CARD_NAMES.future,
+				startDate: getDateCustomFormat(
 					slaFutureStartDate,
 					FORMAT_DATE,
 					'en-US'
 				),
-				label: SLA_CARD_NAMES.future,
-				title: slaFuture?.split(' ')[0],
-			},
-		};
-
-		if (
-			slaRawData.current.title === slaRawData.expired.title &&
-			slaRawData.current.title === slaRawData.future.title
-		) {
-			slaRawData.current.dateStart = slaRawData.expired.dateStart;
-			slaRawData.current.dateEnd = slaRawData.future.dateEnd;
-			slaFiltedData.push(slaRawData.current);
-		}
-		else if (slaRawData.current.title === slaRawData.expired.title) {
-			slaRawData.current.dateStart = slaRawData.expired.dateStart;
-			slaFiltedData.push(slaRawData.current);
-			slaFiltedData.push(slaRawData.future);
-		}
-		else if (slaRawData.current.title === slaRawData.future.title) {
-			slaRawData.current.dateEnd = slaRawData.future.dateEnd;
-			slaFiltedData.push(slaRawData.current);
-			slaFiltedData.push(slaRawData.expired);
-		}
-		else {
-			slaFiltedData.push(slaRawData.current);
-			slaFiltedData.push(slaRawData.expired);
-			slaFiltedData.push(slaRawData.future);
+				title: slaFuture.split(' ')[0],
+			});
 		}
 
-		const slaSelectedCards = slaFiltedData.filter((sla) => sla.title);
-
-		setSlaData(slaSelectedCards);
-
-		if (!slaSelected) {
-			setSlaSelected(slaSelectedCards[0]?.label);
-		}
-	}, [project, slaSelected]);
+		return slaCards;
+	}, [koroneikiAccount]);
 
 	const handleSlaCardClick = () => {
-		const nextPosition = slaPosition + 1;
+		const nextPosition = currentSlaCardPosition + 1;
 
-		if (slaData[nextPosition]) {
-			setSlaSelected(slaData[nextPosition].label);
-			setSlaPosition(nextPosition);
-		}
-		else {
-			setSlaSelected(slaData[0].label);
-			setSlaPosition(0);
+		if (memoizedSlaCards[nextPosition]) {
+			setCurrentSlaCardPosition(nextPosition);
+		} else {
+			setCurrentSlaCardPosition(0);
 		}
 	};
 
@@ -132,11 +108,11 @@ const SlaCard = ({project}) => {
 		<div className="cp-sla-container position-absolute">
 			<h5 className="mb-4">Support Level</h5>
 
-			{slaData?.length ? (
+			{memoizedSlaCards.length ? (
 				<div>
 					<div
 						className={classNames({
-							'ml-2': slaData.length > 1,
+							'ml-2': memoizedSlaCards.length > 1,
 						})}
 					>
 						<div
@@ -144,30 +120,27 @@ const SlaCard = ({project}) => {
 								'align-items-center d-flex cp-sla-card-holder',
 								{
 									'cp-sla-multiple-card ml-2':
-										slaData.length > 1,
+										memoizedSlaCards.length > 1,
 								}
 							)}
 						>
-							{slaData.map((sla) => (
+							{memoizedSlaCards.map((slaCard, index) => (
 								<SlaCardLayout
-									key={sla.title}
-									slaDateEnd={sla.dateEnd}
-									slaDateStart={sla.dateStart}
-									slaLabel={sla.label}
-									slaSelected={slaSelected}
-									slaTitle={sla.title}
+									key={slaCard.title}
+									selected={currentSlaCardPosition === index}
+									{...slaCard}
 								/>
 							))}
 						</div>
 					</div>
 
-					{slaData.length > 1 && (
-						<div
+					{memoizedSlaCards.length > 1 && (
+						<button
 							className="btn btn-outline-primary d-none hide ml-3 position-relative rounded-circle"
 							onClick={handleSlaCardClick}
 						>
 							<ClayIcon symbol="angle-right" />
-						</div>
+						</button>
 					)}
 				</div>
 			) : (

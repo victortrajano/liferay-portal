@@ -9,15 +9,25 @@
  * distribution rights of the Software.
  */
 
+import {useGetKoroneikiAccountByAccountKey} from '../../../../common/services/liferay/graphql/koroneiki-accounts';
 import SlaCard from '../SlaCard';
 import ProjectSupportSkeleton from './Skeleton';
 
-const ProjectSupport = ({project}) => {
+const ProjectSupport = () => {
+	const {
+		data: koroneikiAccountData,
+		loading: koroneikiAccountLoading,
+	} = useGetKoroneikiAccountByAccountKey();
+
+	if (koroneikiAccountLoading) {
+		return <>Loading...</>;
+	}
+
 	return (
 		<div className="container cp-project-contacs-container mb-5 mx-0">
 			<div className="row">
 				<div className="col-5 pb-8">
-					<SlaCard project={project} />
+					<SlaCard koroneikiAccount={koroneikiAccountData} />
 				</div>
 
 				<div className="col-7">
@@ -25,21 +35,21 @@ const ProjectSupport = ({project}) => {
 						Liferay Contact
 					</h5>
 
-					{project.liferayContactName && (
+					{koroneikiAccountData?.liferayContactName && (
 						<div className="font-weight-bold rounded-sm text-neutral-8 text-paragraph">
-							{project.liferayContactName}
+							{koroneikiAccountData?.liferayContactName}
 						</div>
 					)}
 
-					{project.liferayContactRole && (
+					{koroneikiAccountData?.liferayContactRole && (
 						<div className="rounded-sm text-neutral-10 text-paragraph">
-							{project.liferayContactRole}
+							{koroneikiAccountData?.liferayContactRole}
 						</div>
 					)}
 
-					{project.liferayContactEmailAddress && (
+					{koroneikiAccountData?.liferayContactEmailAddress && (
 						<div className="rounded-sm text-neutral-10 text-paragraph-sm">
-							{project.liferayContactEmailAddress}
+							{koroneikiAccountData?.liferayContactEmailAddress}
 						</div>
 					)}
 				</div>

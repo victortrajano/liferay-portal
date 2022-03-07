@@ -14,6 +14,6 @@ export const structuredContentsTypePolicy = {
 		keyFields: ['contentTemplateId'],
 	},
 	StructuredContent: {
-		keyFields: ['externalReferenceCode'],
+		keyFields: ['id'],
 	},
 };

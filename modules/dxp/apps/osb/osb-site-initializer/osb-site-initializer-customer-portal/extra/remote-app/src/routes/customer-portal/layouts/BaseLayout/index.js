@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -9,78 +10,46 @@
  * distribution rights of the Software.
  */
 
-import {useCallback} from 'react';
-import {Outlet, useLocation} from 'react-router-dom';
+import {useState} from 'react';
+import {Outlet} from 'react-router-dom';
 import ProjectSupport from '../../components/ProjectSupport';
 import QuickLinksPanel from '../../containers/QuickLinksPanel';
 import SideMenu from '../../containers/SideMenu';
-import {usePortalContext} from '../../context';
-import ActivationKeys from '../../pages/Project/ActivationKeys';
-import Overview from '../../pages/Project/Overview';
-import {PAGE_TYPES} from '../../utils/constants';
-import LayoutSkeleton from './Skeleton';
-
-const PAGE_SKELETON_LAYOUT = {
-	[PAGE_TYPES.commerce]: <ActivationKeys.Skeleton />,
-	[PAGE_TYPES.dxp]: <ActivationKeys.Skeleton />,
-	[PAGE_TYPES.dxpCloud]: <ActivationKeys.Skeleton />,
-	[PAGE_TYPES.enterpriseSearch]: <ActivationKeys.Skeleton />,
-	[PAGE_TYPES.overview]: <Overview.Skeleton />,
-	[PAGE_TYPES.teamMembers]: <ActivationKeys.Skeleton />,
-};
 
 const Layout = () => {
-	const location = useLocation();
+	const [componentsVisibility, setComponentsVisibility] = useState({
+		showProjectSupport: true,
+		showQuickLinksPanel: true,
+	});
 
-	const [
-		{project, sessionId, subscriptionGroups, userAccount},
-	] = usePortalContext();
-
-	const getCurrentPage = useCallback(() => {
-		const [, ...currentPath] = location.pathname.split('/').filter(Boolean);
-
-		return currentPath.length
-			? currentPath.slice(-1)[0]
-			: PAGE_TYPES.overview;
-	}, [location]);
-
-	const hasProjectContact = getCurrentPage() === PAGE_TYPES.overview;
-
-	const hasQuickLinksPanel = getCurrentPage() !== PAGE_TYPES.teamMembers;
-
-	if (!project || !sessionId || !subscriptionGroups || !userAccount) {
-		return (
-			<LayoutSkeleton>
-				{PAGE_SKELETON_LAYOUT[getCurrentPage()] ||
-					PAGE_SKELETON_LAYOUT.overview}
-			</LayoutSkeleton>
-		);
-	}
+	const [quickLinkContents, setQuickLinkContents] = useState([]);
 
 	return (
 		<div className="d-flex position-relative w-100">
-			<SideMenu
-				getCurrentPage={getCurrentPage}
-				subscriptionGroups={subscriptionGroups}
-			/>
+			<SideMenu />
 
 			<div className="d-flex flex-fill pt-4">
 				<div className="w-100">
-					{hasProjectContact && <ProjectSupport project={project} />}
+					{componentsVisibility.showProjectSupport && (
+						<ProjectSupport />
+					)}
 
 					<Outlet
 						context={{
-							getCurrentPage,
-							project,
-							sessionId,
-							subscriptionGroups,
-							userAccount,
+							quickLinks: [
+								quickLinkContents,
+								setQuickLinkContents,
+							],
+							visibility: [
+								componentsVisibility,
+								setComponentsVisibility,
+							],
 						}}
 					/>
 				</div>
 
-				{hasQuickLinksPanel && (
-					<QuickLinksPanel accountKey={project.accountKey} />
+				{componentsVisibility.showQuickLinksPanel && (
+					<QuickLinksPanel contents={quickLinkContents} />
 				)}
 			</div>
 		</div>

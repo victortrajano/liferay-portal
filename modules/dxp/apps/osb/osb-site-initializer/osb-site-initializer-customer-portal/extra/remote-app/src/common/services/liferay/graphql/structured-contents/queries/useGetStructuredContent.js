@@ -9,29 +9,28 @@
  * distribution rights of the Software.
  */
 
-import {gql, useQuery} from '@apollo/client';
+import {gql, useLazyQuery, useQuery} from '@apollo/client';
 
 const GET_STRUCTURED_CONTENT = gql`
-	query getStructuredContents($structuredContentId: Long!) {
-		structuredContents(id: $structuredContentId)
+	query getStructuredContent($structuredContentId: Long!) {
+		structuredContent(id: $structuredContentId)
 			@rest(
 				type: "StructuredContent"
 				path: "/structured-contents/{args.id}?nestedFields=renderedContentValue"
 				endpoint: "headless-delivery"
 			) {
-			externalReferenceCode
 			friendlyUrlPath
+			key
 			id
 			renderedContents @type(name: "RenderedContent") {
 				contentTemplateId
-				contentTemplateName
 				renderedContentValue
 			}
 		}
 	}
 `;
 
-export function useGetStructuredContents(
+export function useGetStructuredContent(
 	structuredContentId,
 	options = {skip: false}
 ) {
@@ -41,4 +40,8 @@ export function useGetStructuredContents(
 			structuredContentId,
 		},
 	});
+}
+
+export function useLazyGetStructuredContent() {
+	return useLazyQuery(GET_STRUCTURED_CONTENT);
 }

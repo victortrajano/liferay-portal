@@ -9,7 +9,7 @@
  * distribution rights of the Software.
  */
 
-import {gql, useQuery} from '@apollo/client';
+import {gql, useLazyQuery, useQuery} from '@apollo/client';
 
 const GET_ACCOUNT_SUBSCRIPTIONS = gql`
 	query getAccountSubscriptions($filter: String) {
@@ -40,4 +40,8 @@ export function useGetAccountSubscriptions(
 			filter: options.filter,
 		},
 	});
+}
+
+export function useLazyGetAccountSubscriptions() {
+	return useLazyQuery(GET_ACCOUNT_SUBSCRIPTIONS);
 }

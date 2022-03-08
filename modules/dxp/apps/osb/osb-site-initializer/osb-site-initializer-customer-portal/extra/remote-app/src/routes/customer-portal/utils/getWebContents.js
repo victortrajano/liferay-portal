@@ -15,7 +15,7 @@ import {
 	WEB_CONTENT_DXP_VERSION_TYPES,
 } from './constants';
 
-export function getWebContents({dxpVersion, slaCurrent, subscriptionGroups}) {
+export function getWebContents(dxpVersion, slaCurrent, subscriptionGroups) {
 	const webContents = [];
 
 	if (
@@ -33,6 +33,7 @@ export function getWebContents({dxpVersion, slaCurrent, subscriptionGroups}) {
 	) {
 		webContents.push('WEB-CONTENT-ACTION-01');
 	}
+
 	if (
 		!subscriptionGroups.some(
 			({name}) => name === PRODUCT_TYPES.partnership
@@ -41,6 +42,7 @@ export function getWebContents({dxpVersion, slaCurrent, subscriptionGroups}) {
 	) {
 		webContents.push('WEB-CONTENT-ACTION-02');
 	}
+
 	if (
 		subscriptionGroups.some(
 			({name}) =>
@@ -49,6 +51,7 @@ export function getWebContents({dxpVersion, slaCurrent, subscriptionGroups}) {
 	) {
 		webContents.push('WEB-CONTENT-ACTION-03');
 	}
+
 	if (
 		subscriptionGroups.some(
 			({name}) =>
@@ -61,6 +64,7 @@ export function getWebContents({dxpVersion, slaCurrent, subscriptionGroups}) {
 				: WEB_CONTENT_DXP_VERSION_TYPES['7.4']
 		);
 	}
+
 	if (
 		!subscriptionGroups.some(
 			({name}) => name === PRODUCT_TYPES.analytics_cloud

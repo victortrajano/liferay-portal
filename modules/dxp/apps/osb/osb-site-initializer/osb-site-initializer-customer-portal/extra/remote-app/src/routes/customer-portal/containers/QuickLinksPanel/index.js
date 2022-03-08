@@ -12,7 +12,7 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {storage} from '../../../../common/services/liferay/storage';
 import {STORAGE_KEYS} from '../../../../common/utils/constants';
 import QuickLinksSkeleton from './Skeleton';
@@ -27,6 +27,8 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
 
 const QuickLinksPanel = ({contents}) => {
 	const [isQuickLinksExpanded, setIsQuickLinksExpanded] = useState(true);
+	const [quickLinksContents, setQuickLinksContents] = useState([]);
+
 	const {
 		getStructuredContentsWithRenderedContent,
 		koroneikiAccount,
@@ -44,41 +46,48 @@ const QuickLinksPanel = ({contents}) => {
 		}
 	}, []);
 
-	const quickLinksContents = useMemo(
-		() =>
-			contents?.reduce(async (contentsAccumulator, content) => {
-				const structuredContentId = structuredContents?.find(
-					({friendlyUrlPath, key}) =>
-						friendlyUrlPath === content ||
-						key === content.toUpperCase()
-				)?.id;
+	const memoizedGetQuickLinksContent = useCallback(
+		async () =>
+			setQuickLinksContents(
+				await contents?.reduce(
+					async (contentsAccumulatorPromise, content) => {
+						const contentsAccumulator = await contentsAccumulatorPromise;
 
-				if (structuredContentId) {
-					const {
-						data,
-					} = await getStructuredContentsWithRenderedContent({
-						variables: {
-							structuredContentId,
-						},
-					});
+						const structuredContentId = structuredContents?.find(
+							({friendlyUrlPath, key}) =>
+								friendlyUrlPath === content ||
+								key === content.toUpperCase()
+						)?.id;
 
-					const renderedContent = data?.structuredContent?.renderedContents?.find(
-						({contentTemplateId}) =>
-							contentTemplateId === 'ACTION-CARD'
-					);
+						if (structuredContentId) {
+							const {
+								data,
+							} = await getStructuredContentsWithRenderedContent({
+								variables: {
+									structuredContentId,
+								},
+							});
 
-					if (renderedContent) {
-						contentsAccumulator.push(
-							renderedContent.replace(
-								'{{accountKey}}',
-								koroneikiAccount?.accountKey
-							)
-						);
-					}
-				}
+							const renderedContent = data?.structuredContent?.renderedContents?.find(
+								({contentTemplateId}) =>
+									contentTemplateId === 'ACTION-CARD'
+							);
 
-				return contentsAccumulator;
-			}, []),
+							if (renderedContent) {
+								contentsAccumulator.push(
+									renderedContent?.renderedContentValue.replace(
+										'{{accountKey}}',
+										koroneikiAccount?.accountKey
+									)
+								);
+							}
+						}
+
+						return contentsAccumulator;
+					},
+					Promise.resolve([])
+				)
+			),
 		[
 			contents,
 			getStructuredContentsWithRenderedContent,
@@ -86,6 +95,10 @@ const QuickLinksPanel = ({contents}) => {
 			structuredContents,
 		]
 	);
+
+	useEffect(() => memoizedGetQuickLinksContent(), [
+		memoizedGetQuickLinksContent,
+	]);
 
 	if (loading || !quickLinksContents?.length) {
 		return <QuickLinksSkeleton />;

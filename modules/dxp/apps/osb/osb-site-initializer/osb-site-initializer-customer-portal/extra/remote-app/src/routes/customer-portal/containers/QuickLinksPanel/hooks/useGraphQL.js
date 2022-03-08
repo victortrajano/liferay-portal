@@ -31,7 +31,7 @@ export default function useGraphQL() {
 
 	const structuredContents =
 		structuredContentFolderData?.structuredContentFolders?.items[0]
-			?.structuredContents;
+			?.structuredContents?.items;
 
 	return {
 		getStructuredContentsWithRenderedContent,

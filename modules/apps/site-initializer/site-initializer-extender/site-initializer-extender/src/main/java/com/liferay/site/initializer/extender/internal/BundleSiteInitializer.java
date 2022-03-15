@@ -78,6 +78,7 @@ import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -96,6 +97,7 @@ import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
@@ -106,6 +108,7 @@ import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.ThemeLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
@@ -338,16 +341,18 @@ public class BundleSiteInitializer implements SiteInitializer {
 			User user = _userLocalService.getUser(
 				PrincipalThreadLocal.getUserId());
 
-			ServiceContext serviceContext = new ServiceContext() {
-				{
-					setAddGroupPermissions(true);
-					setAddGuestPermissions(true);
-					setCompanyId(user.getCompanyId());
-					setScopeGroupId(groupId);
-					setTimeZone(user.getTimeZone());
-					setUserId(user.getUserId());
-				}
-			};
+			ServiceContext serviceContextThreadLocal =
+				ServiceContextThreadLocal.getServiceContext();
+
+			ServiceContext serviceContext =
+				(ServiceContext)serviceContextThreadLocal.clone();
+
+			serviceContext.setAddGroupPermissions(true);
+			serviceContext.setAddGuestPermissions(true);
+			serviceContext.setCompanyId(user.getCompanyId());
+			serviceContext.setScopeGroupId(groupId);
+			serviceContext.setTimeZone(user.getTimeZone());
+			serviceContext.setUserId(user.getUserId());
 
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder =
@@ -2547,9 +2552,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 		UserAccountResource.Builder userAccountResourceBuilder =
 			_userAccountResourceFactory.create();
 
+		LiferayPortletRequest liferayPortletRequest =
+			serviceContext.getLiferayPortletRequest();
+
 		UserAccountResource userAccountResource =
 			userAccountResourceBuilder.user(
 				serviceContext.fetchUser()
+			).httpServletRequest(
+				liferayPortletRequest.getHttpServletRequest()
 			).build();
 
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);

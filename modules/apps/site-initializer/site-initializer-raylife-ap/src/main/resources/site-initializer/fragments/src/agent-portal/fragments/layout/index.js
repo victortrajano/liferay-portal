@@ -47,3 +47,8 @@ headerTitleElement.innerHTML =
 	layoutName === 'Dashboard'
 		? dashBoardTitle
 		: `<span class="font-weight-bolder h3">${layoutName}</span>`;
+
+if (layoutName === 'Applications') {
+	fragmentElement.querySelector('.page-header-container').style =
+		'border-bottom: 1px solid #D3D3D4; box-shadow: none;';
+}

@@ -3,7 +3,7 @@
 	"label": {
 		"en_US": "Policy to Claims"
 	},
-	"name": "policyToClaimRelationship",
+	"name": "policyToClaims",
 	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:RaylifePolicy$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:RaylifeClaim$]",
 	"objectDefinitionName2": "RaylifeClaim",

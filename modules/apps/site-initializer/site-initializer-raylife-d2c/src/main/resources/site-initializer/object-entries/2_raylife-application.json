@@ -1,0 +1,56 @@
+{
+	"entries": [
+		{
+			"policySent": false,
+			"applicationStatus": "incomplete",
+			"dateFiled": "2022-03-09",
+			"product": "Home",
+			"applicationId": "123456",
+			"r_userToRaylifeApplications_userId": 0
+		},
+		{
+			"policySent": false,
+			"applicationStatus": "quoted",
+			"dateFiled": "2022-02-16",
+			"product": "Auto",
+			"applicationId": "123567",
+			"r_userToRaylifeApplications_userId": 0
+		},
+		{
+			"policySent": false,
+			"applicationStatus": "incomplete",
+			"dateFiled": "2022-02-16",
+			"product": "Auto",
+			"applicationId": "123784",
+			"r_userToRaylifeApplications_userId": 0
+		},
+		{
+			"policySent": false,
+			"applicationStatus": "quoted",
+			"dateFiled": "2022-02-16",
+			"product": "Home",
+			"applicationId": "123789",
+			"r_userToRaylifeApplications_userId": 0
+		},
+		{
+			"policySent": false,
+			"applicationStatus": "reviewed",
+			"dateFiled": "2022-02-10",
+			"product": "Life",
+			"applicationId": "123734",
+			"r_userToRaylifeApplications_userId": 0
+		},
+		{
+			"policySent": false,
+			"applicationStatus": "reviewed",
+			"dateFiled": "2022-03-04",
+			"product": "Home",
+			"applicationId": "437852",
+			"r_userToRaylifeApplications_userId": 0
+		}
+	],
+
+	"filter": "applicationId",
+	"name": "RaylifeApplication",
+	"scope": "company"
+}

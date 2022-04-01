@@ -1682,66 +1682,70 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	private void _addObjectEntries(
-			Long groupId,
 			Map<String, String> objectDefinitionIdsStringUtilReplaceValues,
-			String parentResourcePath, ServiceContext serviceContext,
+			Map<String, String> objectEntriesIdsStringUtilReplaceValues,
+			String resourcePath, ServiceContext serviceContext,
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder)
 		throws Exception {
 
-		Set<String> resourcePaths = _servletContext.getResourcePaths(
-			parentResourcePath);
+		String json = SiteInitializerUtil.read(resourcePath, _servletContext);
 
-		if (SetUtil.isEmpty(resourcePaths)) {
+		if (Validator.isNull(json)) {
 			return;
 		}
 
-		for (String resourcePath : resourcePaths) {
-			String json = SiteInitializerUtil.read(
-				resourcePath, _servletContext);
+		json = StringUtil.replace(
+			json, "[$", "$]", objectEntriesIdsStringUtilReplaceValues);
 
-			if (Validator.isNull(json)) {
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+
+		String objectName = jsonObject.getString("name");
+
+		JSONArray jsonArray = jsonObject.getJSONArray("entries");
+
+		//TODO: improve this, maybe a constant
+		long groupId =
+			StringUtil.equals(jsonObject.getString("scope"), "site") ?
+				serviceContext.getScopeGroupId() : 0L;
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject objectEntryJSONObject = jsonArray.getJSONObject(i);
+			_objectEntryLocalService.get
+			ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
+				serviceContext.getUserId(), groupId,
+				GetterUtil.getLong(
+					objectDefinitionIdsStringUtilReplaceValues.get(
+						"OBJECT_DEFINITION_ID:" + objectName)),
+				ObjectMapperUtil.readValue(
+					Serializable.class, String.valueOf(objectEntryJSONObject)),
+				serviceContext);
+
+			objectEntriesIdsStringUtilReplaceValues.put(
+				StringBundler.concat(
+					objectName, "#",
+					objectEntryJSONObject.getString(jsonObject.getString("filter"))),
+				String.valueOf(objectEntry.getObjectEntryId()));
+
+			String objectEntrySiteInitializerKey = objectEntryJSONObject.getString(
+				"objectEntrySiteInitializerKey");
+
+			if (objectEntrySiteInitializerKey == null) {
 				continue;
 			}
 
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
-
-			String objectName = StringUtil.removeSubstring(
-				FileUtil.getShortFileName(resourcePath), ".json");
-
-			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-				ObjectEntry objectEntry =
-					_objectEntryLocalService.addObjectEntry(
-						serviceContext.getUserId(), groupId,
-						GetterUtil.getLong(
-							objectDefinitionIdsStringUtilReplaceValues.get(
-								"OBJECT_DEFINITION_ID:" + objectName)),
-						ObjectMapperUtil.readValue(
-							Serializable.class, String.valueOf(jsonObject)),
-						serviceContext);
-
-				String objectEntrySiteInitializerKey = jsonObject.getString(
-					"objectEntrySiteInitializerKey");
-
-				if (objectEntrySiteInitializerKey == null) {
-					continue;
-				}
-
-				siteNavigationMenuItemSettingsBuilder.put(
-					objectEntrySiteInitializerKey,
-					new SiteNavigationMenuItemSetting() {
-						{
-							className = objectEntry.getModelClassName();
-							classPK = String.valueOf(
-								objectEntry.getObjectEntryId());
-							title =
-								objectName + StringPool.SPACE +
-									objectEntry.getObjectEntryId();
-						}
-					});
-			}
+			siteNavigationMenuItemSettingsBuilder.put(
+				objectEntrySiteInitializerKey,
+				new SiteNavigationMenuItemSetting() {
+					{
+						className = objectEntry.getModelClassName();
+						classPK = String.valueOf(
+							objectEntry.getObjectEntryId());
+						title =
+							objectName + StringPool.SPACE +
+								objectEntry.getObjectEntryId();
+					}
+				});
 		}
 	}
 
@@ -1752,16 +1756,25 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteNavigationMenuItemSettingsBuilder)
 		throws Exception {
 
-		_addObjectEntries(
-			0L, objectDefinitionIdsStringUtilReplaceValues,
-			"/site-initializer/object-entries/company", serviceContext,
-			siteNavigationMenuItemSettingsBuilder);
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/object-entries");
 
-		_addObjectEntries(
-			serviceContext.getScopeGroupId(),
-			objectDefinitionIdsStringUtilReplaceValues,
-			"/site-initializer/object-entries/group", serviceContext,
-			siteNavigationMenuItemSettingsBuilder);
+		Map<String, String> objectEntriesIdsStringUtilReplaceValues =
+			new HashMap<>();
+
+		Set<String> sortedResourcePaths = new TreeSet<>(
+			new NaturalOrderStringComparator());
+
+		sortedResourcePaths.addAll(resourcePaths);
+
+		resourcePaths = sortedResourcePaths;
+
+		for (String resourcePath : resourcePaths) {
+			_addObjectEntries(
+				objectDefinitionIdsStringUtilReplaceValues,
+				objectEntriesIdsStringUtilReplaceValues, resourcePath,
+				serviceContext, siteNavigationMenuItemSettingsBuilder);
+		}
 	}
 
 	private void _addObjectRelationships(

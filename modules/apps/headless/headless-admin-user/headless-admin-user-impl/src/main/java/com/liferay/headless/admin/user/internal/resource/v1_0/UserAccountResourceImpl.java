@@ -402,6 +402,13 @@ public class UserAccountResourceImpl
 			Long accountId, UserAccount userAccount)
 		throws Exception {
 
+		ServiceContext serviceContext = null;
+
+		if (contextHttpServletRequest != null) {
+			serviceContext = ServiceContextFactory.getInstance(
+				contextHttpServletRequest);
+		}
+
 		AccountEntryUserRel accountEntryUserRel =
 			_accountEntryUserRelService.addAccountEntryUserRel(
 				accountId, contextUser.getUserId(),
@@ -410,7 +417,7 @@ public class UserAccountResourceImpl
 				userAccount.getGivenName(), userAccount.getAdditionalName(),
 				userAccount.getFamilyName(), _getPrefixId(userAccount),
 				_getSuffixId(userAccount), userAccount.getJobTitle(),
-				ServiceContextFactory.getInstance(contextHttpServletRequest));
+				serviceContext);
 
 		User user = accountEntryUserRel.getUser();
 

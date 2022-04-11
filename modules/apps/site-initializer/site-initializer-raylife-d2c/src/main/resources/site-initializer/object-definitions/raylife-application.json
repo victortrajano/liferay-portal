@@ -1,567 +1,255 @@
 {
-	"label": {
-		"en_US": "Raylife Application"
+	"label":{
+		"en_US":"Raylife Application"
 	},
-	"name": "RaylifeApplication",
-	"objectFields": [
+	"name":"RaylifeApplication",
+	"objectFields":[
 		{
-			"DBType": "Boolean",
-			"businessType": "Boolean",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Policy Sent"
+			"businessType":"Boolean",
+			"DBType":"Boolean",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Policy Sent"
 			},
-			"name": "policySent",
-			"required": false,
-			"type": "Boolean"
+			"name":"policySent",
+			"required":false,
+			"type":"Boolean"
 		},
 		{
-			"DBType": "Date",
-			"businessType": "Date",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Date Filed"
+			"businessType":"Date",
+			"DBType":"Date",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Submit Date"
 			},
-			"name": "dateFiled",
-			"required": false,
-			"type": "Date"
+			"name":"submitDate",
+			"required":false,
+			"type":"Date"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Picklist",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Application status"
+			"businessType":"LongText",
+			"DBType":"Clob",
+			"indexed":false,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"data JSON"
 			},
-			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:ApplicationStatus$]",
-			"name": "applicationStatus",
-			"required": false,
-			"type": "String"
+			"name":"dataJSON",
+			"required":false,
+			"type":"Clob"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Address Apt"
+			"businessType":"Picklist",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Application status"
 			},
-			"name": "addressApt",
-			"required": false,
-			"type": "String"
+			"listTypeDefinitionId":"[$LIST_TYPE_DEFINITION_ID:ApplicationStatus$]",
+			"name":"applicationStatus",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Address"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Address Apt"
 			},
-			"name": "address",
-			"required": false,
-			"type": "String"
+			"name":"addressApt",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Annual Payroll For Employees"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Address"
 			},
-			"name": "annualPayrollForEmployees",
-			"required": false,
-			"type": "String"
+			"name":"address",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Annual Payroll For Owner"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Business Category Id"
 			},
-			"name": "annualPayrollForOwner",
-			"required": false,
-			"type": "String"
+			"name":"businessCategoryId",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Application Id"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"City"
 			},
-			"name": "applicationId",
-			"required": false,
-			"type": "String"
+			"name":"city",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Building Square Feet Occupied"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Email"
 			},
-			"name": "buildingSquareFeetOccupied",
-			"required": false,
-			"type": "String"
+			"name":"email",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Business Category Id"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"First name"
 			},
-			"name": "businessCategoryId",
-			"required": false,
-			"type": "String"
+			"name":"firstName",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Business Operates Year Round"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Issues"
 			},
-			"name": "businessOperatesYearRound",
-			"required": false,
-			"type": "String"
+			"name":"issues",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Business Search"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Phone"
 			},
-			"name": "businessSearch",
-			"required": false,
-			"type": "String"
+			"name":"phone",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "City"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Product Category"
 			},
-			"name": "city",
-			"required": false,
-			"type": "String"
+			"name":"productCategory",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Do Own Building at Address"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Product Quote"
 			},
-			"name": "doOwnBuildingAtAddress",
-			"required": false,
-			"type": "String"
+			"name":"productQuote",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Email"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Product"
 			},
-			"name": "email",
-			"required": false,
-			"type": "String"
+			"name":"product",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Estimated Annual Gross Revenue"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Sources"
 			},
-			"name": "estimatedAnnualGrossRevenue",
-			"required": false,
-			"type": "String"
+			"name":"sources",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Fein"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"State"
 			},
-			"name": "fein",
-			"required": false,
-			"type": "String"
+			"name":"state",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "First name"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Website"
 			},
-			"name": "firstName",
-			"required": false,
-			"type": "String"
+			"name":"website",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Has Auto Policy"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":false,
+			"label":{
+				"en_US":"Zip"
 			},
-			"name": "hasAutoPolicy",
-			"required": false,
-			"type": "String"
+			"name":"zip",
+			"required":false,
+			"type":"String"
 		},
 		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Has Fein"
+			"businessType":"Text",
+			"DBType":"String",
+			"indexed":true,
+			"indexedAsKeyword":true,
+			"label":{
+				"en_US":"Last name"
 			},
-			"name": "hasFein",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Has SellProductsUnderOwnBrand"
-			},
-			"name": "hasSellProductsUnderOwnBrand",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Has StoredCustomerInformation"
-			},
-			"name": "hasStoredCustomerInformation",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Is Primary Business Location"
-			},
-			"name": "isPrimaryBusinessLocation",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Is There Diving Boards"
-			},
-			"name": "isThereDivingBoards",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Is There Swimming"
-			},
-			"name": "isThereSwimming",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Issues"
-			},
-			"name": "issues",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Legal Entity"
-			},
-			"name": "legalEntity",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Naics"
-			},
-			"name": "naics",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Overall Sales"
-			},
-			"name": "overallSales",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Part Time Employees"
-			},
-			"name": "partTimeEmployees",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Phone"
-			},
-			"name": "phone",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Product Quote"
-			},
-			"name": "productQuote",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Product Category"
-			},
-			"name": "productCategory",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Product"
-			},
-			"name": "product",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Sales Merchandise"
-			},
-			"name": "salesMerchandise",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Segment"
-			},
-			"name": "segment",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Sources"
-			},
-			"name": "sources",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Start Business at Year"
-			},
-			"name": "startBusinessAtYear",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "State"
-			},
-			"name": "state",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Stories"
-			},
-			"name": "stories",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Total Building Square Feet"
-			},
-			"name": "totalBuildingSquareFeet",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Website"
-			},
-			"name": "website",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Year Building"
-			},
-			"name": "yearBuilding",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Years of Experience"
-			},
-			"name": "yearsOfExperience",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Zip"
-			},
-			"name": "zip",
-			"required": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"indexed": true,
-			"indexedAsKeyword": true,
-			"label": {
-				"en_US": "Last name"
-			},
-			"name": "lastName",
-			"required": false,
-			"type": "String"
+			"name":"lastName",
+			"required":false,
+			"type":"String"
 		}
 	],
-	"panelAppOrder": "100",
-	"panelCategoryKey": "control_panel.object",
-	"pluralLabel": {
-		"en_US": "Raylife Applications"
+	"panelAppOrder":"100",
+	"panelCategoryKey":"control_panel.object",
+	"pluralLabel":{
+		"en_US":"Raylife Applications"
 	},
-	"scope": "company"
+	"scope":"company"
 }

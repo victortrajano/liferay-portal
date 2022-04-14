@@ -2712,7 +2712,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				JSONObject accountBriefsJSONObject =
 					accountBriefsJSONArray.getJSONObject(j);
 
-				userAccountResource.
+				userAccount = userAccountResource.
 					postAccountUserAccountByExternalReferenceCode(
 						accountBriefsJSONObject.getString(
 							"externalReferenceCode"),
@@ -2723,6 +2723,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 				_associateUserAccounts(
 					accountBriefsJSONObject,
 					jsonObject.getString("emailAddress"), serviceContext);
+
+				if(jsonObject.has("organizationBriefs")) {
+					_associateUserOrganization(jsonObject.getJSONArray("organizationBriefs"), userAccount.getId(), serviceContext);
+				}
 			}
 
 			for (; j < accountBriefsJSONArray.length(); j++) {
@@ -2739,6 +2743,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					accountBriefsJSONObject,
 					jsonObject.getString("emailAddress"), serviceContext);
 			}
+
+			if(jsonObject.has("organizationBriefs")) {
+				_associateUserOrganization(jsonObject.getJSONArray("organizationBriefs"), existingUserAccount.getUserId(), serviceContext);
+			}
+
 		}
 	}
 
@@ -2893,6 +2902,44 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 		}
 	}
+
+	private void _associateUserOrganization(
+		JSONArray organizationJSONArray, Long userId,
+		ServiceContext serviceContext)
+		throws Exception {
+
+		if (JSONUtil.isEmpty(organizationJSONArray)) {
+			return;
+		}
+
+		OrganizationResource.Builder organizationResourceBuilder =
+			_organizationResourceFactory.create();
+
+		OrganizationResource organizationResource =
+			organizationResourceBuilder.user(
+				serviceContext.fetchUser()
+			).httpServletRequest(
+				serviceContext.getRequest()
+			).build();
+
+		for (int i = 0; i < organizationJSONArray.length(); i++) {
+
+			JSONObject jsonObject = organizationJSONArray.getJSONObject(i);
+
+			Page<Organization> organizationPage = organizationResource.getOrganizationsPage(null, null,
+				organizationResource.toFilter(
+					StringBundler.concat(
+						"name eq '",
+						jsonObject.getString("name"),
+						"'")),
+				null, null);
+
+			Organization organization = organizationPage.fetchFirstItem();
+
+			_userLocalService.addOrganizationUser(GetterUtil.getLong(organization.getId()), userId);
+		}
+	}
+
 
 	private void _associateUserAccounts(
 			JSONObject accountBriefsJSONObject, String emailAddress,

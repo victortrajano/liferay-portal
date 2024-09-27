@@ -427,12 +427,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 						siteNavigationMenuItemSettingsBuilder));
 
 			_invoke(
-				() -> _addCPDefinitions(
-					documentsStringUtilReplaceValues,
+				() -> _addObjectRelationships(
 					objectDefinitionIdsStringUtilReplaceValues,
 					serviceContext));
+
 			_invoke(
-				() -> _addObjectRelationships(
+				() -> _addObjectEntries(
+					objectDefinitionIdsStringUtilReplaceValues,
+					serviceContext,	siteNavigationMenuItemSettingsBuilder));
+			_invoke(
+				() -> _addCPDefinitions(
+					documentsStringUtilReplaceValues,
 					objectDefinitionIdsStringUtilReplaceValues,
 					serviceContext));
 			_invoke(
@@ -473,6 +478,63 @@ public class BundleSiteInitializer implements SiteInitializer {
 					"Initialized ", getKey(), " for group ", groupId, " in ",
 					System.currentTimeMillis() - startTime, " ms"));
 		}
+	}
+
+	private void _addObjectEntries(Map<String, String> objectDefinitionIdsStringUtilReplaceValues,
+								   ServiceContext serviceContext, SiteNavigationMenuItemSettingsBuilder
+									   siteNavigationMenuItemSettingsBuilder) throws Exception {
+
+		Set<String> resourcePaths = _servletContext.getResourcePaths(
+			"/site-initializer/object-definitions");
+
+		if (SetUtil.isEmpty(resourcePaths)) {
+			return;
+		}
+
+		for (String resourcePath : resourcePaths) {
+			if(resourcePath.endsWith(".object-entries.json")){
+				String json = SiteInitializerUtil.read(
+					resourcePath,
+					_servletContext);
+
+				JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+					json);
+				String objectName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1 ,resourcePath.indexOf("."));
+				for (int i = 0; i < jsonArray.length(); i++) {
+					JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+					ObjectEntry objectEntry =
+						_objectEntryLocalService.addObjectEntry(
+							serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+							Long.parseLong(objectDefinitionIdsStringUtilReplaceValues.get("[$OBJECT_DEFINITION_ID:"
+																						  + objectName + "$]")),
+							ObjectMapperUtil.readValue(
+								Serializable.class, String.valueOf(jsonObject)),
+							serviceContext);
+					String objectEntrySiteInitializerKey = jsonObject.getString(
+						"objectEntrySiteInitializerKey");
+
+					if (objectEntrySiteInitializerKey == null) {
+						continue;
+					}
+
+
+					siteNavigationMenuItemSettingsBuilder.put(
+						objectEntrySiteInitializerKey,
+						new SiteNavigationMenuItemSetting() {
+							{
+								className = objectEntry.getModelClassName();
+								classPK = String.valueOf(
+									objectEntry.getObjectEntryId());
+								title =
+									objectName + StringPool.SPACE +
+									objectEntry.getObjectEntryId();
+							}
+						});
+				}
+			}
+		}
+
 	}
 
 	@Override
@@ -1700,51 +1762,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 				}
 			}
 
-			String objectEntriesJSON = SiteInitializerUtil.read(
-				StringUtil.replaceLast(
-					resourcePath, ".json", ".object-entries.json"),
-				_servletContext);
-
-			if (objectEntriesJSON == null) {
-				continue;
-			}
-
-			JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
-				objectEntriesJSON);
-
-			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-				ObjectEntry objectEntry =
-					_objectEntryLocalService.addObjectEntry(
-						serviceContext.getUserId(), groupId,
-						objectDefinition.getId(),
-						ObjectMapperUtil.readValue(
-							Serializable.class, String.valueOf(jsonObject)),
-						serviceContext);
-
-				String objectEntrySiteInitializerKey = jsonObject.getString(
-					"objectEntrySiteInitializerKey");
-
-				if (objectEntrySiteInitializerKey == null) {
-					continue;
-				}
-
-				String objectDefinitionName = objectDefinition.getName();
-
-				siteNavigationMenuItemSettingsBuilder.put(
-					objectEntrySiteInitializerKey,
-					new SiteNavigationMenuItemSetting() {
-						{
-							className = objectEntry.getModelClassName();
-							classPK = String.valueOf(
-								objectEntry.getObjectEntryId());
-							title =
-								objectDefinitionName + StringPool.SPACE +
-									objectEntry.getObjectEntryId();
-						}
-					});
-			}
 		}
 
 		return objectDefinitionIdsStringUtilReplaceValues;
